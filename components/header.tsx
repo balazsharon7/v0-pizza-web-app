@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ShoppingCart, Menu, User, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -43,9 +44,13 @@ export function Header({ locale, dictionary }: HeaderProps) {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href={`/${locale}`} className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-            <span className="font-serif text-lg font-bold text-primary-foreground">TV</span>
-          </div>
+          <Image
+            src="/images/logo.webp"
+            alt="Terra Verde Pizzéria"
+            width={48}
+            height={48}
+            className="h-12 w-12 object-contain"
+          />
           <span className="hidden font-serif text-xl font-bold sm:inline-block">
             Terra Verde
           </span>
