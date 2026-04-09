@@ -52,12 +52,10 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
     try {
       const supabase = createClient()
       
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
-          emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? 
-            `${window.location.origin}/auth/callback`,
           data: {
             full_name: formData.fullName,
             phone: formData.phone,
@@ -70,8 +68,27 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         return
       }
 
-      toast.success(t.auth.checkEmail)
-      router.push(`/${locale}/auth/login`)
+      // If user is returned and session exists, they're logged in immediately
+      if (data.user && data.session) {
+        toast.success(locale === 'hu' ? 'Sikeres regisztráció!' : 'Registration successful!')
+        router.push(`/${locale}`)
+        router.refresh()
+      } else {
+        // Fallback: auto-login after signup
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        })
+        
+        if (signInError) {
+          toast.success(t.auth.checkEmail)
+          router.push(`/${locale}/auth/login`)
+        } else {
+          toast.success(locale === 'hu' ? 'Sikeres regisztráció!' : 'Registration successful!')
+          router.push(`/${locale}`)
+          router.refresh()
+        }
+      }
     } catch (error) {
       console.error('Register error:', error)
       toast.error(t.common.error)
