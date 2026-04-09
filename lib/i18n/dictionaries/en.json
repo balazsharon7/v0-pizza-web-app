@@ -1,0 +1,148 @@
+{
+  "common": {
+    "home": "Home",
+    "menu": "Menu",
+    "cart": "Cart",
+    "order": "Order",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "myOrders": "My Orders",
+    "admin": "Admin",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "currency": "Ft",
+    "open": "Open",
+    "closed": "Closed"
+  },
+  "nav": {
+    "orderNow": "Order Now",
+    "viewMenu": "View Menu"
+  },
+  "hero": {
+    "title": "Authentic Italian pizza",
+    "subtitle": "made with fresh, local ingredients",
+    "description": "Traditional Neapolitan recipes with a modern twist. Every pizza is handcrafted with fresh, premium ingredients.",
+    "cta": "Order Now",
+    "viewMenu": "View Menu"
+  },
+  "menu": {
+    "title": "Our Menu",
+    "allCategories": "All",
+    "addToCart": "Add to Cart",
+    "customize": "Customize",
+    "from": "From",
+    "selectSize": "Select Size",
+    "extraToppings": "Extra Toppings",
+    "total": "Total"
+  },
+  "sizes": {
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large"
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": "Your cart is empty",
+    "emptyDescription": "Add some delicious items from the menu!",
+    "subtotal": "Subtotal",
+    "deliveryFee": "Delivery Fee",
+    "freeDelivery": "Free Delivery",
+    "freeDeliveryFrom": "Free delivery over {amount} Ft",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "minOrder": "Minimum order: {amount} Ft",
+    "itemAdded": "Added to cart"
+  },
+  "checkout": {
+    "title": "Complete Your Order",
+    "deliveryType": "Delivery Type",
+    "delivery": "Delivery",
+    "pickup": "Pickup",
+    "contactInfo": "Contact Information",
+    "name": "Name",
+    "phone": "Phone Number",
+    "email": "Email (optional)",
+    "deliveryAddress": "Delivery Address",
+    "address": "Address",
+    "city": "City",
+    "zip": "Zip Code",
+    "paymentMethod": "Payment Method",
+    "cash": "Cash",
+    "card": "Card (on delivery)",
+    "notes": "Notes",
+    "notesPlaceholder": "E.g. doorbell, floor, special requests...",
+    "placeOrder": "Place Order",
+    "processing": "Processing...",
+    "estimatedDelivery": "Estimated delivery: {min}-{max} minutes"
+  },
+  "orderSuccess": {
+    "title": "Order Successful!",
+    "orderNumber": "Order Number",
+    "thankYou": "Thank you for your order!",
+    "confirmation": "We will contact you shortly.",
+    "backToMenu": "Back to Menu"
+  },
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Full Name",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "orContinueAsGuest": "or continue as guest",
+    "forgotPassword": "Forgot password?",
+    "checkEmail": "Check your email!"
+  },
+  "profile": {
+    "title": "My Profile",
+    "personalInfo": "Personal Information",
+    "savedAddresses": "Saved Addresses",
+    "orderHistory": "Order History"
+  },
+  "orders": {
+    "title": "My Orders",
+    "noOrders": "You have no orders yet",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "delivering": "Delivering",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "footer": {
+    "contact": "Contact",
+    "openingHours": "Opening Hours",
+    "address": "Address",
+    "followUs": "Follow Us",
+    "rights": "All rights reserved."
+  },
+  "days": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  }
+}

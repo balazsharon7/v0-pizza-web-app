@@ -1,0 +1,148 @@
+{
+  "common": {
+    "home": "Főoldal",
+    "menu": "Étlap",
+    "cart": "Kosár",
+    "order": "Rendelés",
+    "login": "Bejelentkezés",
+    "register": "Regisztráció",
+    "logout": "Kijelentkezés",
+    "profile": "Profil",
+    "myOrders": "Rendeléseim",
+    "admin": "Admin",
+    "loading": "Betöltés...",
+    "error": "Hiba történt",
+    "save": "Mentés",
+    "cancel": "Mégse",
+    "delete": "Törlés",
+    "edit": "Szerkesztés",
+    "add": "Hozzáadás",
+    "remove": "Eltávolítás",
+    "close": "Bezárás",
+    "back": "Vissza",
+    "next": "Tovább",
+    "submit": "Küldés",
+    "search": "Keresés",
+    "currency": "Ft",
+    "open": "Nyitva",
+    "closed": "Zárva"
+  },
+  "nav": {
+    "orderNow": "Rendelés most",
+    "viewMenu": "Étlap megtekintése"
+  },
+  "hero": {
+    "title": "Autentikus olasz pizza",
+    "subtitle": "friss, helyi alapanyagokból",
+    "description": "Hagyományos nápolyi receptek, modern csavarral. Minden pizzánk kézzel készül, friss, prémium alapanyagokból.",
+    "cta": "Rendelj most",
+    "viewMenu": "Étlap megtekintése"
+  },
+  "menu": {
+    "title": "Étlapunk",
+    "allCategories": "Összes",
+    "addToCart": "Kosárba",
+    "customize": "Testreszabás",
+    "from": "Ártól",
+    "selectSize": "Válassz méretet",
+    "extraToppings": "Extra feltétek",
+    "total": "Összesen"
+  },
+  "sizes": {
+    "small": "Kicsi",
+    "medium": "Közepes",
+    "large": "Nagy"
+  },
+  "cart": {
+    "title": "Kosár",
+    "empty": "A kosarad üres",
+    "emptyDescription": "Adj hozzá finomságokat az étlapról!",
+    "subtotal": "Részösszeg",
+    "deliveryFee": "Szállítási díj",
+    "freeDelivery": "Ingyenes szállítás",
+    "freeDeliveryFrom": "Ingyenes szállítás {amount} Ft felett",
+    "total": "Összesen",
+    "checkout": "Tovább a fizetéshez",
+    "minOrder": "Minimum rendelés: {amount} Ft",
+    "itemAdded": "Hozzáadva a kosárhoz"
+  },
+  "checkout": {
+    "title": "Rendelés véglegesítése",
+    "deliveryType": "Átvétel módja",
+    "delivery": "Házhozszállítás",
+    "pickup": "Személyes átvétel",
+    "contactInfo": "Kapcsolattartási adatok",
+    "name": "Név",
+    "phone": "Telefonszám",
+    "email": "Email (opcionális)",
+    "deliveryAddress": "Szállítási cím",
+    "address": "Cím",
+    "city": "Város",
+    "zip": "Irányítószám",
+    "paymentMethod": "Fizetési mód",
+    "cash": "Készpénz",
+    "card": "Bankkártya (átvételkor)",
+    "notes": "Megjegyzés",
+    "notesPlaceholder": "Pl. csengő, emelet, egyéb kérés...",
+    "placeOrder": "Rendelés leadása",
+    "processing": "Feldolgozás...",
+    "estimatedDelivery": "Várható kiszállítás: {min}-{max} perc"
+  },
+  "orderSuccess": {
+    "title": "Rendelés sikeres!",
+    "orderNumber": "Rendelésszám",
+    "thankYou": "Köszönjük a rendelést!",
+    "confirmation": "Hamarosan felvesszük veled a kapcsolatot.",
+    "backToMenu": "Vissza az étlaphoz"
+  },
+  "auth": {
+    "loginTitle": "Bejelentkezés",
+    "registerTitle": "Regisztráció",
+    "email": "Email cím",
+    "password": "Jelszó",
+    "confirmPassword": "Jelszó megerősítése",
+    "fullName": "Teljes név",
+    "loginButton": "Bejelentkezés",
+    "registerButton": "Regisztráció",
+    "noAccount": "Nincs még fiókod?",
+    "hasAccount": "Van már fiókod?",
+    "orContinueAsGuest": "vagy folytatás vendégként",
+    "forgotPassword": "Elfelejtett jelszó?",
+    "checkEmail": "Ellenőrizd az email fiókodat!"
+  },
+  "profile": {
+    "title": "Profilom",
+    "personalInfo": "Személyes adatok",
+    "savedAddresses": "Mentett címek",
+    "orderHistory": "Rendelési előzmények"
+  },
+  "orders": {
+    "title": "Rendeléseim",
+    "noOrders": "Még nincs rendelésed",
+    "status": {
+      "pending": "Függőben",
+      "confirmed": "Visszaigazolva",
+      "preparing": "Készítés alatt",
+      "ready": "Elkészült",
+      "delivering": "Kiszállítás alatt",
+      "completed": "Teljesítve",
+      "cancelled": "Törölve"
+    }
+  },
+  "footer": {
+    "contact": "Kapcsolat",
+    "openingHours": "Nyitvatartás",
+    "address": "Cím",
+    "followUs": "Kövess minket",
+    "rights": "Minden jog fenntartva."
+  },
+  "days": {
+    "monday": "Hétfő",
+    "tuesday": "Kedd",
+    "wednesday": "Szerda",
+    "thursday": "Csütörtök",
+    "friday": "Péntek",
+    "saturday": "Szombat",
+    "sunday": "Vasárnap"
+  }
+}
