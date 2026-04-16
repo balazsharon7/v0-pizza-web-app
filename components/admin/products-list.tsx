@@ -2,18 +2,30 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { toast } from 'sonner'
-import { Pencil, Trash2, Plus } from 'lucide-react'
+import { Pencil, Trash2, Plus, Upload, ImageIcon, X } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -42,6 +54,9 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
   const t = dictionary
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [isCreating, setIsCreating] = useState(false)
+  const [deleteProduct, setDeleteProduct] = useState<Product | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [formData, setFormData] = useState({
     name_hu: '',
     name_en: '',
@@ -49,6 +64,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
     description_en: '',
     base_price: 0,
     category_id: '',
+    image_url: '' as string | null,
     is_available: true,
     is_customizable: true,
   })
@@ -61,6 +77,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
       description_en: product.description_en || '',
       base_price: product.base_price,
       category_id: product.category_id,
+      image_url: product.image_url,
       is_available: product.is_available,
       is_customizable: product.is_customizable,
     })
@@ -75,31 +92,87 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
       description_en: '',
       base_price: 0,
       category_id: categories[0]?.id || '',
+      image_url: null,
       is_available: true,
       is_customizable: true,
     })
     setIsCreating(true)
   }
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      toast.error(locale === 'hu' ? 'Érvénytelen fájltípus' : 'Invalid file type')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(locale === 'hu' ? 'A fájl túl nagy (max 5MB)' : 'File too large (max 5MB)')
+      return
+    }
+
+    setIsUploading(true)
+
+    try {
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: uploadFormData,
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Upload failed')
+      }
+
+      const { url } = await response.json()
+      setFormData({ ...formData, image_url: url })
+      toast.success(locale === 'hu' ? 'Kép feltöltve!' : 'Image uploaded!')
+    } catch (error) {
+      console.error('Upload error:', error)
+      toast.error(locale === 'hu' ? 'Feltöltési hiba' : 'Upload failed')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   const handleSave = async () => {
+    if (!formData.name_hu || !formData.name_en) {
+      toast.error(locale === 'hu' ? 'Add meg a nevet mindkét nyelven' : 'Enter name in both languages')
+      return
+    }
+
+    setIsSaving(true)
     const supabase = createClient()
     
     try {
+      const dataToSave = {
+        ...formData,
+        description_hu: formData.description_hu || null,
+        description_en: formData.description_en || null,
+        image_url: formData.image_url || null,
+      }
+
       if (editingProduct) {
         const { error } = await supabase
           .from('products')
-          .update(formData)
+          .update({ ...dataToSave, updated_at: new Date().toISOString() })
           .eq('id', editingProduct.id)
         
         if (error) throw error
-        toast.success(locale === 'hu' ? 'Termék frissítve' : 'Product updated')
+        toast.success(locale === 'hu' ? 'Termék frissítve!' : 'Product updated!')
       } else {
         const { error } = await supabase
           .from('products')
-          .insert({ ...formData, sort_order: products.length })
+          .insert({ ...dataToSave, sort_order: products.length })
         
         if (error) throw error
-        toast.success(locale === 'hu' ? 'Termék létrehozva' : 'Product created')
+        toast.success(locale === 'hu' ? 'Termék létrehozva!' : 'Product created!')
       }
       
       setEditingProduct(null)
@@ -108,11 +181,13 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
     } catch (error) {
       console.error('Save error:', error)
       toast.error(locale === 'hu' ? 'Hiba történt' : 'Error occurred')
+    } finally {
+      setIsSaving(false)
     }
   }
 
-  const handleDelete = async (productId: string) => {
-    if (!confirm(locale === 'hu' ? 'Biztosan törlöd?' : 'Are you sure?')) return
+  const handleDelete = async () => {
+    if (!deleteProduct) return
     
     const supabase = createClient()
     
@@ -120,10 +195,11 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
       const { error } = await supabase
         .from('products')
         .delete()
-        .eq('id', productId)
+        .eq('id', deleteProduct.id)
       
       if (error) throw error
-      toast.success(locale === 'hu' ? 'Termék törölve' : 'Product deleted')
+      toast.success(locale === 'hu' ? 'Termék törölve!' : 'Product deleted!')
+      setDeleteProduct(null)
       router.refresh()
     } catch (error) {
       console.error('Delete error:', error)
@@ -150,27 +226,61 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
 
   return (
     <>
-      <Button onClick={handleCreate} className="gap-2">
-        <Plus className="h-4 w-4" />
-        {locale === 'hu' ? 'Új termék' : 'New Product'}
-      </Button>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">{locale === 'hu' ? 'Termékek' : 'Products'}</h2>
+        <Button onClick={handleCreate} className="gap-2">
+          <Plus className="h-4 w-4" />
+          {locale === 'hu' ? 'Új termék' : 'New Product'}
+        </Button>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((product) => (
-          <Card key={product.id} className={!product.is_available ? 'opacity-50' : ''}>
+          <Card key={product.id} className={!product.is_available ? 'opacity-60' : ''}>
             <CardContent className="p-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1">
-                  <h3 className="font-semibold">{getLocalizedName(product, locale)}</h3>
+              <div className="flex gap-3">
+                {/* Product Image */}
+                <div className="flex-shrink-0">
+                  {product.image_url ? (
+                    <Image
+                      src={product.image_url}
+                      alt={product.name_hu}
+                      width={80}
+                      height={80}
+                      className="rounded-lg object-cover w-20 h-20"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-lg bg-muted flex items-center justify-center">
+                      <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Product Info */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold truncate">{getLocalizedName(product, locale)}</h3>
                   {product.category && (
-                    <Badge variant="outline" className="mt-1">
+                    <Badge variant="outline" className="mt-1 text-xs">
                       {getLocalizedName(product.category, locale)}
                     </Badge>
                   )}
-                  <p className="mt-2 font-bold text-primary">
+                  <p className="mt-1 font-bold text-primary">
                     {formatPrice(product.base_price)} Ft
                   </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <Switch
+                      checked={product.is_available}
+                      onCheckedChange={() => handleToggleAvailability(product)}
+                    />
+                    <span className="text-xs text-muted-foreground">
+                      {product.is_available
+                        ? (locale === 'hu' ? 'Elérhető' : 'Available')
+                        : (locale === 'hu' ? 'Nem elérhető' : 'Unavailable')}
+                    </span>
+                  </div>
                 </div>
+
+                {/* Actions */}
                 <div className="flex flex-col gap-1">
                   <Button
                     variant="ghost"
@@ -182,27 +292,32 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDelete(product.id)}
+                    onClick={() => setDeleteProduct(product)}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
               </div>
-              <div className="mt-3 flex items-center gap-2">
-                <Switch
-                  checked={product.is_available}
-                  onCheckedChange={() => handleToggleAvailability(product)}
-                />
-                <span className="text-sm text-muted-foreground">
-                  {product.is_available
-                    ? (locale === 'hu' ? 'Elérhető' : 'Available')
-                    : (locale === 'hu' ? 'Nem elérhető' : 'Unavailable')}
-                </span>
-              </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {products.length === 0 && (
+        <div className="text-center py-12">
+          <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-2">
+            {locale === 'hu' ? 'Nincsenek termékek' : 'No products'}
+          </h3>
+          <p className="text-muted-foreground mb-4">
+            {locale === 'hu' ? 'Hozz létre az első terméket!' : 'Create your first product!'}
+          </p>
+          <Button onClick={handleCreate}>
+            <Plus className="h-4 w-4 mr-2" />
+            {locale === 'hu' ? 'Új termék' : 'New Product'}
+          </Button>
+        </div>
+      )}
 
       {/* Edit/Create Dialog */}
       <Dialog open={!!editingProduct || isCreating} onOpenChange={(open) => {
@@ -211,97 +326,170 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
           setIsCreating(false)
         }
       }}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingProduct
                 ? (locale === 'hu' ? 'Termék szerkesztése' : 'Edit Product')
                 : (locale === 'hu' ? 'Új termék' : 'New Product')}
             </DialogTitle>
+            <DialogDescription>
+              {locale === 'hu'
+                ? 'Töltsd ki a termék adatait mindkét nyelven.'
+                : 'Fill in the product details in both languages.'}
+            </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4">
+          <div className="space-y-6 py-4">
+            {/* Image Upload Section */}
+            <div className="space-y-2">
+              <Label>{locale === 'hu' ? 'Termék képe' : 'Product Image'}</Label>
+              <div className="flex items-start gap-4">
+                {formData.image_url ? (
+                  <div className="relative">
+                    <Image
+                      src={formData.image_url}
+                      alt="Product preview"
+                      width={120}
+                      height={120}
+                      className="rounded-lg object-cover w-[120px] h-[120px]"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute -top-2 -right-2 h-6 w-6"
+                      onClick={() => setFormData({ ...formData, image_url: null })}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="w-[120px] h-[120px] rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/50">
+                    <ImageIcon className="h-10 w-10 text-muted-foreground/50" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <Label
+                    htmlFor="image-upload"
+                    className="flex flex-col items-center justify-center w-full h-[120px] border-2 border-dashed rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
+                  >
+                    <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                    <span className="text-sm font-medium">
+                      {isUploading
+                        ? (locale === 'hu' ? 'Feltöltés...' : 'Uploading...')
+                        : (locale === 'hu' ? 'Kép feltöltése' : 'Upload image')}
+                    </span>
+                    <span className="text-xs text-muted-foreground mt-1">PNG, JPG, WebP (max 5MB)</span>
+                  </Label>
+                  <Input
+                    id="image-upload"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Category */}
+            <div className="space-y-2">
+              <Label>{locale === 'hu' ? 'Kategória' : 'Category'}</Label>
+              <Select
+                value={formData.category_id}
+                onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={locale === 'hu' ? 'Válassz kategóriát' : 'Select category'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {getLocalizedName(cat, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Names */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name_hu">Név (HU)</Label>
+                <Label htmlFor="name_hu">{locale === 'hu' ? 'Név (magyar)' : 'Name (Hungarian)'} *</Label>
                 <Input
                   id="name_hu"
                   value={formData.name_hu}
                   onChange={(e) => setFormData({ ...formData, name_hu: e.target.value })}
+                  placeholder="pl. Margherita"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="name_en">Name (EN)</Label>
+                <Label htmlFor="name_en">{locale === 'hu' ? 'Név (angol)' : 'Name (English)'} *</Label>
                 <Input
                   id="name_en"
                   value={formData.name_en}
                   onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
+                  placeholder="e.g. Margherita"
                 />
               </div>
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="description_hu">Leírás (HU)</Label>
-              <Textarea
-                id="description_hu"
-                value={formData.description_hu}
-                onChange={(e) => setFormData({ ...formData, description_hu: e.target.value })}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="description_en">Description (EN)</Label>
-              <Textarea
-                id="description_en"
-                value={formData.description_en}
-                onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
-              />
-            </div>
-            
+
+            {/* Descriptions */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="base_price">{locale === 'hu' ? 'Ár (Ft)' : 'Price (Ft)'}</Label>
-                <Input
-                  id="base_price"
-                  type="number"
-                  value={formData.base_price}
-                  onChange={(e) => setFormData({ ...formData, base_price: parseInt(e.target.value) || 0 })}
+                <Label htmlFor="description_hu">{locale === 'hu' ? 'Leírás (magyar)' : 'Description (Hungarian)'}</Label>
+                <Textarea
+                  id="description_hu"
+                  value={formData.description_hu}
+                  onChange={(e) => setFormData({ ...formData, description_hu: e.target.value })}
+                  placeholder={locale === 'hu' ? 'Összetevők, jellemzők...' : 'Ingredients, features...'}
+                  rows={3}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="category">{locale === 'hu' ? 'Kategória' : 'Category'}</Label>
-                <Select
-                  value={formData.category_id}
-                  onValueChange={(value) => setFormData({ ...formData, category_id: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {getLocalizedName(cat, locale)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="description_en">{locale === 'hu' ? 'Leírás (angol)' : 'Description (English)'}</Label>
+                <Textarea
+                  id="description_en"
+                  value={formData.description_en}
+                  onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
+                  placeholder="Ingredients, features..."
+                  rows={3}
+                />
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
+            {/* Price */}
+            <div className="space-y-2">
+              <Label htmlFor="base_price">{locale === 'hu' ? 'Alapár (Ft)' : 'Base Price (HUF)'}</Label>
+              <Input
+                id="base_price"
+                type="number"
+                min="0"
+                step="10"
+                value={formData.base_price}
+                onChange={(e) => setFormData({ ...formData, base_price: parseInt(e.target.value) || 0 })}
+              />
+            </div>
+            
+            {/* Switches */}
+            <div className="flex flex-wrap gap-6">
               <div className="flex items-center gap-2">
                 <Switch
+                  id="is_available"
                   checked={formData.is_available}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_available: checked })}
                 />
-                <Label>{locale === 'hu' ? 'Elérhető' : 'Available'}</Label>
+                <Label htmlFor="is_available">{locale === 'hu' ? 'Elérhető' : 'Available'}</Label>
               </div>
               <div className="flex items-center gap-2">
                 <Switch
+                  id="is_customizable"
                   checked={formData.is_customizable}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_customizable: checked })}
                 />
-                <Label>{locale === 'hu' ? 'Testreszabható' : 'Customizable'}</Label>
+                <Label htmlFor="is_customizable">{locale === 'hu' ? 'Testreszabható (méret, feltét)' : 'Customizable (size, toppings)'}</Label>
               </div>
             </div>
           </div>
@@ -313,10 +501,37 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
             }}>
               {t.common.cancel}
             </Button>
-            <Button onClick={handleSave}>{t.common.save}</Button>
+            <Button onClick={handleSave} disabled={isSaving || isUploading}>
+              {isSaving ? (locale === 'hu' ? 'Mentés...' : 'Saving...') : t.common.save}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteProduct} onOpenChange={() => setDeleteProduct(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {locale === 'hu' ? 'Biztosan törlöd?' : 'Are you sure?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {locale === 'hu'
+                ? `A "${deleteProduct?.name_hu}" termék véglegesen törlődik. Ez a művelet nem vonható vissza.`
+                : `The product "${deleteProduct?.name_en}" will be permanently deleted. This action cannot be undone.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{locale === 'hu' ? 'Mégse' : 'Cancel'}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {locale === 'hu' ? 'Törlés' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
