@@ -149,16 +149,19 @@ export function Header({ locale, dictionary }: HeaderProps) {
           </DropdownMenu>
 
           {/* User Menu */}
-          {!isLoading && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="hidden sm:flex">
-                  <User className="h-5 w-5" />
-                  <span className="sr-only">{t.common.profile}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="hidden sm:flex">
+                <User className="h-5 w-5" />
+                <span className="sr-only">{t.common.profile}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              {isLoading ? (
+                <div className="px-2 py-4 text-center text-sm text-muted-foreground">
+                  {locale === 'hu' ? 'Betöltés...' : 'Loading...'}
+                </div>
+              ) : user ? (
                   <>
                     <div className="px-2 py-1.5">
                       <p className="text-sm font-medium truncate">
@@ -210,7 +213,6 @@ export function Header({ locale, dictionary }: HeaderProps) {
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
 
           {/* Cart Button */}
           <Button
