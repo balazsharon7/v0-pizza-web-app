@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Clock, MapPin, Phone, Mail } from 'lucide-react'
+import { ArrowRight, Clock, MapPin, Phone, Mail, Leaf, ChefHat, Truck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
@@ -74,7 +74,7 @@ export default async function HomePage({
             </div>
             
             <h1 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              <span className="text-foreground">{t.hero.title}</span>
+              <span className="text-foreground">Terra Verde Pizzeria</span>
             </h1>
             
             <p className="text-xl text-muted-foreground md:text-2xl leading-relaxed">
@@ -201,8 +201,8 @@ export default async function HomePage({
           
           <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
             <div className="text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-md transition-shadow">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-4xl">
-                🌿
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                <Leaf className="h-10 w-10 text-primary" />
               </div>
               <h3 className="mb-3 font-serif text-xl font-semibold">
                 {locale === 'hu' ? 'Friss alapanyagok' : 'Fresh Ingredients'}
@@ -215,8 +215,8 @@ export default async function HomePage({
             </div>
             
             <div className="text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-md transition-shadow">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-4xl">
-                👨‍🍳
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                <ChefHat className="h-10 w-10 text-primary" />
               </div>
               <h3 className="mb-3 font-serif text-xl font-semibold">
                 {locale === 'hu' ? 'Hagyományos receptek' : 'Traditional Recipes'}
@@ -229,16 +229,16 @@ export default async function HomePage({
             </div>
             
             <div className="text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-md transition-shadow">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-4xl">
-                🚀
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                <Truck className="h-10 w-10 text-primary" />
               </div>
               <h3 className="mb-3 font-serif text-xl font-semibold">
                 {locale === 'hu' ? 'Gyors kiszállítás' : 'Fast Delivery'}
               </h3>
               <p className="text-muted-foreground leading-relaxed">
                 {locale === 'hu'
-                  ? `Rendelésed ${delivery.estimated_time_min || 30}-${delivery.estimated_time_max || 45} percen belül nálad van.`
-                  : `Your order arrives in ${delivery.estimated_time_min || 30}-${delivery.estimated_time_max || 45} minutes.`}
+                  ? 'Rendelésed 1 órán belül nálad van.'
+                  : 'Your order arrives in under 1 hour.'}
               </p>
             </div>
           </div>
@@ -263,10 +263,10 @@ export default async function HomePage({
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="text-base h-12 px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+            <Button asChild size="lg" variant="secondary" className="text-base h-12 px-8">
               <a href={`tel:${storeInfo.phone || '+36 1 234 5678'}`}>
                 <Phone className="mr-2 h-5 w-5" />
-                {storeInfo.phone || '+36 1 234 5678'}
+                <span className="font-semibold">{storeInfo.phone || '+36 1 234 5678'}</span>
               </a>
             </Button>
           </div>

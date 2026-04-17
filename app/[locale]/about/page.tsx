@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { MapPin, Phone, Mail, Clock, Truck, Timer, Banknote } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Timer, Wheat, ChefHat } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -118,7 +118,7 @@ export default async function AboutPage({ params }: PageProps) {
             <Card className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="pt-8 pb-6 space-y-4">
                 <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-3xl">🇮🇹</span>
+                  <Wheat className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="font-serif text-xl font-semibold">
                   {t.about.quality2Title}
@@ -131,7 +131,7 @@ export default async function AboutPage({ params }: PageProps) {
             <Card className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="pt-8 pb-6 space-y-4">
                 <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-3xl">👨‍🍳</span>
+                  <ChefHat className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="font-serif text-xl font-semibold">
                   {t.about.quality3Title}
@@ -240,21 +240,21 @@ export default async function AboutPage({ params }: PageProps) {
                 </CardContent>
               </Card>
 
-              {/* Map placeholder */}
+              {/* Map */}
               <div className="space-y-4">
                 <h3 className="font-serif text-xl font-semibold">
                   {t.about.findUs}
                 </h3>
-                <div className="aspect-video rounded-xl overflow-hidden bg-muted">
+                <div className="aspect-video rounded-xl overflow-hidden bg-muted shadow-lg">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2697.8!2d18.9558!3d47.4611!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDfCsDI3JzQwLjAiTiAxOMKwNTcnMjEuMCJF!5e0!3m2!1sen!2shu!4v1620000000000!5m2!1sen!2shu"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2697.5!2d18.9521!3d47.4621!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4741e098a7c3a8e7%3A0x400c4290c1e11d0!2sBuda%C3%B6rs%2C%20Szabads%C3%A1g%20%C3%BAt%2023%2C%202040!5e0!3m2!1shu!2shu!4v1700000000000!5m2!1shu!2shu"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="Terra Verde Pizzeria Location"
+                    title={locale === 'hu' ? 'Terra Verde Pizzéria helyszíne' : 'Terra Verde Pizzeria Location'}
                   />
                 </div>
               </div>
