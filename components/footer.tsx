@@ -1,16 +1,76 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Phone, Mail, MapPin } from 'lucide-react'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
+import { createClient } from '@/lib/supabase/client'
 
 interface FooterProps {
   locale: Locale
   dictionary: Dictionary
 }
 
+interface StoreInfo {
+  name_hu?: string
+  name_en?: string
+  address?: string
+  phone?: string
+  email?: string
+}
+
+interface OpeningHours {
+  [key: string]: {
+    open: string
+    close: string
+    closed?: boolean
+  }
+}
+
 export function Footer({ locale, dictionary }: FooterProps) {
   const t = dictionary
   const currentYear = new Date().getFullYear()
+  const [storeInfo, setStoreInfo] = useState<StoreInfo>({})
+  const [openingHours, setOpeningHours] = useState<OpeningHours>({})
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('settings')
+        .select('key, value')
+
+      if (data) {
+        const settings: Record<string, any> = {}
+        data.forEach((s) => {
+          settings[s.key] = s.value
+        })
+        setStoreInfo(settings.store_info || {})
+        setOpeningHours(settings.opening_hours || {})
+      }
+    }
+    fetchSettings()
+  }, [])
+
+  // Format opening hours for display
+  const getOpeningHoursDisplay = () => {
+    const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+    const weekend = ['saturday', 'sunday']
+    
+    // Check if all weekdays have the same hours
+    const weekdayHours = weekdays.map(d => openingHours[d])
+    const allWeekdaysSame = weekdayHours.every(h => 
+      h && !h.closed && h.open === weekdayHours[0]?.open && h.close === weekdayHours[0]?.close
+    )
+    
+    const satHours = openingHours.saturday
+    const sunHours = openingHours.sunday
+
+    return { weekdayHours: weekdayHours[0], allWeekdaysSame, satHours, sunHours }
+  }
+
+  const { weekdayHours, allWeekdaysSame, satHours, sunHours } = getOpeningHoursDisplay()
 
   return (
     <footer className="border-t bg-sidebar text-sidebar-foreground">
@@ -37,19 +97,19 @@ export function Footer({ locale, dictionary }: FooterProps) {
             <ul className="space-y-3 text-sm text-sidebar-foreground/80">
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                <a href="tel:+3612345678" className="hover:text-sidebar-foreground">
-                  +36 1 234 5678
+                <a href={`tel:${storeInfo.phone || '+36301735918'}`} className="hover:text-sidebar-foreground">
+                  {storeInfo.phone || '+36 30 173 5918'}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                <a href="mailto:info@terraverdepizza.hu" className="hover:text-sidebar-foreground">
-                  info@terraverdepizza.hu
+                <a href={`mailto:${storeInfo.email || 'info@terraverdepizza.hu'}`} className="hover:text-sidebar-foreground">
+                  {storeInfo.email || 'info@terraverdepizza.hu'}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-0.5" />
-                <span>Budapest, Pelda utca 123.</span>
+                <span>{storeInfo.address || '2040 Budaörs, Szabadság út 23-25.'}</span>
               </li>
             </ul>
           </div>
@@ -58,17 +118,36 @@ export function Footer({ locale, dictionary }: FooterProps) {
           <div className="space-y-4">
             <h3 className="font-serif text-lg font-semibold">{t.footer.openingHours}</h3>
             <ul className="space-y-1 text-sm text-sidebar-foreground/80">
+              {allWeekdaysSame && weekdayHours && !weekdayHours.closed ? (
+                <li className="flex justify-between">
+                  <span>{t.days.monday} - {t.days.friday}</span>
+                  <span>{weekdayHours.open} - {weekdayHours.close}</span>
+                </li>
+              ) : (
+                <li className="flex justify-between">
+                  <span>{t.days.monday} - {t.days.friday}</span>
+                  <span>11:00 - 22:00</span>
+                </li>
+              )}
               <li className="flex justify-between">
-                <span>{t.days.monday} - {t.days.thursday}</span>
-                <span>11:00 - 22:00</span>
-              </li>
-              <li className="flex justify-between">
-                <span>{t.days.friday} - {t.days.saturday}</span>
-                <span>11:00 - 23:00</span>
+                <span>{t.days.saturday}</span>
+                <span>
+                  {satHours && !satHours.closed 
+                    ? `${satHours.open} - ${satHours.close}`
+                    : satHours?.closed 
+                      ? (locale === 'hu' ? 'Zárva' : 'Closed')
+                      : '11:00 - 23:00'}
+                </span>
               </li>
               <li className="flex justify-between">
                 <span>{t.days.sunday}</span>
-                <span>12:00 - 21:00</span>
+                <span>
+                  {sunHours && !sunHours.closed 
+                    ? `${sunHours.open} - ${sunHours.close}`
+                    : sunHours?.closed 
+                      ? (locale === 'hu' ? 'Zárva' : 'Closed')
+                      : '12:00 - 21:00'}
+                </span>
               </li>
             </ul>
           </div>
@@ -85,6 +164,14 @@ export function Footer({ locale, dictionary }: FooterProps) {
                   className="text-sidebar-foreground/80 hover:text-sidebar-foreground"
                 >
                   {t.common.menu}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`/${locale}/about`}
+                  className="text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                >
+                  {locale === 'hu' ? 'Rólunk' : 'About'}
                 </Link>
               </li>
               <li>

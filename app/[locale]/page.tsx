@@ -74,7 +74,7 @@ export default async function HomePage({
             </div>
             
             <h1 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              <span className="text-foreground">{t.hero.title}</span>
+              <span className="text-foreground">Terra Verde Pizzeria</span>
             </h1>
             
             <p className="text-xl text-muted-foreground md:text-2xl leading-relaxed">
