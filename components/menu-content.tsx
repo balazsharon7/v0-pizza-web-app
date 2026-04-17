@@ -39,7 +39,8 @@ export function MenuContent({
   locale,
   dictionary,
 }: MenuContentProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  // Default to first category (pizzas)
+  const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [isStoreOpen, setIsStoreOpen] = useState<boolean>(true)
   const { addItem } = useCart()
@@ -50,6 +51,9 @@ export function MenuContent({
   const filteredCategories = categories.filter((c) => allowedSlugs.includes(c.slug))
   const allowedCategoryIds = filteredCategories.map((c) => c.id)
 
+  // Set default category on first render
+  const activeCategory = selectedCategory || filteredCategories[0]?.id || ''
+
   // Filter products to only show from allowed categories
   const availableProducts = products.filter((p) => allowedCategoryIds.includes(p.category_id))
   
@@ -59,10 +63,7 @@ export function MenuContent({
     ? products.filter(p => p.category_id === drinkCategory.id && p.is_available)
     : []
 
-  const filteredProducts =
-    selectedCategory === 'all'
-      ? availableProducts
-      : availableProducts.filter((p) => p.category_id === selectedCategory)
+  const filteredProducts = availableProducts.filter((p) => p.category_id === activeCategory)
 
   const getCategoryIcon = (slug: string) => {
     switch (slug) {
@@ -100,25 +101,13 @@ export function MenuContent({
       {/* Category Selection */}
       <div className="mb-10">
         <div className="flex flex-wrap justify-center gap-3">
-          <button
-            onClick={() => setSelectedCategory('all')}
-            className={`
-              flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-200
-              ${selectedCategory === 'all'
-                ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
-                : 'bg-muted hover:bg-muted/80 text-foreground'
-              }
-            `}
-          >
-            {t.menu.allCategories}
-          </button>
           {filteredCategories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
               className={`
                 flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-200
-                ${selectedCategory === category.id
+                ${activeCategory === category.id
                   ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
                   : 'bg-muted hover:bg-muted/80 text-foreground'
                 }
