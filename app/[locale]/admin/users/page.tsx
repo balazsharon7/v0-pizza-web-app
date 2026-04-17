@@ -26,10 +26,12 @@ export default async function UsersPage({ params }: UsersPageProps) {
   if (!profile?.is_admin) redirect(`/${locale}`)
 
   // Fetch all users
-  const { data: profiles } = await supabase
+  const { data: profiles, error: profilesError } = await supabase
     .from('profiles')
     .select('*')
     .order('created_at', { ascending: false })
+  
+  console.log('[v0] Admin users page - profiles:', profiles?.length, 'error:', profilesError)
 
   // Fetch order counts separately for each user
   const users = await Promise.all(
