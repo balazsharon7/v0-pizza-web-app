@@ -41,6 +41,7 @@ import { formatPrice, getLocalizedName, type Product, type Category } from '@/li
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { createClient } from '@/lib/supabase/client'
+import { updateProduct, createProduct as createProductAction, deleteProduct as deleteProductAction, revalidateAll } from '@/app/actions/admin'
 
 interface ProductsListProps {
   products: (Product & { category?: Category })[]
@@ -148,30 +149,30 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
     }
 
     setIsSaving(true)
-    const supabase = createClient()
     
     try {
       const dataToSave = {
-        ...formData,
-        description_hu: formData.description_hu || null,
-        description_en: formData.description_en || null,
-        image_url: formData.image_url || null,
+        name_hu: formData.name_hu,
+        name_en: formData.name_en,
+        description_hu: formData.description_hu || undefined,
+        description_en: formData.description_en || undefined,
+        base_price: formData.base_price,
+        category_id: formData.category_id,
+        image_url: formData.image_url || undefined,
+        is_available: formData.is_available,
+        is_customizable: formData.is_customizable,
       }
 
       if (editingProduct) {
-        const { error } = await supabase
-          .from('products')
-          .update({ ...dataToSave, updated_at: new Date().toISOString() })
-          .eq('id', editingProduct.id)
-        
-        if (error) throw error
+        const result = await updateProduct(editingProduct.id, dataToSave)
+        if (!result.success) throw new Error(result.error)
         toast.success(locale === 'hu' ? 'Termék frissítve!' : 'Product updated!')
       } else {
-        const { error } = await supabase
-          .from('products')
-          .insert({ ...dataToSave, sort_order: products.length })
-        
-        if (error) throw error
+        const result = await createProductAction({
+          ...dataToSave,
+          category_id: formData.category_id,
+        })
+        if (!result.success) throw new Error(result.error)
         toast.success(locale === 'hu' ? 'Termék létrehozva!' : 'Product created!')
       }
       
@@ -189,15 +190,9 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
   const handleDelete = async () => {
     if (!deleteProduct) return
     
-    const supabase = createClient()
-    
     try {
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', deleteProduct.id)
-      
-      if (error) throw error
+      const result = await deleteProductAction(deleteProduct.id)
+      if (!result.success) throw new Error(result.error)
       toast.success(locale === 'hu' ? 'Termék törölve!' : 'Product deleted!')
       setDeleteProduct(null)
       router.refresh()
@@ -208,15 +203,9 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
   }
 
   const handleToggleAvailability = async (product: Product) => {
-    const supabase = createClient()
-    
     try {
-      const { error } = await supabase
-        .from('products')
-        .update({ is_available: !product.is_available })
-        .eq('id', product.id)
-      
-      if (error) throw error
+      const result = await updateProduct(product.id, { is_available: !product.is_available })
+      if (!result.success) throw new Error(result.error)
       router.refresh()
     } catch (error) {
       console.error('Toggle error:', error)

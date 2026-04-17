@@ -25,19 +25,9 @@ export default async function UsersPage({ params }: UsersPageProps) {
 
   if (!profile?.is_admin) redirect(`/${locale}`)
 
-  // Fetch all users with their order counts
-  const { data: users } = await supabase
-    .from('profiles')
-    .select(`
-      *,
-      orders:orders(count)
-    `)
-    .order('created_at', { ascending: false })
-
   return (
     <div className="space-y-6">
       <UsersList
-        users={users || []}
         locale={locale}
         dictionary={t}
       />

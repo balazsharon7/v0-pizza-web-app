@@ -19,6 +19,8 @@ import { locales, localeNames, type Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { useState, useEffect } from 'react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { OpenStatus } from '@/components/open-status'
+import { toast } from 'sonner'
 
 interface HeaderProps {
   locale: Locale
@@ -82,6 +84,7 @@ export function Header({ locale, dictionary }: HeaderProps) {
     await supabase.auth.signOut()
     setUser(null)
     setProfile(null)
+    toast.success(locale === 'hu' ? 'Sikeres kijelentkezés!' : 'Successfully signed out!')
     router.push(`/${locale}`)
     router.refresh()
   }
@@ -95,6 +98,7 @@ export function Header({ locale, dictionary }: HeaderProps) {
   const navLinks = [
     { href: `/${locale}`, label: t.common.home },
     { href: `/${locale}/menu`, label: t.common.menu },
+    { href: `/${locale}/about`, label: locale === 'hu' ? 'Rólunk' : 'About' },
   ]
 
   return (
@@ -125,6 +129,9 @@ export function Header({ locale, dictionary }: HeaderProps) {
               {link.label}
             </Link>
           ))}
+          
+          {/* Open Status */}
+          <OpenStatus locale={locale} />
         </nav>
 
         {/* Actions */}
