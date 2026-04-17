@@ -145,28 +145,36 @@ export function SettingsForm({ locale }: SettingsFormProps) {
     
     try {
       // Update is_open
-      await supabase
+      const { error: err1 } = await supabase
         .from('settings')
         .update({ value: { value: isOpen }, updated_at: new Date().toISOString() })
         .eq('key', 'is_open')
       
+      if (err1) throw err1
+      
       // Update opening_hours
-      await supabase
+      const { error: err2 } = await supabase
         .from('settings')
         .update({ value: openingHours, updated_at: new Date().toISOString() })
         .eq('key', 'opening_hours')
       
+      if (err2) throw err2
+      
       // Update store_info
-      await supabase
+      const { error: err3 } = await supabase
         .from('settings')
         .update({ value: storeInfo, updated_at: new Date().toISOString() })
         .eq('key', 'store_info')
       
+      if (err3) throw err3
+      
       // Update delivery
-      await supabase
+      const { error: err4 } = await supabase
         .from('settings')
         .update({ value: delivery, updated_at: new Date().toISOString() })
         .eq('key', 'delivery')
+      
+      if (err4) throw err4
       
       toast.success(t.saved)
       router.refresh()
