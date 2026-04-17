@@ -84,6 +84,7 @@ export function Header({ locale, dictionary }: HeaderProps) {
     await supabase.auth.signOut()
     setUser(null)
     setProfile(null)
+    toast.success(locale === 'hu' ? 'Sikeres kijelentkezés!' : 'Successfully signed out!')
     router.push(`/${locale}`)
     router.refresh()
   }

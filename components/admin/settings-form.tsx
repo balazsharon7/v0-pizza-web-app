@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
 import { Clock, Store, Truck, Save, Power } from 'lucide-react'
+import { updateSettings } from '@/app/actions/admin'
 
 type OpeningHours = {
   [key: string]: { open: string; close: string; closed?: boolean }
@@ -144,46 +145,18 @@ export function SettingsForm({ locale }: SettingsFormProps) {
     setIsSaving(true)
     
     try {
-      // Check auth status first
-      const { data: { user } } = await supabase.auth.getUser()
+      // Update all settings using server actions
+      const result1 = await updateSettings('is_open', { value: isOpen })
+      if (!result1.success) throw new Error(result1.error)
       
-      if (!user) {
-        toast.error(locale === 'hu' ? 'Nincs bejelentkezve!' : 'Not logged in!')
-        setIsSaving(false)
-        return
-      }
+      const result2 = await updateSettings('opening_hours', openingHours)
+      if (!result2.success) throw new Error(result2.error)
       
-      // Update is_open
-      const { error: err1 } = await supabase
-        .from('settings')
-        .update({ value: { value: isOpen }, updated_at: new Date().toISOString() })
-        .eq('key', 'is_open')
+      const result3 = await updateSettings('store_info', storeInfo)
+      if (!result3.success) throw new Error(result3.error)
       
-      if (err1) throw err1
-      
-      // Update opening_hours
-      const { error: err2 } = await supabase
-        .from('settings')
-        .update({ value: openingHours, updated_at: new Date().toISOString() })
-        .eq('key', 'opening_hours')
-      
-      if (err2) throw err2
-      
-      // Update store_info
-      const { error: err3 } = await supabase
-        .from('settings')
-        .update({ value: storeInfo, updated_at: new Date().toISOString() })
-        .eq('key', 'store_info')
-      
-      if (err3) throw err3
-      
-      // Update delivery
-      const { error: err4 } = await supabase
-        .from('settings')
-        .update({ value: delivery, updated_at: new Date().toISOString() })
-        .eq('key', 'delivery')
-      
-      if (err4) throw err4
+      const result4 = await updateSettings('delivery', delivery)
+      if (!result4.success) throw new Error(result4.error)
       
       toast.success(t.saved)
       router.refresh()
