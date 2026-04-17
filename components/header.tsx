@@ -45,16 +45,14 @@ export function Header({ locale, dictionary }: HeaderProps) {
     
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      console.log('[v0] User:', user?.id, user?.email)
       setUser(user)
       
       if (user) {
-        const { data: profileData, error } = await supabase
+        const { data: profileData } = await supabase
           .from('profiles')
           .select('is_admin, full_name')
           .eq('id', user.id)
           .single()
-        console.log('[v0] Profile data:', profileData, 'Error:', error)
         setProfile(profileData)
       }
       setIsLoading(false)
