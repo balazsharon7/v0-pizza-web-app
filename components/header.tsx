@@ -19,6 +19,7 @@ import { locales, localeNames, type Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { useState, useEffect } from 'react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { OpenStatus } from '@/components/open-status'
 
 interface HeaderProps {
   locale: Locale
@@ -125,6 +126,9 @@ export function Header({ locale, dictionary }: HeaderProps) {
               {link.label}
             </Link>
           ))}
+          
+          {/* Open Status */}
+          <OpenStatus locale={locale} />
         </nav>
 
         {/* Actions */}
