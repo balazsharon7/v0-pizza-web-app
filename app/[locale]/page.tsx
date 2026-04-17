@@ -6,6 +6,9 @@ import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { FeaturedPizzas } from '@/components/featured-pizzas'
 
+// Disable caching to always show fresh data
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage({
   params,
 }: {

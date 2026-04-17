@@ -146,7 +146,6 @@ export function SettingsForm({ locale }: SettingsFormProps) {
     try {
       // Check auth status first
       const { data: { user } } = await supabase.auth.getUser()
-      console.log('[v0] Settings save - User:', user?.id, user?.email)
       
       if (!user) {
         toast.error(locale === 'hu' ? 'Nincs bejelentkezve!' : 'Not logged in!')
@@ -155,43 +154,35 @@ export function SettingsForm({ locale }: SettingsFormProps) {
       }
       
       // Update is_open
-      const { error: err1, data: data1 } = await supabase
+      const { error: err1 } = await supabase
         .from('settings')
         .update({ value: { value: isOpen }, updated_at: new Date().toISOString() })
         .eq('key', 'is_open')
-        .select()
       
-      console.log('[v0] is_open update result:', { data: data1, error: err1 })
       if (err1) throw err1
       
       // Update opening_hours
-      const { error: err2, data: data2 } = await supabase
+      const { error: err2 } = await supabase
         .from('settings')
         .update({ value: openingHours, updated_at: new Date().toISOString() })
         .eq('key', 'opening_hours')
-        .select()
       
-      console.log('[v0] opening_hours update result:', { data: data2, error: err2 })
       if (err2) throw err2
       
       // Update store_info
-      const { error: err3, data: data3 } = await supabase
+      const { error: err3 } = await supabase
         .from('settings')
         .update({ value: storeInfo, updated_at: new Date().toISOString() })
         .eq('key', 'store_info')
-        .select()
       
-      console.log('[v0] store_info update result:', { data: data3, error: err3 })
       if (err3) throw err3
       
       // Update delivery
-      const { error: err4, data: data4 } = await supabase
+      const { error: err4 } = await supabase
         .from('settings')
         .update({ value: delivery, updated_at: new Date().toISOString() })
         .eq('key', 'delivery')
-        .select()
       
-      console.log('[v0] delivery update result:', { data: data4, error: err4 })
       if (err4) throw err4
       
       toast.success(t.saved)

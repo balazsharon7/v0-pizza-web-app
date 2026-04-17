@@ -4,6 +4,9 @@ import { createClient } from '@/lib/supabase/server'
 import { MenuContent } from '@/components/menu-content'
 import type { Category, Product, Size, Topping } from '@/lib/types'
 
+// Disable caching to always show fresh data
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({
   params,
 }: {
