@@ -20,6 +20,7 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { useState, useEffect } from 'react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { OpenStatus } from '@/components/open-status'
+import { toast } from 'sonner'
 
 interface HeaderProps {
   locale: Locale
