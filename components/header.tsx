@@ -98,6 +98,7 @@ export function Header({ locale, dictionary }: HeaderProps) {
   const navLinks = [
     { href: `/${locale}`, label: t.common.home },
     { href: `/${locale}/menu`, label: t.common.menu },
+    { href: `/${locale}/about`, label: locale === 'hu' ? 'Rólunk' : 'About' },
   ]
 
   return (
