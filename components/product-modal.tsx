@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Check, Minus, Plus } from 'lucide-react'
+import { ShoppingCart, Minus, Plus, Pizza } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -34,6 +34,7 @@ interface ProductModalProps {
   locale: Locale
   dictionary: Dictionary
   onClose: () => void
+  isStoreOpen?: boolean
 }
 
 export function ProductModal({
@@ -43,6 +44,7 @@ export function ProductModal({
   locale,
   dictionary,
   onClose,
+  isStoreOpen = true,
 }: ProductModalProps) {
   const { addItem, toggleCart } = useCart()
   const t = dictionary
@@ -108,7 +110,7 @@ export function ProductModal({
                 className="object-cover"
               />
             ) : (
-              <span className="text-8xl">🍕</span>
+              <Pizza className="h-24 w-24 text-primary/30" />
             )}
           </div>
 
@@ -171,6 +173,15 @@ export function ProductModal({
             </div>
           </div>
 
+          {/* Store Closed Warning */}
+          {!isStoreOpen && (
+            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-center text-sm text-destructive">
+              {locale === 'hu' 
+                ? 'Az étterem jelenleg zárva van. Rendelést csak nyitvatartási időben fogadunk.'
+                : 'The restaurant is currently closed. We only accept orders during opening hours.'}
+            </div>
+          )}
+
           {/* Total & Add to Cart */}
           <div className="flex items-center justify-between pt-2">
             <div>
@@ -179,9 +190,9 @@ export function ProductModal({
                 {formatPrice(totalPrice)} {t.common.currency}
               </p>
             </div>
-            <Button size="lg" onClick={handleAddToCart} className="gap-2">
-              <Check className="h-4 w-4" />
-              {t.menu.addToCart}
+            <Button size="lg" onClick={handleAddToCart} className="gap-2" disabled={!isStoreOpen}>
+              <ShoppingCart className="h-4 w-4" />
+              {locale === 'hu' ? 'Kosárba' : 'Add to Cart'}
             </Button>
           </div>
         </div>
