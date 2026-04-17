@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Shield, ShieldOff, Mail, Phone, MapPin, Package } from 'lucide-react'
+import { Shield, ShieldOff, Phone, MapPin, Package, Loader2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -38,19 +38,62 @@ interface Profile {
   default_city: string | null
   is_admin: boolean
   created_at: string
-  orders: { count: number }[]
+  orderCount: number
 }
 
 interface UsersListProps {
-  users: Profile[]
   locale: Locale
   dictionary: Dictionary
 }
 
-export function UsersList({ users, locale, dictionary }: UsersListProps) {
+export function UsersList({ locale, dictionary }: UsersListProps) {
   const router = useRouter()
+  const [users, setUsers] = useState<Profile[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [toggleAdminUser, setToggleAdminUser] = useState<Profile | null>(null)
+
+  const supabase = createClient()
+
+  // Fetch users on client side where we have the session
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setIsLoading(true)
+      
+      // First get all profiles
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false })
+      
+      if (error) {
+        console.error('[v0] Error fetching profiles:', error)
+        toast.error(locale === 'hu' ? 'Hiba a felhasználók betöltésekor' : 'Error loading users')
+        setIsLoading(false)
+        return
+      }
+
+      // Then fetch order counts for each user
+      const usersWithCounts = await Promise.all(
+        (profiles || []).map(async (profile) => {
+          const { count } = await supabase
+            .from('orders')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', profile.id)
+          
+          return {
+            ...profile,
+            orderCount: count || 0
+          }
+        })
+      )
+
+      setUsers(usersWithCounts)
+      setIsLoading(false)
+    }
+
+    fetchUsers()
+  }, [locale])
 
   const filteredUsers = users.filter(user => 
     user.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -61,8 +104,6 @@ export function UsersList({ users, locale, dictionary }: UsersListProps) {
   const handleToggleAdmin = async () => {
     if (!toggleAdminUser) return
     
-    const supabase = createClient()
-    
     try {
       const { error } = await supabase
         .from('profiles')
@@ -72,7 +113,13 @@ export function UsersList({ users, locale, dictionary }: UsersListProps) {
       if (error) throw error
       toast.success(locale === 'hu' ? 'Jogosultság módosítva!' : 'Permission updated!')
       setToggleAdminUser(null)
-      router.refresh()
+      
+      // Refresh the list
+      setUsers(prev => prev.map(u => 
+        u.id === toggleAdminUser.id 
+          ? { ...u, is_admin: !toggleAdminUser.is_admin }
+          : u
+      ))
     } catch (error) {
       console.error('Toggle admin error:', error)
       toast.error(locale === 'hu' ? 'Hiba történt' : 'Error occurred')
@@ -89,7 +136,15 @@ export function UsersList({ users, locale, dictionary }: UsersListProps) {
 
   const totalUsers = users.length
   const adminUsers = users.filter(u => u.is_admin).length
-  const usersWithOrders = users.filter(u => u.orders?.[0]?.count > 0).length
+  const usersWithOrders = users.filter(u => u.orderCount > 0).length
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
 
   return (
     <>
@@ -191,7 +246,7 @@ export function UsersList({ users, locale, dictionary }: UsersListProps) {
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-1">
                       <Package className="h-4 w-4 text-muted-foreground" />
-                      {user.orders?.[0]?.count || 0}
+                      {user.orderCount}
                     </div>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
@@ -220,7 +275,7 @@ export function UsersList({ users, locale, dictionary }: UsersListProps) {
         </CardContent>
       </Card>
 
-      {filteredUsers.length === 0 && (
+      {filteredUsers.length === 0 && !isLoading && (
         <div className="text-center py-8 text-muted-foreground">
           {locale === 'hu' ? 'Nincs találat' : 'No results found'}
         </div>
