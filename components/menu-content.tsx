@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Pizza, GlassWater, ShoppingCart } from 'lucide-react'
+import { Pizza, GlassWater, ShoppingCart, SlidersHorizontal } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ProductModal } from '@/components/product-modal'
@@ -82,12 +82,18 @@ export function MenuContent({
       toast.error(locale === 'hu' ? 'Az étterem jelenleg zárva van' : 'The restaurant is currently closed')
       return
     }
-    if (product.is_customizable) {
-      setSelectedProduct(product)
-    } else {
-      addItem(product, null, [], 1)
-      toast.success(locale === 'hu' ? 'Hozzáadva a kosárhoz!' : 'Added to cart!')
+    // Always add directly to cart (without toppings)
+    addItem(product, null, [], 1)
+    toast.success(locale === 'hu' ? 'Hozzáadva a kosárhoz!' : 'Added to cart!')
+  }
+
+  const handleCustomize = (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!isStoreOpen) {
+      toast.error(locale === 'hu' ? 'Az étterem jelenleg zárva van' : 'The restaurant is currently closed')
+      return
     }
+    setSelectedProduct(product)
   }
 
   return (
@@ -163,6 +169,18 @@ export function MenuContent({
                       <Pizza className="h-24 w-24 text-primary/30 group-hover:scale-110 transition-transform duration-300" />
                     )}
                   </div>
+                )}
+                {/* Customize button for pizzas - top right corner */}
+                {product.is_customizable && isStoreOpen && (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="absolute top-2 right-2 shadow-md"
+                    onClick={(e) => handleCustomize(product, e)}
+                  >
+                    <SlidersHorizontal className="h-4 w-4 mr-1" />
+                    {locale === 'hu' ? 'Testreszabás' : 'Customize'}
+                  </Button>
                 )}
               </div>
               <CardContent className="p-4">
