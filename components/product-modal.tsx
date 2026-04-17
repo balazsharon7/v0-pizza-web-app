@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -91,6 +92,9 @@ export function ProductModal({
           <DialogTitle className="font-serif text-2xl">
             {getLocalizedName(product, locale)}
           </DialogTitle>
+          <DialogDescription>
+            {getLocalizedDescription(product, locale) || (locale === 'hu' ? 'Válaszd ki a feltéteket és a mennyiséget' : 'Select toppings and quantity')}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -107,13 +111,6 @@ export function ProductModal({
               <span className="text-8xl">🍕</span>
             )}
           </div>
-
-          {/* Description */}
-          {getLocalizedDescription(product, locale) && (
-            <p className="text-muted-foreground">
-              {getLocalizedDescription(product, locale)}
-            </p>
-          )}
 
           {/* Toppings Selection */}
           {product.is_customizable && toppings.length > 0 && (

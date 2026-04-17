@@ -18,6 +18,7 @@ type OpeningHours = {
 interface OpenStatusProps {
   locale: string
   showHours?: boolean
+  compact?: boolean
 }
 
 const dayNames: Record<string, { hu: string; en: string }> = {
@@ -89,7 +90,7 @@ function isCurrentlyOpen(hours: OpeningHours, manualOverride: boolean | null): {
   }
 }
 
-export function OpenStatus({ locale, showHours = false }: OpenStatusProps) {
+export function OpenStatus({ locale, showHours = false, compact = false }: OpenStatusProps) {
   const [openingHours, setOpeningHours] = useState<OpeningHours | null>(null)
   const [manualOverride, setManualOverride] = useState<boolean | null>(null)
   const [status, setStatus] = useState<{ isOpen: boolean; closesAt?: string; opensAt?: string } | null>(null)
@@ -141,6 +142,20 @@ export function OpenStatus({ locale, showHours = false }: OpenStatusProps) {
   
   if (!status) {
     return null
+  }
+
+  // Compact mode for hero section
+  if (compact) {
+    return (
+      <div className="flex items-center gap-2">
+        <span className={`h-2 w-2 rounded-full ${status.isOpen ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+        <span className="text-sm font-medium">
+          {status.isOpen 
+            ? (locale === 'hu' ? 'Most nyitva vagyunk' : 'We are open now')
+            : (locale === 'hu' ? 'Jelenleg zárva' : 'Currently closed')}
+        </span>
+      </div>
+    )
   }
   
   const t = {
