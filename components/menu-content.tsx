@@ -39,10 +39,18 @@ export function MenuContent({
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const t = dictionary
 
+  // Only show pizza and drinks categories
+  const allowedSlugs = ['pizzas', 'drinks']
+  const filteredCategories = categories.filter((c) => allowedSlugs.includes(c.slug))
+  const allowedCategoryIds = filteredCategories.map((c) => c.id)
+
+  // Filter products to only show from allowed categories
+  const availableProducts = products.filter((p) => allowedCategoryIds.includes(p.category_id))
+
   const filteredProducts =
     selectedCategory === 'all'
-      ? products
-      : products.filter((p) => p.category_id === selectedCategory)
+      ? availableProducts
+      : availableProducts.filter((p) => p.category_id === selectedCategory)
 
   const getCategoryIcon = (slug: string) => {
     switch (slug) {
@@ -71,7 +79,7 @@ export function MenuContent({
             >
               {t.menu.allCategories}
             </TabsTrigger>
-            {categories.map((category) => (
+            {filteredCategories.map((category) => (
               <TabsTrigger
                 key={category.id}
                 value={category.id}
@@ -88,7 +96,7 @@ export function MenuContent({
       {/* Products Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filteredProducts.map((product) => {
-          const category = categories.find((c) => c.id === product.category_id)
+          const category = filteredCategories.find((c) => c.id === product.category_id)
           
           return (
             <Card
