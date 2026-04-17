@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Truck, Store, CreditCard, Banknote } from 'lucide-react'
 import { toast } from 'sonner'
@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { placeOrder } from '@/app/[locale]/checkout/actions'
+import { createClient } from '@/lib/supabase/client'
 
 interface CheckoutFormProps {
   locale: Locale
@@ -50,6 +51,42 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
   const isMinOrderMet = subtotal >= minOrder
   const actualDeliveryFee = deliveryType === 'pickup' ? 0 : deliveryFee
   const total = subtotal + actualDeliveryFee
+
+  // Load profile data if user is logged in
+  useEffect(() => {
+    const loadProfileData = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+        
+        if (profile) {
+          setFormData(prev => ({
+            ...prev,
+            name: profile.full_name || prev.name,
+            phone: profile.phone || prev.phone,
+            email: user.email || prev.email,
+            address: profile.address || prev.address,
+            city: profile.city || prev.city,
+            zip: profile.zip || prev.zip,
+          }))
+        } else {
+          // At minimum, use user's email
+          setFormData(prev => ({
+            ...prev,
+            email: user.email || prev.email,
+          }))
+        }
+      }
+    }
+    
+    loadProfileData()
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -427,11 +464,11 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
                 <span className="text-primary">{formatPrice(total)} {t.common.currency}</span>
               </div>
 
-              {deliveryType === 'delivery' && selectedZone && (
+              {deliveryType === 'delivery' && (
                 <p className="text-sm text-muted-foreground text-center">
-                  {t.checkout.estimatedDelivery
-                    .replace('{min}', String(selectedZone.delivery_time_min))
-                    .replace('{max}', String(selectedZone.delivery_time_max))}
+                  {locale === 'hu' 
+                    ? 'Várható kiszállítás: 1 órán belül'
+                    : 'Estimated delivery: within 1 hour'}
                 </p>
               )}
 

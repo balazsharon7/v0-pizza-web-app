@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { GlassWater, Plus, X } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { GlassWater, Plus } from 'lucide-react'
 import { useCart } from '@/lib/cart-context'
 import { formatPrice, getLocalizedName, type Product } from '@/lib/types'
 import {
@@ -20,36 +21,46 @@ interface DrinkSuggestionProps {
   locale: string
 }
 
+// Key for sessionStorage to track if suggestion was shown
+const SUGGESTION_SHOWN_KEY = 'drink_suggestion_shown'
+
 export function DrinkSuggestion({ drinks, locale }: DrinkSuggestionProps) {
   const [showSuggestion, setShowSuggestion] = useState(false)
   const [suggestedDrink, setSuggestedDrink] = useState<Product | null>(null)
-  const [previousItemCount, setPreviousItemCount] = useState(0)
-  const { items, addItem, itemCount } = useCart()
+  const { items, addItem } = useCart()
+  const pathname = usePathname()
+  
+  // Check if we're on checkout page
+  const isCheckoutPage = pathname?.includes('/checkout')
   
   useEffect(() => {
-    // Check if a pizza was just added (itemCount increased)
-    if (itemCount > previousItemCount) {
-      // Check if there are pizzas but no drinks in cart
-      const hasPizza = items.some(item => 
-        item.product.category_id && 
-        items.find(i => i.product.is_customizable) // Pizzas are customizable
-      )
-      const hasDrink = items.some(item => 
-        drinks.some(d => d.id === item.product.id)
-      )
-      
-      // Get a random available drink
-      const availableDrinks = drinks.filter(d => d.is_available)
-      
-      if (hasPizza && !hasDrink && availableDrinks.length > 0 && itemCount >= 1) {
-        const randomDrink = availableDrinks[Math.floor(Math.random() * availableDrinks.length)]
-        setSuggestedDrink(randomDrink)
-        // Small delay for better UX
-        setTimeout(() => setShowSuggestion(true), 500)
-      }
+    // Only show on checkout page and only once per session
+    if (!isCheckoutPage) return
+    
+    // Check if already shown this session
+    const alreadyShown = sessionStorage.getItem(SUGGESTION_SHOWN_KEY)
+    if (alreadyShown) return
+    
+    // Check if there are pizzas but no drinks in cart
+    const hasPizza = items.some(item => item.product.is_customizable)
+    const hasDrink = items.some(item => 
+      drinks.some(d => d.id === item.product.id)
+    )
+    
+    // Get a random available drink
+    const availableDrinks = drinks.filter(d => d.is_available)
+    
+    if (hasPizza && !hasDrink && availableDrinks.length > 0 && items.length > 0) {
+      const randomDrink = availableDrinks[Math.floor(Math.random() * availableDrinks.length)]
+      setSuggestedDrink(randomDrink)
+      // Small delay for better UX
+      setTimeout(() => {
+        setShowSuggestion(true)
+        // Mark as shown
+        sessionStorage.setItem(SUGGESTION_SHOWN_KEY, 'true')
+      }, 800)
     }
-    setPreviousItemCount(itemCount)
-  }, [itemCount, items, drinks, previousItemCount])
+  }, [isCheckoutPage, items, drinks])
   
   const handleAddDrink = () => {
     if (suggestedDrink) {
@@ -61,7 +72,7 @@ export function DrinkSuggestion({ drinks, locale }: DrinkSuggestionProps) {
   const t = {
     title: locale === 'hu' ? 'Ne felejtsd el az italt!' : "Don't forget your drink!",
     description: locale === 'hu' 
-      ? 'Pizzához jól esik egy frissítő ital. Mit szólnál ehhez?'
+      ? 'Pizzához jól esik egy frissitő ital. Mit szólnál ehhez?'
       : 'A refreshing drink goes great with pizza. How about this one?',
     add: locale === 'hu' ? 'Hozzáadom' : 'Add to cart',
     noThanks: locale === 'hu' ? 'Köszönöm, nem kérek' : 'No thanks',
