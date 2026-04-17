@@ -1,11 +1,12 @@
 'use client'
 
+import Image from 'next/image'
+import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { formatPrice, getLocalizedName, getLocalizedDescription, type Product } from '@/lib/types'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
-import Link from 'next/link'
 
 interface FeaturedPizzasProps {
   pizzas: Product[]
@@ -28,10 +29,19 @@ export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasPro
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {pizzas.map((pizza) => (
         <Card key={pizza.id} className="group overflow-hidden transition-shadow hover:shadow-lg">
-          <div className="aspect-square bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center">
-            <span className="text-7xl group-hover:scale-110 transition-transform duration-300">
-              🍕
-            </span>
+          <div className="aspect-square bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center relative overflow-hidden">
+            {pizza.image_url ? (
+              <Image
+                src={pizza.image_url}
+                alt={getLocalizedName(pizza, locale)}
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-300"
+              />
+            ) : (
+              <span className="text-7xl group-hover:scale-110 transition-transform duration-300">
+                🍕
+              </span>
+            )}
           </div>
           <CardContent className="p-4">
             <h3 className="font-serif text-lg font-semibold">

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -96,9 +97,18 @@ export function MenuContent({
               onClick={() => setSelectedProduct(product)}
             >
               <div className="aspect-square bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center relative overflow-hidden">
-                <span className="text-7xl group-hover:scale-110 transition-transform duration-300">
-                  {category ? getCategoryIcon(category.slug) : '🍴'}
-                </span>
+                {product.image_url ? (
+                  <Image
+                    src={product.image_url}
+                    alt={getLocalizedName(product, locale)}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                ) : (
+                  <span className="text-7xl group-hover:scale-110 transition-transform duration-300">
+                    {category ? getCategoryIcon(category.slug) : '🍴'}
+                  </span>
+                )}
                 {product.is_customizable && (
                   <span className="absolute top-2 right-2 rounded-full bg-accent px-2 py-1 text-xs font-medium text-accent-foreground">
                     {t.menu.customize}
