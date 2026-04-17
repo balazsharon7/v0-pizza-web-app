@@ -13,7 +13,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
 import { useCart } from '@/lib/cart-context'
-import { formatPrice, getLocalizedName, type DeliveryType, type PaymentMethod } from '@/lib/types'
+import { formatPrice, getLocalizedName, type DeliveryType, type PaymentMethod, type DeliveryZone } from '@/lib/types'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { placeOrder } from '@/app/[locale]/checkout/actions'
@@ -21,9 +22,10 @@ import { placeOrder } from '@/app/[locale]/checkout/actions'
 interface CheckoutFormProps {
   locale: Locale
   dictionary: Dictionary
+  deliveryZones: DeliveryZone[]
 }
 
-export function CheckoutForm({ locale, dictionary }: CheckoutFormProps) {
+export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutFormProps) {
   const router = useRouter()
   const { items, subtotal, clearCart } = useCart()
   const t = dictionary
@@ -31,6 +33,7 @@ export function CheckoutForm({ locale, dictionary }: CheckoutFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('delivery')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash')
+  const [selectedZoneId, setSelectedZoneId] = useState<string>(deliveryZones[0]?.id || '')
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -41,10 +44,11 @@ export function CheckoutForm({ locale, dictionary }: CheckoutFormProps) {
     notes: '',
   })
 
-  const deliveryFee = 500
-  const freeDeliveryThreshold = 8000
-  const isFreeDelivery = subtotal >= freeDeliveryThreshold
-  const actualDeliveryFee = deliveryType === 'pickup' ? 0 : (isFreeDelivery ? 0 : deliveryFee)
+  const selectedZone = deliveryZones.find((z) => z.id === selectedZoneId)
+  const deliveryFee = selectedZone?.delivery_fee || 0
+  const minOrder = selectedZone?.min_order || 0
+  const isMinOrderMet = subtotal >= minOrder
+  const actualDeliveryFee = deliveryType === 'pickup' ? 0 : deliveryFee
   const total = subtotal + actualDeliveryFee
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,6 +61,15 @@ export function CheckoutForm({ locale, dictionary }: CheckoutFormProps) {
     
     if (items.length === 0) {
       toast.error(locale === 'hu' ? 'A kosár üres' : 'Cart is empty')
+      return
+    }
+
+    if (deliveryType === 'delivery' && !isMinOrderMet) {
+      toast.error(
+        locale === 'hu' 
+          ? `A minimum rendelési összeg ${formatPrice(minOrder)} Ft erre a zónára` 
+          : `Minimum order is ${formatPrice(minOrder)} Ft for this zone`
+      )
       return
     }
 
@@ -199,6 +212,68 @@ export function CheckoutForm({ locale, dictionary }: CheckoutFormProps) {
             </CardContent>
           </Card>
 
+          {/* Delivery Zone Selection */}
+          {deliveryType === 'delivery' && deliveryZones.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{locale === 'hu' ? 'Szállítási zóna' : 'Delivery Zone'}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Select value={selectedZoneId} onValueChange={setSelectedZoneId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={locale === 'hu' ? 'Válassz zónát' : 'Select zone'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {deliveryZones.map((zone) => (
+                      <SelectItem key={zone.id} value={zone.id}>
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: zone.color }} 
+                          />
+                          <span>{getLocalizedName(zone, locale)}</span>
+                          <span className="text-muted-foreground text-sm ml-2">
+                            ({zone.delivery_fee === 0 
+                              ? (locale === 'hu' ? 'Ingyenes' : 'Free') 
+                              : `${formatPrice(zone.delivery_fee)} Ft`})
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                {selectedZone && (
+                  <div className="p-3 rounded-lg border text-sm space-y-1" style={{ borderLeftColor: selectedZone.color, borderLeftWidth: '4px' }}>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{locale === 'hu' ? 'Minimum rendelés:' : 'Min. order:'}</span>
+                      <span className="font-medium">{formatPrice(selectedZone.min_order)} Ft</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{locale === 'hu' ? 'Szállítási idő:' : 'Delivery time:'}</span>
+                      <span className="font-medium">{selectedZone.delivery_time_min}-{selectedZone.delivery_time_max} {locale === 'hu' ? 'perc' : 'min'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{locale === 'hu' ? 'Szállítási díj:' : 'Delivery fee:'}</span>
+                      <span className="font-medium text-primary">
+                        {selectedZone.delivery_fee === 0 
+                          ? (locale === 'hu' ? 'Ingyenes' : 'Free') 
+                          : `${formatPrice(selectedZone.delivery_fee)} Ft`}
+                      </span>
+                    </div>
+                    {!isMinOrderMet && (
+                      <p className="text-destructive mt-2">
+                        {locale === 'hu' 
+                          ? `Még ${formatPrice(minOrder - subtotal)} Ft hiányzik a minimum rendeléshez!`
+                          : `${formatPrice(minOrder - subtotal)} Ft more needed for minimum order!`}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           {/* Delivery Address */}
           {deliveryType === 'delivery' && (
             <Card>
@@ -338,8 +413,8 @@ export function CheckoutForm({ locale, dictionary }: CheckoutFormProps) {
                 {deliveryType === 'delivery' && (
                   <div className="flex justify-between">
                     <span>{t.cart.deliveryFee}</span>
-                    <span className={isFreeDelivery ? 'text-accent' : ''}>
-                      {isFreeDelivery ? t.cart.freeDelivery : `${formatPrice(deliveryFee)} ${t.common.currency}`}
+                    <span className={deliveryFee === 0 ? 'text-accent' : ''}>
+                      {deliveryFee === 0 ? t.cart.freeDelivery : `${formatPrice(deliveryFee)} ${t.common.currency}`}
                     </span>
                   </div>
                 )}
@@ -352,13 +427,15 @@ export function CheckoutForm({ locale, dictionary }: CheckoutFormProps) {
                 <span className="text-primary">{formatPrice(total)} {t.common.currency}</span>
               </div>
 
-              {deliveryType === 'delivery' && (
+              {deliveryType === 'delivery' && selectedZone && (
                 <p className="text-sm text-muted-foreground text-center">
-                  {t.checkout.estimatedDelivery.replace('{min}', '30').replace('{max}', '45')}
+                  {t.checkout.estimatedDelivery
+                    .replace('{min}', String(selectedZone.delivery_time_min))
+                    .replace('{max}', String(selectedZone.delivery_time_max))}
                 </p>
               )}
 
-              <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+              <Button type="submit" className="w-full" size="lg" disabled={isSubmitting || (deliveryType === 'delivery' && !isMinOrderMet)}>
                 {isSubmitting ? (
                   <>
                     <Spinner className="mr-2" />

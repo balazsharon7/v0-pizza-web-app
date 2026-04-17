@@ -133,6 +133,21 @@ export interface DeliverySettings {
   estimated_time_max: number
 }
 
+export interface DeliveryZone {
+  id: string
+  name_hu: string
+  name_en: string
+  color: string
+  min_order: number
+  delivery_fee: number
+  delivery_time_min: number
+  delivery_time_max: number
+  polygon: [number, number][]
+  sort_order: number
+  is_active: boolean
+  created_at: string
+}
+
 // Cart types
 export interface CartItem {
   id: string

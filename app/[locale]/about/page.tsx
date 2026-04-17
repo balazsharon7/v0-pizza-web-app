@@ -7,6 +7,8 @@ import { Separator } from '@/components/ui/separator'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
+import { DeliveryZonesStatic } from '@/components/delivery-zones-map'
+import type { DeliveryZone } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,6 +25,15 @@ export default async function AboutPage({ params }: PageProps) {
   const { data: settingsData } = await supabase
     .from('settings')
     .select('key, value')
+
+  // Fetch delivery zones
+  const { data: deliveryZonesData } = await supabase
+    .from('delivery_zones')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+
+  const deliveryZones = (deliveryZonesData || []) as DeliveryZone[]
 
   const settings: Record<string, any> = {}
   settingsData?.forEach((s) => {
@@ -190,31 +201,6 @@ export default async function AboutPage({ params }: PageProps) {
 
               <Separator />
 
-              {/* Delivery Info */}
-              <div className="space-y-4">
-                <h3 className="font-serif text-xl font-semibold flex items-center gap-2">
-                  <Truck className="w-5 h-5 text-primary" />
-                  {t.about.deliveryTitle}
-                </h3>
-                <p className="text-muted-foreground">{t.about.deliveryInfo}</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  <div className="bg-background rounded-lg p-4 text-center">
-                    <Banknote className="w-5 h-5 mx-auto mb-2 text-primary" />
-                    <p className="text-xs text-muted-foreground">{t.about.minOrder}</p>
-                    <p className="font-semibold">{delivery.min_order || 3000} Ft</p>
-                  </div>
-                  <div className="bg-background rounded-lg p-4 text-center">
-                    <Timer className="w-5 h-5 mx-auto mb-2 text-primary" />
-                    <p className="text-xs text-muted-foreground">{t.about.deliveryTime}</p>
-                    <p className="font-semibold">{delivery.estimated_time_min || 30}-{delivery.estimated_time_max || 60} {t.about.minutes}</p>
-                  </div>
-                  <div className="bg-background rounded-lg p-4 text-center">
-                    <Truck className="w-5 h-5 mx-auto mb-2 text-primary" />
-                    <p className="text-xs text-muted-foreground">{t.about.deliveryFee}</p>
-                    <p className="font-semibold">{delivery.fee || 900} Ft</p>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Opening Hours */}
@@ -276,6 +262,15 @@ export default async function AboutPage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      {/* Delivery Zones Section */}
+      {deliveryZones.length > 0 && (
+        <section className="py-16 lg:py-24">
+          <div className="container mx-auto px-4">
+            <DeliveryZonesStatic zones={deliveryZones} locale={locale} />
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
