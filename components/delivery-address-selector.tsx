@@ -6,102 +6,94 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { formatPrice, type DeliveryZone, type DeliverySettlement } from '@/lib/types'
+import { formatPrice, getLocalizedName, type DeliveryZone } from '@/lib/types'
 import type { Locale } from '@/lib/i18n/config'
 
 interface DeliveryAddressSelectorProps {
   locale: Locale
-  settlements: DeliverySettlement[]
   zones: DeliveryZone[]
-  selectedSettlementId: string
+  selectedZoneId: string
   selectedZip: string
   address: string
-  onSettlementChange: (settlementId: string) => void
+  onZoneChange: (zoneId: string) => void
   onZipChange: (zip: string) => void
   onAddressChange: (address: string) => void
-  onZoneChange: (zone: DeliveryZone | null) => void
+  onSelectedZoneUpdate: (zone: DeliveryZone | null) => void
 }
 
 export function DeliveryAddressSelector({
   locale,
-  settlements,
   zones,
-  selectedSettlementId,
+  selectedZoneId,
   selectedZip,
   address,
-  onSettlementChange,
+  onZoneChange,
   onZipChange,
   onAddressChange,
-  onZoneChange,
+  onSelectedZoneUpdate,
 }: DeliveryAddressSelectorProps) {
   const [isOutOfZone, setIsOutOfZone] = useState(false)
 
-  // Get unique settlement names with their zones
-  const settlementOptions = useMemo(() => {
-    return settlements
-      .filter(s => s.is_active)
-      .map(settlement => {
-        const zone = zones.find(z => z.id === settlement.zone_id)
-        return {
-          ...settlement,
-          zone,
-        }
-      })
-      .sort((a, b) => a.name.localeCompare(b.name, 'hu'))
-  }, [settlements, zones])
+  // Get active zones sorted by name
+  const activeZones = useMemo(() => {
+    return zones
+      .filter(z => z.is_active && z.zip_codes && z.zip_codes.length > 0)
+      .sort((a, b) => a.sort_order - b.sort_order)
+  }, [zones])
 
-  // Get the selected settlement
-  const selectedSettlement = useMemo(() => {
-    return settlementOptions.find(s => s.id === selectedSettlementId)
-  }, [settlementOptions, selectedSettlementId])
+  // Get the selected zone
+  const selectedZone = useMemo(() => {
+    return activeZones.find(z => z.id === selectedZoneId) || null
+  }, [activeZones, selectedZoneId])
 
-  // Get available ZIP codes for selected settlement
+  // Get available ZIP codes for selected zone
   const availableZipCodes = useMemo(() => {
-    if (!selectedSettlement) return []
-    return selectedSettlement.zip_codes.sort()
-  }, [selectedSettlement])
+    if (!selectedZone || !selectedZone.zip_codes) return []
+    return [...selectedZone.zip_codes].sort()
+  }, [selectedZone])
 
-  // When settlement changes, auto-select first ZIP if only one
+  // When zone changes, auto-select first ZIP if only one
   useEffect(() => {
-    if (selectedSettlement && availableZipCodes.length === 1) {
+    if (selectedZone && availableZipCodes.length === 1) {
       onZipChange(availableZipCodes[0])
+    } else if (selectedZone && availableZipCodes.length > 0 && !selectedZip) {
+      // Don't auto-select, user needs to choose
     }
-  }, [selectedSettlement, availableZipCodes, onZipChange])
+  }, [selectedZone, availableZipCodes, onZipChange, selectedZip])
 
-  // Update zone when settlement or ZIP changes
+  // Update parent when zone changes
   useEffect(() => {
-    if (selectedSettlement?.zone) {
-      onZoneChange(selectedSettlement.zone)
+    onSelectedZoneUpdate(selectedZone)
+    if (selectedZone) {
       setIsOutOfZone(false)
-    } else if (selectedSettlementId && !selectedSettlement) {
-      onZoneChange(null)
-      setIsOutOfZone(true)
     }
-  }, [selectedSettlement, selectedSettlementId, onZoneChange])
+  }, [selectedZone, onSelectedZoneUpdate])
 
-  // Try to find settlement by ZIP code input
+  // Try to find zone by ZIP code input
   const handleZipInput = (zip: string) => {
     onZipChange(zip)
     
     if (zip.length >= 4) {
-      // Find settlement that includes this ZIP
-      const matchingSettlement = settlementOptions.find(s => 
-        s.zip_codes.includes(zip)
+      // Find zone that includes this ZIP
+      const matchingZone = activeZones.find(z => 
+        z.zip_codes && z.zip_codes.includes(zip)
       )
       
-      if (matchingSettlement) {
-        onSettlementChange(matchingSettlement.id)
+      if (matchingZone) {
+        onZoneChange(matchingZone.id)
         setIsOutOfZone(false)
       } else {
         setIsOutOfZone(true)
-        onZoneChange(null)
+        onSelectedZoneUpdate(null)
       }
+    } else {
+      setIsOutOfZone(false)
     }
   }
 
   const t = {
-    settlement: locale === 'hu' ? 'Település' : 'Settlement',
-    selectSettlement: locale === 'hu' ? 'Válassz települést...' : 'Select settlement...',
+    zone: locale === 'hu' ? 'Kiszállítási terület' : 'Delivery Area',
+    selectZone: locale === 'hu' ? 'Válassz területet...' : 'Select area...',
     zipCode: locale === 'hu' ? 'Irányítószám' : 'ZIP Code',
     selectZip: locale === 'hu' ? 'Válassz...' : 'Select...',
     enterZip: locale === 'hu' ? 'Írd be az irányítószámot' : 'Enter ZIP code',
@@ -109,35 +101,38 @@ export function DeliveryAddressSelector({
     addressPlaceholder: locale === 'hu' ? 'Pl. Fő utca 12.' : 'e.g. Main Street 12',
     deliveryFee: locale === 'hu' ? 'Kiszállítási díj' : 'Delivery fee',
     minOrder: locale === 'hu' ? 'Min. rendelés' : 'Min. order',
+    deliveryTime: locale === 'hu' ? 'Szállítási idő' : 'Delivery time',
     free: locale === 'hu' ? 'Ingyenes' : 'Free',
+    minutes: locale === 'hu' ? 'perc' : 'min',
     outOfZone: locale === 'hu' 
-      ? 'Sajnos erre a címre nem szállítunk. Kérjük válassz másik települést.'
-      : 'Sorry, we do not deliver to this address. Please select another settlement.',
+      ? 'Sajnos erre a címre nem szállítunk. Kérjük válassz másik területet.'
+      : 'Sorry, we do not deliver to this address. Please select another area.',
     deliveryInfo: locale === 'hu' ? 'Kiszállítási információ' : 'Delivery info',
   }
 
   return (
     <div className="space-y-4">
-      {/* Settlement Selection */}
+      {/* Zone Selection */}
       <div className="space-y-2">
-        <Label htmlFor="settlement">{t.settlement} *</Label>
-        <Select value={selectedSettlementId} onValueChange={onSettlementChange}>
-          <SelectTrigger id="settlement">
-            <SelectValue placeholder={t.selectSettlement} />
+        <Label htmlFor="zone">{t.zone} *</Label>
+        <Select value={selectedZoneId} onValueChange={onZoneChange}>
+          <SelectTrigger id="zone">
+            <SelectValue placeholder={t.selectZone} />
           </SelectTrigger>
           <SelectContent>
-            {settlementOptions.map((settlement) => (
-              <SelectItem key={settlement.id} value={settlement.id}>
+            {activeZones.map((zone) => (
+              <SelectItem key={zone.id} value={zone.id}>
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>{settlement.name}</span>
-                  {settlement.zone && (
-                    <span className="text-xs text-muted-foreground ml-2">
-                      ({settlement.zone.delivery_fee === 0 
-                        ? t.free 
-                        : `${formatPrice(settlement.zone.delivery_fee)} Ft`})
-                    </span>
-                  )}
+                  <div 
+                    className="w-3 h-3 rounded-full flex-shrink-0" 
+                    style={{ backgroundColor: zone.color }}
+                  />
+                  <span>{getLocalizedName(zone, locale)}</span>
+                  <span className="text-xs text-muted-foreground ml-2">
+                    ({zone.delivery_fee === 0 
+                      ? t.free 
+                      : `${formatPrice(zone.delivery_fee)} Ft`})
+                  </span>
                 </div>
               </SelectItem>
             ))}
@@ -148,7 +143,7 @@ export function DeliveryAddressSelector({
       {/* ZIP Code Selection */}
       <div className="space-y-2">
         <Label htmlFor="zip">{t.zipCode} *</Label>
-        {availableZipCodes.length > 1 ? (
+        {selectedZone && availableZipCodes.length > 1 ? (
           <Select value={selectedZip} onValueChange={onZipChange}>
             <SelectTrigger id="zip">
               <SelectValue placeholder={t.selectZip} />
@@ -192,32 +187,38 @@ export function DeliveryAddressSelector({
       )}
 
       {/* Delivery Info Card */}
-      {selectedSettlement?.zone && !isOutOfZone && (
+      {selectedZone && !isOutOfZone && (
         <div 
           className="p-4 rounded-lg border-2 bg-muted/30"
-          style={{ borderColor: selectedSettlement.zone.color }}
+          style={{ borderColor: selectedZone.color }}
         >
           <div className="flex items-center gap-2 mb-3">
             <div 
               className="w-3 h-3 rounded-full" 
-              style={{ backgroundColor: selectedSettlement.zone.color }} 
+              style={{ backgroundColor: selectedZone.color }} 
             />
             <span className="font-medium text-sm">{t.deliveryInfo}</span>
             <Check className="h-4 w-4 text-green-500 ml-auto" />
           </div>
-          <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-3 gap-3 text-sm">
             <div>
               <span className="text-muted-foreground">{t.deliveryFee}:</span>
               <p className="font-semibold text-primary">
-                {selectedSettlement.zone.delivery_fee === 0 
+                {selectedZone.delivery_fee === 0 
                   ? t.free 
-                  : `${formatPrice(selectedSettlement.zone.delivery_fee)} Ft`}
+                  : `${formatPrice(selectedZone.delivery_fee)} Ft`}
               </p>
             </div>
             <div>
               <span className="text-muted-foreground">{t.minOrder}:</span>
               <p className="font-semibold">
-                {formatPrice(selectedSettlement.zone.min_order)} Ft
+                {formatPrice(selectedZone.min_order)} Ft
+              </p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">{t.deliveryTime}:</span>
+              <p className="font-semibold">
+                {selectedZone.delivery_time_min}-{selectedZone.delivery_time_max} {t.minutes}
               </p>
             </div>
           </div>

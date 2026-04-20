@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
 import { useCart } from '@/lib/cart-context'
-import { formatPrice, getLocalizedName, type DeliveryType, type PaymentMethod, type DeliveryZone, type DeliverySettlement } from '@/lib/types'
+import { formatPrice, getLocalizedName, type DeliveryType, type PaymentMethod, type DeliveryZone } from '@/lib/types'
 import { DeliveryAddressSelector } from '@/components/delivery-address-selector'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
@@ -24,10 +24,9 @@ interface CheckoutFormProps {
   locale: Locale
   dictionary: Dictionary
   deliveryZones: DeliveryZone[]
-  deliverySettlements: DeliverySettlement[]
 }
 
-export function CheckoutForm({ locale, dictionary, deliveryZones, deliverySettlements }: CheckoutFormProps) {
+export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutFormProps) {
   const router = useRouter()
   const { items, subtotal, clearCart } = useCart()
   const t = dictionary
@@ -36,8 +35,8 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, deliverySettle
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('delivery')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash')
   
-  // New address selector state
-  const [selectedSettlementId, setSelectedSettlementId] = useState<string>('')
+  // Address selector state - now directly using zones
+  const [selectedZoneId, setSelectedZoneId] = useState<string>('')
   const [selectedZip, setSelectedZip] = useState<string>('')
   const [streetAddress, setStreetAddress] = useState<string>('')
   const [selectedZone, setSelectedZone] = useState<DeliveryZone | null>(null)
@@ -55,7 +54,7 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, deliverySettle
   const isMinOrderMet = subtotal >= minOrder
   const actualDeliveryFee = deliveryType === 'pickup' ? 0 : deliveryFee
   const total = subtotal + actualDeliveryFee
-  const isAddressValid = deliveryType === 'pickup' || (selectedSettlementId && selectedZip && streetAddress && selectedZone)
+  const isAddressValid = deliveryType === 'pickup' || (selectedZoneId && selectedZip && streetAddress && selectedZone)
 
   // Load profile data if user is logged in
   useEffect(() => {
@@ -78,14 +77,15 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, deliverySettle
             email: user.email || prev.email,
           }))
           
-          // Try to match profile address with a settlement
+          // Try to match profile ZIP with a zone
           if (profile.default_zip) {
-            const matchingSettlement = deliverySettlements.find(s => 
-              s.zip_codes.includes(profile.default_zip)
+            const matchingZone = deliveryZones.find(z => 
+              z.zip_codes && z.zip_codes.includes(profile.default_zip)
             )
-            if (matchingSettlement) {
-              setSelectedSettlementId(matchingSettlement.id)
+            if (matchingZone) {
+              setSelectedZoneId(matchingZone.id)
               setSelectedZip(profile.default_zip)
+              setSelectedZone(matchingZone)
               if (profile.default_address) {
                 setStreetAddress(profile.default_address)
               }
@@ -101,14 +101,14 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, deliverySettle
     }
     
     loadProfileData()
-  }, [deliverySettlements])
+  }, [deliveryZones])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleZoneChange = useCallback((zone: DeliveryZone | null) => {
+  const handleSelectedZoneUpdate = useCallback((zone: DeliveryZone | null) => {
     setSelectedZone(zone)
   }, [])
 
@@ -138,9 +138,6 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, deliverySettle
 
     setIsSubmitting(true)
 
-    // Get settlement name for city
-    const settlement = deliverySettlements.find(s => s.id === selectedSettlementId)
-
     try {
       const orderData = {
         deliveryType,
@@ -149,7 +146,7 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, deliverySettle
         customerPhone: formData.phone,
         customerEmail: formData.email || null,
         deliveryAddress: deliveryType === 'delivery' ? streetAddress : null,
-        deliveryCity: deliveryType === 'delivery' ? settlement?.name : null,
+        deliveryCity: deliveryType === 'delivery' && selectedZone ? (locale === 'hu' ? selectedZone.name_hu : selectedZone.name_en) : null,
         deliveryZip: deliveryType === 'delivery' ? selectedZip : null,
         notes: formData.notes || null,
         subtotal,
@@ -278,7 +275,7 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, deliverySettle
             </CardContent>
           </Card>
 
-          {/* Delivery Address - New Cascading Selector */}
+          {/* Delivery Address - Using zones directly */}
           {deliveryType === 'delivery' && (
             <Card>
               <CardHeader>
@@ -287,15 +284,14 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, deliverySettle
               <CardContent>
                 <DeliveryAddressSelector
                   locale={locale}
-                  settlements={deliverySettlements}
                   zones={deliveryZones}
-                  selectedSettlementId={selectedSettlementId}
+                  selectedZoneId={selectedZoneId}
                   selectedZip={selectedZip}
                   address={streetAddress}
-                  onSettlementChange={setSelectedSettlementId}
+                  onZoneChange={setSelectedZoneId}
                   onZipChange={setSelectedZip}
                   onAddressChange={setStreetAddress}
-                  onZoneChange={handleZoneChange}
+                  onSelectedZoneUpdate={handleSelectedZoneUpdate}
                 />
               </CardContent>
             </Card>

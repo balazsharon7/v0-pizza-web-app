@@ -2,7 +2,7 @@ import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { CheckoutForm } from '@/components/checkout-form'
 import { createClient } from '@/lib/supabase/server'
-import type { DeliveryZone, DeliverySettlement } from '@/lib/types'
+import type { DeliveryZone } from '@/lib/types'
 
 export async function generateMetadata({
   params,
@@ -24,7 +24,7 @@ export default async function CheckoutPage({
   const dictionary = await getDictionary(locale)
   const supabase = await createClient()
 
-  // Fetch delivery zones
+  // Fetch delivery zones with zip_codes
   const { data: deliveryZonesData } = await supabase
     .from('delivery_zones')
     .select('*')
@@ -32,15 +32,6 @@ export default async function CheckoutPage({
     .order('sort_order', { ascending: true })
 
   const deliveryZones = (deliveryZonesData || []) as DeliveryZone[]
-
-  // Fetch delivery settlements
-  const { data: settlementsData } = await supabase
-    .from('delivery_settlements')
-    .select('*')
-    .eq('is_active', true)
-    .order('name', { ascending: true })
-
-  const deliverySettlements = (settlementsData || []) as DeliverySettlement[]
 
   return (
     <div className="py-8 md:py-12">
@@ -53,7 +44,6 @@ export default async function CheckoutPage({
           locale={locale} 
           dictionary={dictionary} 
           deliveryZones={deliveryZones}
-          deliverySettlements={deliverySettlements}
         />
       </div>
     </div>

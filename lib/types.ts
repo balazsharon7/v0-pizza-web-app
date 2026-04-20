@@ -143,20 +143,13 @@ export interface DeliveryZone {
   delivery_time_min: number
   delivery_time_max: number
   polygon: [number, number][]
+  zip_codes: string[]
   sort_order: number
   is_active: boolean
   created_at: string
 }
 
-export interface DeliverySettlement {
-  id: string
-  zone_id: string
-  name: string
-  zip_codes: string[]
-  is_active: boolean
-  created_at: string
-  zone?: DeliveryZone
-}
+
 
 // Cart types
 export interface CartItem {

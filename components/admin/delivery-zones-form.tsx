@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
+import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
   DialogContent,
@@ -25,7 +26,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { toast } from 'sonner'
-import { Plus, Pencil, Trash2, Save, MapPin } from 'lucide-react'
+import { Plus, Pencil, Trash2, Save, MapPin, X } from 'lucide-react'
 import { formatPrice, type DeliveryZone } from '@/lib/types'
 
 interface DeliveryZonesFormProps {
@@ -52,6 +53,7 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
   const [isCreating, setIsCreating] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [deleteZone, setDeleteZone] = useState<DeliveryZone | null>(null)
+  const [newZipCode, setNewZipCode] = useState('')
   
   const [formData, setFormData] = useState({
     name_hu: '',
@@ -61,14 +63,15 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
     delivery_fee: 500,
     delivery_time_min: 30,
     delivery_time_max: 60,
+    zip_codes: [] as string[],
     is_active: true,
   })
   
   const t = {
     title: locale === 'hu' ? 'Kiszállítási zónák' : 'Delivery Zones',
     description: locale === 'hu' 
-      ? 'Add meg a kiszállítási területeket és díjakat' 
-      : 'Manage delivery areas and fees',
+      ? 'Add meg a kiszállítási területeket, irányítószámokat és díjakat' 
+      : 'Manage delivery areas, ZIP codes and fees',
     addZone: locale === 'hu' ? 'Új zóna' : 'Add Zone',
     editZone: locale === 'hu' ? 'Zóna szerkesztése' : 'Edit Zone',
     createZone: locale === 'hu' ? 'Új zóna létrehozása' : 'Create New Zone',
@@ -79,6 +82,9 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
     deliveryFee: locale === 'hu' ? 'Szállítási díj (Ft)' : 'Delivery fee (Ft)',
     deliveryTimeMin: locale === 'hu' ? 'Min. idő (perc)' : 'Min. time (min)',
     deliveryTimeMax: locale === 'hu' ? 'Max. idő (perc)' : 'Max. time (min)',
+    zipCodes: locale === 'hu' ? 'Irányítószámok' : 'ZIP Codes',
+    addZipCode: locale === 'hu' ? 'Irányítószám hozzáadása' : 'Add ZIP code',
+    zipPlaceholder: locale === 'hu' ? 'pl. 2040' : 'e.g. 2040',
     active: locale === 'hu' ? 'Aktív' : 'Active',
     save: locale === 'hu' ? 'Mentés' : 'Save',
     cancel: locale === 'hu' ? 'Mégse' : 'Cancel',
@@ -87,8 +93,8 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
       ? 'Biztosan törölni szeretnéd ezt a zónát?' 
       : 'Are you sure you want to delete this zone?',
     deleteWarning: locale === 'hu'
-      ? 'Ez a művelet nem visszavonható. A zónához tartozó települések is törlődnek.'
-      : 'This action cannot be undone. Settlements linked to this zone will also be deleted.',
+      ? 'Ez a művelet nem visszavonható.'
+      : 'This action cannot be undone.',
     saved: locale === 'hu' ? 'Zóna mentve!' : 'Zone saved!',
     deleted: locale === 'hu' ? 'Zóna törölve!' : 'Zone deleted!',
     error: locale === 'hu' ? 'Hiba történt' : 'Error occurred',
@@ -99,6 +105,7 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
     actions: locale === 'hu' ? 'Műveletek' : 'Actions',
     free: locale === 'hu' ? 'Ingyenes' : 'Free',
     minutes: locale === 'hu' ? 'perc' : 'min',
+    noZipCodes: locale === 'hu' ? 'Nincs irányítószám' : 'No ZIP codes',
   }
 
   const resetForm = () => {
@@ -110,8 +117,10 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
       delivery_fee: 500,
       delivery_time_min: 30,
       delivery_time_max: 60,
+      zip_codes: [],
       is_active: true,
     })
+    setNewZipCode('')
   }
 
   const handleEdit = (zone: DeliveryZone) => {
@@ -124,15 +133,32 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
       delivery_fee: zone.delivery_fee,
       delivery_time_min: zone.delivery_time_min,
       delivery_time_max: zone.delivery_time_max,
+      zip_codes: zone.zip_codes || [],
       is_active: zone.is_active,
     })
     setIsCreating(false)
+    setNewZipCode('')
   }
 
   const handleCreate = () => {
     resetForm()
     setEditingZone(null)
     setIsCreating(true)
+  }
+
+  const handleAddZipCode = () => {
+    const zip = newZipCode.trim()
+    if (zip && !formData.zip_codes.includes(zip)) {
+      setFormData({ ...formData, zip_codes: [...formData.zip_codes, zip].sort() })
+      setNewZipCode('')
+    }
+  }
+
+  const handleRemoveZipCode = (zipToRemove: string) => {
+    setFormData({
+      ...formData,
+      zip_codes: formData.zip_codes.filter(zip => zip !== zipToRemove)
+    })
   }
 
   const handleSave = async () => {
@@ -156,6 +182,7 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
             delivery_fee: formData.delivery_fee,
             delivery_time_min: formData.delivery_time_min,
             delivery_time_max: formData.delivery_time_max,
+            zip_codes: formData.zip_codes,
             is_active: formData.is_active,
           })
           .eq('id', editingZone.id)
@@ -180,8 +207,9 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
             delivery_fee: formData.delivery_fee,
             delivery_time_min: formData.delivery_time_min,
             delivery_time_max: formData.delivery_time_max,
+            zip_codes: formData.zip_codes,
             is_active: formData.is_active,
-            polygon: '[]', // Default empty polygon
+            polygon: '[]',
             sort_order: zones.length,
           })
           .select()
@@ -189,7 +217,6 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
 
         if (error) throw error
 
-        // Add to local state
         if (data) {
           setZones([...zones, data as DeliveryZone])
         }
@@ -272,6 +299,7 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
             <TableHeader>
               <TableRow>
                 <TableHead>{t.zone}</TableHead>
+                <TableHead>{t.zipCodes}</TableHead>
                 <TableHead>{t.minOrder}</TableHead>
                 <TableHead>{t.fee}</TableHead>
                 <TableHead>{t.time}</TableHead>
@@ -285,12 +313,30 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <div
-                        className="w-4 h-4 rounded-full"
+                        className="w-4 h-4 rounded-full flex-shrink-0"
                         style={{ backgroundColor: zone.color }}
                       />
                       <span className="font-medium">
                         {locale === 'hu' ? zone.name_hu : zone.name_en}
                       </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1 max-w-[200px]">
+                      {zone.zip_codes && zone.zip_codes.length > 0 ? (
+                        zone.zip_codes.slice(0, 3).map((zip) => (
+                          <Badge key={zip} variant="secondary" className="text-xs">
+                            {zip}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground text-xs">{t.noZipCodes}</span>
+                      )}
+                      {zone.zip_codes && zone.zip_codes.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{zone.zip_codes.length - 3}
+                        </Badge>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>{formatPrice(zone.min_order)} Ft</TableCell>
@@ -329,7 +375,7 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
               ))}
               {zones.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                     {locale === 'hu' ? 'Nincsenek zónák' : 'No zones yet'}
                   </TableCell>
                 </TableRow>
@@ -346,15 +392,15 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
             resetForm()
           }
         }}>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingZone ? t.editZone : t.createZone}
               </DialogTitle>
               <DialogDescription>
                 {locale === 'hu' 
-                  ? 'Add meg a zóna adatait és a kiszállítási feltételeket'
-                  : 'Enter zone details and delivery conditions'}
+                  ? 'Add meg a zóna adatait, irányítószámokat és a kiszállítási feltételeket'
+                  : 'Enter zone details, ZIP codes and delivery conditions'}
               </DialogDescription>
             </DialogHeader>
 
@@ -396,6 +442,45 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
                       onClick={() => setFormData({ ...formData, color: color.value })}
                     />
                   ))}
+                </div>
+              </div>
+
+              {/* ZIP Codes Section */}
+              <div className="space-y-2">
+                <Label>{t.zipCodes}</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={newZipCode}
+                    onChange={(e) => setNewZipCode(e.target.value)}
+                    placeholder={t.zipPlaceholder}
+                    maxLength={5}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        handleAddZipCode()
+                      }
+                    }}
+                  />
+                  <Button type="button" variant="outline" onClick={handleAddZipCode}>
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.zip_codes.map((zip) => (
+                    <Badge key={zip} variant="secondary" className="gap-1">
+                      {zip}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveZipCode(zip)}
+                        className="ml-1 hover:text-destructive"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                  {formData.zip_codes.length === 0 && (
+                    <span className="text-muted-foreground text-sm">{t.noZipCodes}</span>
+                  )}
                 </div>
               </div>
 
