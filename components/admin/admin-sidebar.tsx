@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, ShoppingBag, Package, Settings, FolderOpen, Users } from 'lucide-react'
+import { LayoutDashboard, ShoppingBag, Package, Settings, FolderOpen, Users, MapPin } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
@@ -41,6 +41,11 @@ export function AdminSidebar({ locale, dictionary }: AdminSidebarProps) {
       href: `/${locale}/admin/users`,
       label: locale === 'hu' ? 'Felhasználók' : 'Users',
       icon: Users,
+    },
+    {
+      href: `/${locale}/admin/settlements`,
+      label: locale === 'hu' ? 'Települések' : 'Settlements',
+      icon: MapPin,
     },
     {
       href: `/${locale}/admin/settings`,
