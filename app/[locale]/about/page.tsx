@@ -240,30 +240,12 @@ export default async function AboutPage({ params }: PageProps) {
                 </CardContent>
               </Card>
 
-              {/* Map */}
-              <div className="space-y-4">
-                <h3 className="font-serif text-xl font-semibold">
-                  {t.about.findUs}
-                </h3>
-                <div className="aspect-video rounded-xl overflow-hidden bg-muted shadow-lg">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2697.5!2d18.9521!3d47.4621!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4741e098a7c3a8e7%3A0x400c4290c1e11d0!2sBuda%C3%B6rs%2C%20Szabads%C3%A1g%20%C3%BAt%2023%2C%202040!5e0!3m2!1shu!2shu!4v1700000000000!5m2!1shu!2shu"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title={locale === 'hu' ? 'Terra Verde Pizzéria helyszíne' : 'Terra Verde Pizzeria Location'}
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Delivery Zones Section */}
+      {/* Delivery Zones Section with Map */}
       {deliveryZones.length > 0 && (
         <section className="py-16 lg:py-24">
           <div className="container mx-auto px-4">
