@@ -24,7 +24,7 @@ export default async function CheckoutPage({
   const dictionary = await getDictionary(locale)
   const supabase = await createClient()
 
-  // Fetch delivery zones
+  // Fetch delivery zones with zip_codes
   const { data: deliveryZonesData } = await supabase
     .from('delivery_zones')
     .select('*')
@@ -40,7 +40,11 @@ export default async function CheckoutPage({
           {dictionary.checkout.title}
         </h1>
         
-        <CheckoutForm locale={locale} dictionary={dictionary} deliveryZones={deliveryZones} />
+        <CheckoutForm 
+          locale={locale} 
+          dictionary={dictionary} 
+          deliveryZones={deliveryZones}
+        />
       </div>
     </div>
   )

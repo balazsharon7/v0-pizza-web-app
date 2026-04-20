@@ -1,5 +1,7 @@
 import type { Locale } from '@/lib/i18n/config'
 import { SettingsForm } from '@/components/admin/settings-form'
+import { createClient } from '@/lib/supabase/server'
+import type { DeliveryZone } from '@/lib/types'
 
 export async function generateMetadata({
   params,
@@ -18,6 +20,15 @@ export default async function AdminSettingsPage({
   params: Promise<{ locale: Locale }>
 }) {
   const { locale } = await params
+  const supabase = await createClient()
+
+  // Fetch delivery zones
+  const { data: zonesData } = await supabase
+    .from('delivery_zones')
+    .select('*')
+    .order('sort_order', { ascending: true })
+
+  const deliveryZones = (zonesData || []) as DeliveryZone[]
 
   return (
     <div className="space-y-6">
@@ -33,7 +44,7 @@ export default async function AdminSettingsPage({
         </p>
       </div>
       
-      <SettingsForm locale={locale} />
+      <SettingsForm locale={locale} deliveryZones={deliveryZones} />
     </div>
   )
 }
