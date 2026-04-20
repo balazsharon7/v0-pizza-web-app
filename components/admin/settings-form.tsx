@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
-import { Clock, Store, Truck, Save, Power, MapPin } from 'lucide-react'
+import { Clock, Store, Save, Power, MapPin } from 'lucide-react'
 import { updateSettings } from '@/app/actions/admin'
 import { DeliveryZonesForm } from './delivery-zones-form'
 import type { DeliveryZone } from '@/lib/types'
@@ -27,14 +27,7 @@ type StoreInfo = {
   email: string
 }
 
-type DeliverySettings = {
-  min_order: number
-  fee: number
-  free_above: number
-  radius_km: number
-  estimated_time_min: number
-  estimated_time_max: number
-}
+
 
 interface SettingsFormProps {
   locale: string
@@ -69,14 +62,7 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
     phone: '',
     email: '',
   })
-  const [delivery, setDelivery] = useState<DeliverySettings>({
-    min_order: 3000,
-    fee: 500,
-    free_above: 8000,
-    radius_km: 5,
-    estimated_time_min: 30,
-    estimated_time_max: 45,
-  })
+
   
   const t = {
     title: locale === 'hu' ? 'Beállítások' : 'Settings',
@@ -87,19 +73,11 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
     openingHoursDesc: locale === 'hu' ? 'Add meg a heti nyitvatartási időket' : 'Set your weekly opening hours',
     storeInfo: locale === 'hu' ? 'Üzlet adatok' : 'Store Information',
     storeInfoDesc: locale === 'hu' ? 'Az étterem alapadatai' : 'Basic restaurant information',
-    delivery: locale === 'hu' ? 'Szállítás' : 'Delivery',
-    deliveryDesc: locale === 'hu' ? 'Szállítási beállítások' : 'Delivery settings',
     namHu: locale === 'hu' ? 'Név (magyar)' : 'Name (Hungarian)',
     nameEn: locale === 'hu' ? 'Név (angol)' : 'Name (English)',
     address: locale === 'hu' ? 'Cím' : 'Address',
     phone: locale === 'hu' ? 'Telefon' : 'Phone',
     email: locale === 'hu' ? 'Email' : 'Email',
-    minOrder: locale === 'hu' ? 'Minimális rendelés (Ft)' : 'Minimum order (Ft)',
-    deliveryFee: locale === 'hu' ? 'Szállítási díj (Ft)' : 'Delivery fee (Ft)',
-    freeAbove: locale === 'hu' ? 'Ingyenes szállítás felett (Ft)' : 'Free delivery above (Ft)',
-    radius: locale === 'hu' ? 'Szállítási körzet (km)' : 'Delivery radius (km)',
-    estimatedTimeMin: locale === 'hu' ? 'Becsült idő min (perc)' : 'Estimated time min (min)',
-    estimatedTimeMax: locale === 'hu' ? 'Becsült idő max (perc)' : 'Estimated time max (min)',
     open: locale === 'hu' ? 'Nyitás' : 'Open',
     close: locale === 'hu' ? 'Zárás' : 'Close',
     closed: locale === 'hu' ? 'Zárva' : 'Closed',
@@ -128,9 +106,6 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
               case 'store_info':
                 setStoreInfo(setting.value as StoreInfo)
                 break
-              case 'delivery':
-                setDelivery(setting.value as DeliverySettings)
-                break
             }
           })
         }
@@ -157,9 +132,6 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
       
       const result3 = await updateSettings('store_info', storeInfo)
       if (!result3.success) throw new Error(result3.error)
-      
-      const result4 = await updateSettings('delivery', delivery)
-      if (!result4.success) throw new Error(result4.error)
       
       toast.success(t.saved)
       router.refresh()
@@ -192,7 +164,7 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
   return (
     <div className="space-y-6">
       <Tabs defaultValue="status" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="status" className="flex items-center gap-2">
             <Power className="h-4 w-4" />
             <span className="hidden sm:inline">{t.storeStatus}</span>
@@ -204,10 +176,6 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
           <TabsTrigger value="store" className="flex items-center gap-2">
             <Store className="h-4 w-4" />
             <span className="hidden sm:inline">{t.storeInfo}</span>
-          </TabsTrigger>
-          <TabsTrigger value="delivery" className="flex items-center gap-2">
-            <Truck className="h-4 w-4" />
-            <span className="hidden sm:inline">{t.delivery}</span>
           </TabsTrigger>
           <TabsTrigger value="zones" className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
@@ -363,76 +331,6 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
           </Card>
         </TabsContent>
         
-        <TabsContent value="delivery" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Truck className="h-5 w-5" />
-                {t.delivery}
-              </CardTitle>
-              <CardDescription>{t.deliveryDesc}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="space-y-2">
-                  <Label htmlFor="min-order">{t.minOrder}</Label>
-                  <Input
-                    id="min-order"
-                    type="number"
-                    value={delivery.min_order}
-                    onChange={(e) => setDelivery({ ...delivery, min_order: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="delivery-fee">{t.deliveryFee}</Label>
-                  <Input
-                    id="delivery-fee"
-                    type="number"
-                    value={delivery.fee}
-                    onChange={(e) => setDelivery({ ...delivery, fee: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="free-above">{t.freeAbove}</Label>
-                  <Input
-                    id="free-above"
-                    type="number"
-                    value={delivery.free_above}
-                    onChange={(e) => setDelivery({ ...delivery, free_above: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="radius">{t.radius}</Label>
-                  <Input
-                    id="radius"
-                    type="number"
-                    value={delivery.radius_km}
-                    onChange={(e) => setDelivery({ ...delivery, radius_km: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="time-min">{t.estimatedTimeMin}</Label>
-                  <Input
-                    id="time-min"
-                    type="number"
-                    value={delivery.estimated_time_min}
-                    onChange={(e) => setDelivery({ ...delivery, estimated_time_min: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="time-max">{t.estimatedTimeMax}</Label>
-                  <Input
-                    id="time-max"
-                    type="number"
-                    value={delivery.estimated_time_max}
-                    onChange={(e) => setDelivery({ ...delivery, estimated_time_max: Number(e.target.value) })}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         <TabsContent value="zones" className="mt-6">
           <DeliveryZonesForm locale={locale} initialZones={deliveryZones} />
         </TabsContent>
