@@ -10,8 +10,10 @@ import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
-import { Clock, Store, Truck, Save, Power } from 'lucide-react'
+import { Clock, Store, Truck, Save, Power, MapPin } from 'lucide-react'
 import { updateSettings } from '@/app/actions/admin'
+import { DeliveryZonesForm } from './delivery-zones-form'
+import type { DeliveryZone } from '@/lib/types'
 
 type OpeningHours = {
   [key: string]: { open: string; close: string; closed?: boolean }
@@ -36,6 +38,7 @@ type DeliverySettings = {
 
 interface SettingsFormProps {
   locale: string
+  deliveryZones?: DeliveryZone[]
 }
 
 const dayNames: Record<string, { hu: string; en: string }> = {
@@ -50,7 +53,7 @@ const dayNames: Record<string, { hu: string; en: string }> = {
 
 const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
-export function SettingsForm({ locale }: SettingsFormProps) {
+export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) {
   const router = useRouter()
   const supabase = createClient()
   
@@ -189,7 +192,7 @@ export function SettingsForm({ locale }: SettingsFormProps) {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="status" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="status" className="flex items-center gap-2">
             <Power className="h-4 w-4" />
             <span className="hidden sm:inline">{t.storeStatus}</span>
@@ -205,6 +208,10 @@ export function SettingsForm({ locale }: SettingsFormProps) {
           <TabsTrigger value="delivery" className="flex items-center gap-2">
             <Truck className="h-4 w-4" />
             <span className="hidden sm:inline">{t.delivery}</span>
+          </TabsTrigger>
+          <TabsTrigger value="zones" className="flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
+            <span className="hidden sm:inline">{locale === 'hu' ? 'Zónák' : 'Zones'}</span>
           </TabsTrigger>
         </TabsList>
         
@@ -424,6 +431,10 @@ export function SettingsForm({ locale }: SettingsFormProps) {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="zones" className="mt-6">
+          <DeliveryZonesForm locale={locale} initialZones={deliveryZones} />
         </TabsContent>
       </Tabs>
       
