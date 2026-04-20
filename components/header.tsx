@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { ShoppingCart, Menu, User, Globe, LogOut, Shield, Package } from 'lucide-react'
+import { ShoppingCart, Menu, User, Globe, LogOut, Shield, Package, X, Home, UtensilsCrossed, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet'
 import { useCart } from '@/lib/cart-context'
 import { createClient } from '@/lib/supabase/client'
 import { locales, localeNames, type Locale } from '@/lib/i18n/config'
@@ -96,9 +96,9 @@ export function Header({ locale, dictionary }: HeaderProps) {
   }
 
   const navLinks = [
-    { href: `/${locale}`, label: t.common.home },
-    { href: `/${locale}/menu`, label: t.common.menu },
-    { href: `/${locale}/about`, label: locale === 'hu' ? 'Rólunk' : 'About' },
+    { href: `/${locale}`, label: t.common.home, icon: Home },
+    { href: `/${locale}/menu`, label: t.common.menu, icon: UtensilsCrossed },
+    { href: `/${locale}/about`, label: locale === 'hu' ? 'Rólunk' : 'About', icon: Info },
   ]
 
   return (
@@ -111,7 +111,7 @@ export function Header({ locale, dictionary }: HeaderProps) {
             alt="Terra Verde Pizzéria"
             width={48}
             height={48}
-            className="h-12 w-12 object-contain"
+            className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
           />
           <span className="hidden font-serif text-xl font-bold sm:inline-block">
             Terra Verde
@@ -135,11 +135,11 @@ export function Header({ locale, dictionary }: HeaderProps) {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-2">
-          {/* Language Switcher */}
+        <div className="flex items-center gap-1 sm:gap-2">
+          {/* Language Switcher - Desktop only */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="hidden sm:flex">
+              <Button variant="ghost" size="icon" className="hidden md:flex">
                 <Globe className="h-5 w-5" />
                 <span className="sr-only">Switch language</span>
               </Button>
@@ -155,10 +155,10 @@ export function Header({ locale, dictionary }: HeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* User Menu */}
+          {/* User Menu - Desktop only */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="hidden sm:flex">
+              <Button variant="ghost" size="icon" className="hidden md:flex">
                 <User className="h-5 w-5" />
                 <span className="sr-only">{t.common.profile}</span>
               </Button>
@@ -169,57 +169,57 @@ export function Header({ locale, dictionary }: HeaderProps) {
                   {locale === 'hu' ? 'Betöltés...' : 'Loading...'}
                 </div>
               ) : user ? (
-                  <>
-                    <div className="px-2 py-1.5">
-                      <p className="text-sm font-medium truncate">
-                        {profile?.full_name || user.email}
-                      </p>
-                      {profile?.full_name && (
-                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                      )}
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href={`/${locale}/profile`} className="cursor-pointer">
-                        <User className="h-4 w-4 mr-2" />
-                        {locale === 'hu' ? 'Profilom' : 'My Profile'}
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href={`/${locale}/profile`} className="cursor-pointer">
-                        <Package className="h-4 w-4 mr-2" />
-                        {locale === 'hu' ? 'Rendeléseim' : 'My Orders'}
-                      </Link>
-                    </DropdownMenuItem>
-                    {profile?.is_admin && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link href={`/${locale}/admin`} className="cursor-pointer">
-                            <Shield className="h-4 w-4 mr-2" />
-                            {locale === 'hu' ? 'Admin felület' : 'Admin Panel'}
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
+                <>
+                  <div className="px-2 py-1.5">
+                    <p className="text-sm font-medium truncate">
+                      {profile?.full_name || user.email}
+                    </p>
+                    {profile?.full_name && (
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                     )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      {locale === 'hu' ? 'Kijelentkezés' : 'Sign Out'}
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href={`/${locale}/auth/login`}>{t.common.login}</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href={`/${locale}/auth/register`}>{t.common.register}</Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${locale}/profile`} className="cursor-pointer">
+                      <User className="h-4 w-4 mr-2" />
+                      {locale === 'hu' ? 'Profilom' : 'My Profile'}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${locale}/profile`} className="cursor-pointer">
+                      <Package className="h-4 w-4 mr-2" />
+                      {locale === 'hu' ? 'Rendeléseim' : 'My Orders'}
+                    </Link>
+                  </DropdownMenuItem>
+                  {profile?.is_admin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href={`/${locale}/admin`} className="cursor-pointer">
+                          <Shield className="h-4 w-4 mr-2" />
+                          {locale === 'hu' ? 'Admin felület' : 'Admin Panel'}
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {locale === 'hu' ? 'Kijelentkezés' : 'Sign Out'}
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${locale}/auth/login`}>{t.common.login}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${locale}/auth/register`}>{t.common.register}</Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Cart Button */}
           <Button
@@ -237,7 +237,7 @@ export function Header({ locale, dictionary }: HeaderProps) {
             <span className="sr-only">{t.common.cart}</span>
           </Button>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu Button */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -245,81 +245,141 @@ export function Header({ locale, dictionary }: HeaderProps) {
                 <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px]">
-              <nav className="mt-8 flex flex-col gap-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-lg font-medium transition-colors hover:text-primary"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <hr className="my-2" />
-                {user ? (
-                  <>
-                    <Link
-                      href={`/${locale}/profile`}
-                      className="text-lg font-medium transition-colors hover:text-primary"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {locale === 'hu' ? 'Profilom' : 'My Profile'}
-                    </Link>
-                    {profile?.is_admin && (
+            <SheetContent side="right" className="w-[300px] p-0">
+              <div className="flex flex-col h-full">
+                {/* Mobile Menu Header */}
+                <div className="flex items-center justify-between p-4 border-b">
+                  <span className="font-serif text-lg font-bold">Menu</span>
+                  <SheetClose asChild>
+                    <Button variant="ghost" size="icon">
+                      <X className="h-5 w-5" />
+                    </Button>
+                  </SheetClose>
+                </div>
+                
+                {/* Open Status */}
+                <div className="px-4 py-3 border-b bg-muted/50">
+                  <OpenStatus locale={locale} compact />
+                </div>
+
+                {/* Navigation Links */}
+                <nav className="flex-1 overflow-y-auto p-4">
+                  <div className="space-y-1">
+                    {navLinks.map((link) => {
+                      const Icon = link.icon
+                      const isActive = pathname === link.href
+                      return (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          className={`flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-colors ${
+                            isActive 
+                              ? 'bg-primary text-primary-foreground' 
+                              : 'hover:bg-muted'
+                          }`}
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Icon className="h-5 w-5" />
+                          {link.label}
+                        </Link>
+                      )
+                    })}
+                  </div>
+
+                  <div className="my-4 h-px bg-border" />
+
+                  {/* User Section */}
+                  <div className="space-y-1">
+                    {user ? (
+                      <>
+                        <div className="px-4 py-2 mb-2">
+                          <p className="text-sm font-medium truncate">
+                            {profile?.full_name || user.email}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                        </div>
+                        <Link
+                          href={`/${locale}/profile`}
+                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium hover:bg-muted"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <User className="h-5 w-5" />
+                          {locale === 'hu' ? 'Profilom' : 'My Profile'}
+                        </Link>
+                        <Link
+                          href={`/${locale}/profile`}
+                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium hover:bg-muted"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Package className="h-5 w-5" />
+                          {locale === 'hu' ? 'Rendeléseim' : 'My Orders'}
+                        </Link>
+                        {profile?.is_admin && (
+                          <Link
+                            href={`/${locale}/admin`}
+                            className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium hover:bg-muted"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <Shield className="h-5 w-5" />
+                            {locale === 'hu' ? 'Admin felület' : 'Admin Panel'}
+                          </Link>
+                        )}
+                        <button
+                          onClick={() => {
+                            handleSignOut()
+                            setMobileMenuOpen(false)
+                          }}
+                          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-destructive hover:bg-destructive/10"
+                        >
+                          <LogOut className="h-5 w-5" />
+                          {locale === 'hu' ? 'Kijelentkezés' : 'Sign Out'}
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          href={`/${locale}/auth/login`}
+                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium hover:bg-muted"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <User className="h-5 w-5" />
+                          {t.common.login}
+                        </Link>
+                        <Link
+                          href={`/${locale}/auth/register`}
+                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {t.common.register}
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                </nav>
+
+                {/* Language Switcher - Bottom */}
+                <div className="border-t p-4">
+                  <p className="text-xs text-muted-foreground mb-2">
+                    {locale === 'hu' ? 'Nyelv' : 'Language'}
+                  </p>
+                  <div className="flex gap-2">
+                    {locales.map((loc) => (
                       <Link
-                        href={`/${locale}/admin`}
-                        className="text-lg font-medium transition-colors hover:text-primary"
+                        key={loc}
+                        href={switchLocale(loc)}
+                        className={`flex-1 rounded-lg px-4 py-2.5 text-center text-sm font-medium transition-colors ${
+                          locale === loc 
+                            ? 'bg-primary text-primary-foreground' 
+                            : 'bg-muted hover:bg-muted/80'
+                        }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        {locale === 'hu' ? 'Admin felület' : 'Admin Panel'}
+                        {localeNames[loc]}
                       </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        handleSignOut()
-                        setMobileMenuOpen(false)
-                      }}
-                      className="text-left text-lg font-medium text-destructive transition-colors hover:text-destructive/80"
-                    >
-                      {locale === 'hu' ? 'Kijelentkezés' : 'Sign Out'}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href={`/${locale}/auth/login`}
-                      className="text-lg font-medium transition-colors hover:text-primary"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {t.common.login}
-                    </Link>
-                    <Link
-                      href={`/${locale}/auth/register`}
-                      className="text-lg font-medium transition-colors hover:text-primary"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {t.common.register}
-                    </Link>
-                  </>
-                )}
-                <hr className="my-2" />
-                <div className="flex gap-2">
-                  {locales.map((loc) => (
-                    <Link
-                      key={loc}
-                      href={switchLocale(loc)}
-                      className={`rounded-md px-3 py-1 text-sm ${
-                        locale === loc ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                      }`}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {localeNames[loc]}
-                    </Link>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </nav>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
