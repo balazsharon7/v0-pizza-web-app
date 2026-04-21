@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
+import Image from 'next/image'
+import { Minus, Plus, ShoppingBag, Trash2, Pizza, GlassWater } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -63,8 +64,19 @@ export function CartSheet({ locale, dictionary }: CartSheetProps) {
               <div className="space-y-4 py-4">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-3">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-muted">
-                      <span className="text-2xl">🍕</span>
+                    <div className="relative flex h-16 w-16 items-center justify-center rounded-lg bg-muted overflow-hidden">
+                      {item.product.image_url ? (
+                        <Image
+                          src={item.product.image_url}
+                          alt={getLocalizedName(item.product, locale)}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : item.product.is_customizable ? (
+                        <Pizza className="h-8 w-8 text-muted-foreground" />
+                      ) : (
+                        <GlassWater className="h-8 w-8 text-muted-foreground" />
+                      )}
                     </div>
                     <div className="flex-1 space-y-1">
                       <h4 className="font-medium leading-none">

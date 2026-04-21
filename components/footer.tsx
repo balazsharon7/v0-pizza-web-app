@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Phone, Mail, MapPin } from 'lucide-react'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
@@ -78,10 +79,14 @@ export function Footer({ locale, dictionary }: FooterProps) {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="space-y-4">
-            <Link href={`/${locale}`} className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sidebar-primary">
-                <span className="font-serif text-lg font-bold text-sidebar-primary-foreground">TV</span>
-              </div>
+            <Link href={`/${locale}`} className="flex items-center gap-3">
+              <Image
+                src="/images/logo.webp"
+                alt="Terra Verde Pizzéria"
+                width={56}
+                height={56}
+                className="h-14 w-14 object-contain"
+              />
               <span className="font-serif text-xl font-bold">Terra Verde</span>
             </Link>
             <p className="text-sm text-sidebar-foreground/80">

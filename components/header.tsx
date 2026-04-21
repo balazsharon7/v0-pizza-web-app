@@ -245,11 +245,20 @@ export function Header({ locale, dictionary }: HeaderProps) {
                 <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] p-0">
-              <div className="flex flex-col h-full">
+            <SheetContent side="top" className="h-auto max-h-[85vh] p-0">
+              <div className="flex flex-col">
                 {/* Mobile Menu Header */}
                 <div className="flex items-center justify-between p-4 border-b">
-                  <span className="font-serif text-lg font-bold">Menu</span>
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="/images/logo.webp"
+                      alt="Terra Verde"
+                      width={32}
+                      height={32}
+                      className="h-8 w-8 object-contain"
+                    />
+                    <span className="font-serif text-lg font-bold">Terra Verde</span>
+                  </div>
                   <SheetClose asChild>
                     <Button variant="ghost" size="icon">
                       <X className="h-5 w-5" />
@@ -262,9 +271,9 @@ export function Header({ locale, dictionary }: HeaderProps) {
                   <OpenStatus locale={locale} compact />
                 </div>
 
-                {/* Navigation Links */}
-                <nav className="flex-1 overflow-y-auto p-4">
-                  <div className="space-y-1">
+                {/* Navigation Links - Horizontal on mobile */}
+                <nav className="p-4">
+                  <div className="grid grid-cols-3 gap-2 mb-4">
                     {navLinks.map((link) => {
                       const Icon = link.icon
                       const isActive = pathname === link.href
@@ -272,10 +281,10 @@ export function Header({ locale, dictionary }: HeaderProps) {
                         <Link
                           key={link.href}
                           href={link.href}
-                          className={`flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-colors ${
+                          className={`flex flex-col items-center gap-1 rounded-lg p-3 text-center text-sm font-medium transition-colors ${
                             isActive 
                               ? 'bg-primary text-primary-foreground' 
-                              : 'hover:bg-muted'
+                              : 'bg-muted hover:bg-muted/80'
                           }`}
                           onClick={() => setMobileMenuOpen(false)}
                         >
@@ -286,41 +295,43 @@ export function Header({ locale, dictionary }: HeaderProps) {
                     })}
                   </div>
 
-                  <div className="my-4 h-px bg-border" />
+                  <div className="h-px bg-border my-4" />
 
                   {/* User Section */}
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {user ? (
                       <>
-                        <div className="px-4 py-2 mb-2">
+                        <div className="px-2 py-2 mb-2 bg-muted/50 rounded-lg">
                           <p className="text-sm font-medium truncate">
                             {profile?.full_name || user.email}
                           </p>
                           <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                         </div>
-                        <Link
-                          href={`/${locale}/profile`}
-                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium hover:bg-muted"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          <User className="h-5 w-5" />
-                          {locale === 'hu' ? 'Profilom' : 'My Profile'}
-                        </Link>
-                        <Link
-                          href={`/${locale}/profile`}
-                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium hover:bg-muted"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          <Package className="h-5 w-5" />
-                          {locale === 'hu' ? 'Rendeléseim' : 'My Orders'}
-                        </Link>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Link
+                            href={`/${locale}/profile`}
+                            className="flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium bg-muted hover:bg-muted/80"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <User className="h-4 w-4" />
+                            {locale === 'hu' ? 'Profil' : 'Profile'}
+                          </Link>
+                          <Link
+                            href={`/${locale}/profile`}
+                            className="flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium bg-muted hover:bg-muted/80"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <Package className="h-4 w-4" />
+                            {locale === 'hu' ? 'Rendelések' : 'Orders'}
+                          </Link>
+                        </div>
                         {profile?.is_admin && (
                           <Link
                             href={`/${locale}/admin`}
-                            className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium hover:bg-muted"
+                            className="flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium bg-primary/10 text-primary hover:bg-primary/20 w-full"
                             onClick={() => setMobileMenuOpen(false)}
                           >
-                            <Shield className="h-5 w-5" />
+                            <Shield className="h-4 w-4" />
                             {locale === 'hu' ? 'Admin felület' : 'Admin Panel'}
                           </Link>
                         )}
@@ -329,45 +340,42 @@ export function Header({ locale, dictionary }: HeaderProps) {
                             handleSignOut()
                             setMobileMenuOpen(false)
                           }}
-                          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-destructive hover:bg-destructive/10"
+                          className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive bg-destructive/10 hover:bg-destructive/20"
                         >
-                          <LogOut className="h-5 w-5" />
+                          <LogOut className="h-4 w-4" />
                           {locale === 'hu' ? 'Kijelentkezés' : 'Sign Out'}
                         </button>
                       </>
                     ) : (
-                      <>
+                      <div className="grid grid-cols-2 gap-2">
                         <Link
                           href={`/${locale}/auth/login`}
-                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium hover:bg-muted"
+                          className="flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium bg-muted hover:bg-muted/80"
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          <User className="h-5 w-5" />
+                          <User className="h-4 w-4" />
                           {t.common.login}
                         </Link>
                         <Link
                           href={`/${locale}/auth/register`}
-                          className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                          className="flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90"
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           {t.common.register}
                         </Link>
-                      </>
+                      </div>
                     )}
                   </div>
                 </nav>
 
                 {/* Language Switcher - Bottom */}
                 <div className="border-t p-4">
-                  <p className="text-xs text-muted-foreground mb-2">
-                    {locale === 'hu' ? 'Nyelv' : 'Language'}
-                  </p>
                   <div className="flex gap-2">
                     {locales.map((loc) => (
                       <Link
                         key={loc}
                         href={switchLocale(loc)}
-                        className={`flex-1 rounded-lg px-4 py-2.5 text-center text-sm font-medium transition-colors ${
+                        className={`flex-1 rounded-lg px-4 py-2 text-center text-sm font-medium transition-colors ${
                           locale === loc 
                             ? 'bg-primary text-primary-foreground' 
                             : 'bg-muted hover:bg-muted/80'
