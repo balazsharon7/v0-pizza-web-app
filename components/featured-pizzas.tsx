@@ -1,12 +1,14 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
+import { ShoppingCart, Pizza } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { formatPrice, getLocalizedName, getLocalizedDescription, type Product } from '@/lib/types'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
+import { useCart } from '@/lib/cart-context'
+import { toast } from 'sonner'
 
 interface FeaturedPizzasProps {
   pizzas: Product[]
@@ -16,6 +18,12 @@ interface FeaturedPizzasProps {
 
 export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasProps) {
   const t = dictionary
+  const { addItem } = useCart()
+
+  const handleAddToCart = (pizza: Product) => {
+    addItem(pizza, null, [], 1)
+    toast.success(locale === 'hu' ? 'Hozzáadva a kosárhoz!' : 'Added to cart!')
+  }
 
   if (pizzas.length === 0) {
     return (
@@ -38,9 +46,7 @@ export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasPro
                 className="object-cover group-hover:scale-110 transition-transform duration-300"
               />
             ) : (
-              <span className="text-7xl group-hover:scale-110 transition-transform duration-300">
-                🍕
-              </span>
+              <Pizza className="h-20 w-20 text-primary/30 group-hover:scale-110 transition-transform duration-300" />
             )}
           </div>
           <CardContent className="p-4">
@@ -57,10 +63,9 @@ export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasPro
                   {formatPrice(pizza.base_price)} {t.common.currency}
                 </span>
               </div>
-              <Button asChild size="sm">
-                <Link href={`/${locale}/menu`}>
-                  {t.menu.addToCart}
-                </Link>
+              <Button size="sm" onClick={() => handleAddToCart(pizza)}>
+                <ShoppingCart className="h-4 w-4 mr-1" />
+                {locale === 'hu' ? 'Kosárba' : 'Add'}
               </Button>
             </div>
           </CardContent>

@@ -90,6 +90,83 @@ function isCurrentlyOpen(hours: OpeningHours, manualOverride: boolean | null): {
   }
 }
 
+// Compact dot indicator for mobile header
+export function OpenStatusDot({ locale }: { locale: string }) {
+  const [status, setStatus] = useState<{ isOpen: boolean } | null>(null)
+  const [openingHours, setOpeningHours] = useState<OpeningHours | null>(null)
+  const [manualOverride, setManualOverride] = useState<boolean | null>(null)
+  
+  const supabase = createClient()
+  
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const { data: hoursData } = await supabase
+        .from('settings')
+        .select('value')
+        .eq('key', 'opening_hours')
+        .single()
+      
+      const { data: overrideData } = await supabase
+        .from('settings')
+        .select('value')
+        .eq('key', 'is_open')
+        .single()
+      
+      if (hoursData) {
+        setOpeningHours(hoursData.value as OpeningHours)
+      }
+      
+      if (overrideData) {
+        setManualOverride((overrideData.value as { value: boolean }).value)
+      }
+    }
+    
+    fetchSettings()
+    const interval = setInterval(fetchSettings, 60000)
+    return () => clearInterval(interval)
+  }, [supabase])
+  
+  useEffect(() => {
+    if (openingHours) {
+      setStatus(isCurrentlyOpen(openingHours, manualOverride))
+      const interval = setInterval(() => {
+        setStatus(isCurrentlyOpen(openingHours, manualOverride))
+      }, 60000)
+      return () => clearInterval(interval)
+    }
+  }, [openingHours, manualOverride])
+  
+  if (!status) return null
+  
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex flex-col items-center justify-center px-2 py-1 cursor-pointer">
+            <span 
+              className={`h-3 w-3 rounded-full ${
+                status.isOpen 
+                  ? 'bg-green-500 shadow-[0_0_8px_2px_rgba(34,197,94,0.5)]' 
+                  : 'bg-red-500 shadow-[0_0_8px_2px_rgba(239,68,68,0.5)]'
+              }`}
+            />
+            <span className="mt-0.5 text-[10px] text-muted-foreground">
+              {status.isOpen ? (locale === 'hu' ? 'Nyitva' : 'Open') : (locale === 'hu' ? 'Zárva' : 'Closed')}
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p className="text-sm">
+            {status.isOpen 
+              ? (locale === 'hu' ? 'Jelenleg nyitva vagyunk' : 'We are currently open')
+              : (locale === 'hu' ? 'Jelenleg zárva vagyunk' : 'We are currently closed')}
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
+
 export function OpenStatus({ locale, showHours = false, compact = false }: OpenStatusProps) {
   const [openingHours, setOpeningHours] = useState<OpeningHours | null>(null)
   const [manualOverride, setManualOverride] = useState<boolean | null>(null)
