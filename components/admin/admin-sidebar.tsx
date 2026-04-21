@@ -100,84 +100,65 @@ export function AdminSidebar({ locale, dictionary }: AdminSidebarProps) {
         </div>
       </aside>
 
-      {/* Mobile Header Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background lg:hidden">
-        <div className="flex items-center justify-around py-2">
-          {navItems.slice(0, 4).map((item) => {
-            const isActive = pathname === item.href || 
-              (item.href !== `/${locale}/admin` && pathname.startsWith(item.href))
-            
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors min-w-[64px]',
-                  isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                <span className="text-[10px] font-medium">{item.label}</span>
-              </Link>
-            )
-          })}
-          
-          {/* More menu */}
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild>
-              <button className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-muted-foreground min-w-[64px]">
-                <Menu className="h-5 w-5" />
-                <span className="text-[10px] font-medium">
-                  {locale === 'hu' ? 'Több' : 'More'}
-                </span>
-              </button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-auto max-h-[80vh] rounded-t-xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-serif text-lg font-bold">{t.common.admin}</h3>
-                <SheetClose asChild>
-                  <Button variant="ghost" size="icon">
-                    <X className="h-5 w-5" />
-                  </Button>
-                </SheetClose>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-3 mb-6">
-                {navItems.map((item) => {
-                  const isActive = pathname === item.href || 
-                    (item.href !== `/${locale}/admin` && pathname.startsWith(item.href))
-                  
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
+      {/* Mobile Top Navigation */}
+      <div className="lg:hidden border-b bg-background sticky top-0 z-40">
+        <div className="flex items-center justify-between p-3">
+          <div className="flex items-center gap-2">
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[280px] p-0">
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center justify-between p-4 border-b">
+                    <h2 className="font-serif text-lg font-bold">{t.common.admin}</h2>
+                    <SheetClose asChild>
+                      <Button variant="ghost" size="icon">
+                        <X className="h-5 w-5" />
+                      </Button>
+                    </SheetClose>
+                  </div>
+                  <NavContent onNavigate={() => setMobileOpen(false)} />
+                  <div className="border-t p-4">
+                    <Link 
+                      href={`/${locale}`}
                       onClick={() => setMobileOpen(false)}
-                      className={cn(
-                        'flex flex-col items-center gap-2 rounded-xl p-4 transition-colors',
-                        isActive
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted hover:bg-muted/80'
-                      )}
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <item.icon className="h-6 w-6" />
-                      <span className="text-xs font-medium text-center">{item.label}</span>
+                      <ArrowLeft className="h-4 w-4" />
+                      {locale === 'hu' ? 'Vissza a weboldalra' : 'Back to website'}
                     </Link>
-                  )
-                })}
-              </div>
-
-              <Link 
-                href={`/${locale}`}
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-muted text-sm font-medium"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                {locale === 'hu' ? 'Vissza a weboldalra' : 'Back to website'}
-              </Link>
-            </SheetContent>
-          </Sheet>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+            <h1 className="font-serif font-bold">{t.common.admin}</h1>
+          </div>
+          
+          {/* Quick navigation icons */}
+          <div className="flex items-center gap-1">
+            {navItems.slice(0, 4).map((item) => {
+              const isActive = pathname === item.href || 
+                (item.href !== `/${locale}/admin` && pathname.startsWith(item.href))
+              
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center justify-center rounded-lg p-2 transition-colors',
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-muted'
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                </Link>
+              )
+            })}
+          </div>
         </div>
       </div>
     </>
