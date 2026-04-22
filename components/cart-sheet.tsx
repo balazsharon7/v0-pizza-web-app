@@ -26,13 +26,7 @@ export function CartSheet({ locale, dictionary }: CartSheetProps) {
   const { items, isOpen, toggleCart, removeItem, updateQuantity, subtotal, itemCount } = useCart()
   const t = dictionary
 
-  const deliveryFee = 500
-  const freeDeliveryThreshold = 8000
   const minOrder = 3000
-
-  const isFreeDelivery = subtotal >= freeDeliveryThreshold
-  const actualDeliveryFee = isFreeDelivery ? 0 : deliveryFee
-  const total = subtotal + actualDeliveryFee
   const canCheckout = subtotal >= minOrder
 
   return (
@@ -139,21 +133,13 @@ export function CartSheet({ locale, dictionary }: CartSheetProps) {
                   <span>{t.cart.subtotal}</span>
                   <span>{formatPrice(subtotal)} {t.common.currency}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>{t.cart.deliveryFee}</span>
-                  <span className={isFreeDelivery ? 'text-accent' : ''}>
-                    {isFreeDelivery ? t.cart.freeDelivery : `${formatPrice(deliveryFee)} ${t.common.currency}`}
-                  </span>
-                </div>
-                {!isFreeDelivery && (
-                  <p className="text-xs text-muted-foreground">
-                    {t.cart.freeDeliveryFrom.replace('{amount}', formatPrice(freeDeliveryThreshold))}
-                  </p>
-                )}
+                <p className="text-xs text-muted-foreground">
+                  {locale === 'hu' ? 'A szállítási díj a pénztárnál kerül kiszámításra' : 'Delivery fee calculated at checkout'}
+                </p>
                 <Separator />
                 <div className="flex justify-between text-base font-semibold">
                   <span>{t.cart.total}</span>
-                  <span>{formatPrice(total)} {t.common.currency}</span>
+                  <span>{formatPrice(subtotal)} {t.common.currency}</span>
                 </div>
               </div>
 

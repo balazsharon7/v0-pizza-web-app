@@ -9,6 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
+import { SocialAuthButtons } from '@/components/auth/social-auth-buttons'
 import { createClient } from '@/lib/supabase/client'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
@@ -91,6 +92,9 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
             {isLoading ? <Spinner className="mr-2" /> : null}
             {t.auth.loginButton}
           </Button>
+          
+          <SocialAuthButtons locale={locale} />
+          
           <p className="text-center text-sm text-muted-foreground">
             {t.auth.noAccount}{' '}
             <Link href={`/${locale}/auth/register`} className="text-primary hover:underline">

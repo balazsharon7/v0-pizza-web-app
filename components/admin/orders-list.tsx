@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -25,12 +27,14 @@ import { formatPrice, getLocalizedName, type Order, type OrderStatus } from '@/l
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { updateOrderStatus } from './actions'
-import { Truck, Store, Phone, MapPin, Clock, Check, X, ChefHat, Package, ArrowRight } from 'lucide-react'
+import { Truck, Store, Phone, MapPin, Clock, Check, X, ChefHat, Package, ArrowRight, Calendar, Search } from 'lucide-react'
 
 interface OrdersListProps {
   orders: Order[]
   locale: Locale
   dictionary: Dictionary
+  initialFromDate?: string
+  initialToDate?: string
 }
 
 const statusColors: Record<OrderStatus, string> = {
@@ -63,12 +67,35 @@ const statuses: OrderStatus[] = [
   'cancelled',
 ]
 
-export function OrdersList({ orders, locale, dictionary }: OrdersListProps) {
+export function OrdersList({ orders, locale, dictionary, initialFromDate, initialToDate }: OrdersListProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const t = dictionary
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [isUpdating, setIsUpdating] = useState(false)
+  const [fromDate, setFromDate] = useState(initialFromDate || '')
+  const [toDate, setToDate] = useState(initialToDate || '')
+
+  const handleDateFilter = () => {
+    const params = new URLSearchParams()
+    if (fromDate) params.set('from', fromDate)
+    if (toDate) params.set('to', toDate)
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
+  const handleShowToday = () => {
+    const today = new Date().toISOString().split('T')[0]
+    setFromDate(today)
+    setToDate(today)
+    router.push(`${pathname}?from=${today}&to=${today}`)
+  }
+
+  const handleShowAll = () => {
+    setFromDate('')
+    setToDate('')
+    router.push(pathname)
+  }
 
   const filteredOrders = filterStatus === 'all'
     ? orders
@@ -128,7 +155,48 @@ export function OrdersList({ orders, locale, dictionary }: OrdersListProps) {
 
   return (
     <>
-      {/* Filter - Mobile Friendly */}
+      {/* Date Range Filter */}
+      <Card className="mb-4">
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <Label className="text-xs">{locale === 'hu' ? 'Dátumtól' : 'From Date'}</Label>
+                <Input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="h-10"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">{locale === 'hu' ? 'Dátumig' : 'To Date'}</Label>
+                <Input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="h-10"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleDateFilter} className="flex-1 sm:flex-none">
+                <Search className="h-4 w-4 mr-2" />
+                {locale === 'hu' ? 'Keresés' : 'Search'}
+              </Button>
+              <Button variant="outline" onClick={handleShowToday}>
+                <Calendar className="h-4 w-4 mr-2" />
+                {locale === 'hu' ? 'Ma' : 'Today'}
+              </Button>
+              <Button variant="ghost" onClick={handleShowAll}>
+                {locale === 'hu' ? 'Mind' : 'All'}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Status Filter - Mobile Friendly */}
       <div className="flex flex-wrap gap-2 mb-4">
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-full sm:w-[200px] h-12">
