@@ -63,7 +63,9 @@ export function MenuContent({
     ? products.filter(p => p.category_id === drinkCategory.id && p.is_available)
     : []
 
-  const filteredProducts = availableProducts.filter((p) => p.category_id === activeCategory)
+  const filteredProducts = availableProducts
+    .filter((p) => p.category_id === activeCategory)
+    .sort((a, b) => getLocalizedName(a, locale).localeCompare(getLocalizedName(b, locale), locale))
 
   const getCategoryIcon = (slug: string) => {
     switch (slug) {

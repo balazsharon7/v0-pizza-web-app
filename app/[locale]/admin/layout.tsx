@@ -34,9 +34,9 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)]">
       <AdminSidebar locale={locale} dictionary={dictionary} />
-      <main className="flex-1 overflow-y-auto bg-muted/30 p-4 pb-24 lg:p-6 lg:pb-6">
+      <main className="flex-1 overflow-y-auto bg-muted/30 p-4 lg:p-6">
         {children}
       </main>
     </div>

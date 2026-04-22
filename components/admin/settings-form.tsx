@@ -226,42 +226,43 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
               <CardDescription>{t.openingHoursDesc}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {dayOrder.map((day) => {
                   const hours = openingHours[day] || { open: '11:00', close: '22:00', closed: false }
                   return (
-                    <div key={day} className="flex items-center gap-4 p-3 border rounded-lg">
-                      <div className="w-28 font-medium">
-                        {dayNames[day][locale as 'hu' | 'en']}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          checked={!hours.closed}
-                          onCheckedChange={(checked) => updateOpeningHours(day, 'closed', !checked)}
-                        />
-                        <span className="text-sm text-muted-foreground w-16">
-                          {hours.closed ? t.closed : (locale === 'hu' ? 'Nyitva' : 'Open')}
-                        </span>
+                    <div key={day} className="p-3 border rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="font-medium">
+                          {dayNames[day][locale as 'hu' | 'en']}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">
+                            {hours.closed ? t.closed : (locale === 'hu' ? 'Nyitva' : 'Open')}
+                          </span>
+                          <Switch
+                            checked={!hours.closed}
+                            onCheckedChange={(checked) => updateOpeningHours(day, 'closed', !checked)}
+                          />
+                        </div>
                       </div>
                       {!hours.closed && (
-                        <div className="flex items-center gap-2 flex-1">
-                          <div className="flex items-center gap-2">
-                            <Label className="text-sm text-muted-foreground">{t.open}</Label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <Label className="text-xs text-muted-foreground">{t.open}</Label>
                             <Input
                               type="time"
                               value={hours.open}
                               onChange={(e) => updateOpeningHours(day, 'open', e.target.value)}
-                              className="w-32"
+                              className="w-full"
                             />
                           </div>
-                          <span className="text-muted-foreground">-</span>
-                          <div className="flex items-center gap-2">
-                            <Label className="text-sm text-muted-foreground">{t.close}</Label>
+                          <div className="space-y-1">
+                            <Label className="text-xs text-muted-foreground">{t.close}</Label>
                             <Input
                               type="time"
                               value={hours.close}
                               onChange={(e) => updateOpeningHours(day, 'close', e.target.value)}
-                              className="w-32"
+                              className="w-full"
                             />
                           </div>
                         </div>
