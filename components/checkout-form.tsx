@@ -169,11 +169,10 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
         clearCart()
         router.push(`/${locale}/order-success?order=${result.orderNumber}`)
       } else {
-        console.error('[v0] Order failed:', result.error)
         toast.error(result.error || (locale === 'hu' ? 'Hiba történt a rendelés során' : 'Error placing order'))
       }
     } catch (error) {
-      console.error('[v0] Order error:', error)
+      console.error('Order error:', error)
       toast.error(locale === 'hu' ? 'Hiba történt a rendelés során' : 'Error placing order')
     } finally {
       setIsSubmitting(false)

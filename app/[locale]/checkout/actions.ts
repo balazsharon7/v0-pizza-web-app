@@ -44,10 +44,14 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
     
     const orderNumber = generateOrderNumber()
     
-    // Create order
-    const { data: order, error: orderError } = await supabase
+    // Generate a UUID for the order
+    const orderId = crypto.randomUUID()
+    
+    // Create order - don't use .select() for anonymous users as they can't read back
+    const { error: orderError } = await supabase
       .from('orders')
       .insert({
+        id: orderId,
         user_id: user?.id || null,
         order_number: orderNumber,
         status: 'pending',
@@ -64,45 +68,37 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
         payment_method: data.paymentMethod,
         notes: data.notes,
       })
-      .select()
-      .single()
 
     if (orderError) {
-      console.error('[v0] Order creation error:', JSON.stringify(orderError, null, 2))
-      console.error('[v0] User ID:', user?.id || 'anonymous')
-      console.error('[v0] Order data:', JSON.stringify({
-        user_id: user?.id || null,
-        order_number: orderNumber,
-        delivery_type: data.deliveryType,
-        customer_name: data.customerName,
-      }, null, 2))
+      console.error('Order creation error:', orderError)
       return { success: false, error: `Order creation failed: ${orderError.message}` }
     }
 
     // Create order items
     for (const item of data.items) {
-      const { data: orderItem, error: itemError } = await supabase
+      const orderItemId = crypto.randomUUID()
+      
+      const { error: itemError } = await supabase
         .from('order_items')
         .insert({
-          order_id: order.id,
+          id: orderItemId,
+          order_id: orderId,
           product_id: item.productId,
           size_id: item.sizeId,
           quantity: item.quantity,
           unit_price: item.unitPrice,
           total_price: item.totalPrice,
         })
-        .select()
-        .single()
 
       if (itemError) {
         console.error('Order item creation error:', itemError)
-        throw new Error('Failed to create order item')
+        return { success: false, error: `Order item creation failed: ${itemError.message}` }
       }
 
       // Create order item toppings
       if (item.toppingIds.length > 0) {
         const toppingInserts = item.toppingIds.map((toppingId, index) => ({
-          order_item_id: orderItem.id,
+          order_item_id: orderItemId,
           topping_id: toppingId,
           price: item.toppingPrices[index],
         }))
