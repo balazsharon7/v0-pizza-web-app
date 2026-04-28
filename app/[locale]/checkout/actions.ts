@@ -68,8 +68,15 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
       .single()
 
     if (orderError) {
-      console.error('Order creation error:', orderError)
-      throw new Error('Failed to create order')
+      console.error('[v0] Order creation error:', JSON.stringify(orderError, null, 2))
+      console.error('[v0] User ID:', user?.id || 'anonymous')
+      console.error('[v0] Order data:', JSON.stringify({
+        user_id: user?.id || null,
+        order_number: orderNumber,
+        delivery_type: data.deliveryType,
+        customer_name: data.customerName,
+      }, null, 2))
+      return { success: false, error: `Order creation failed: ${orderError.message}` }
     }
 
     // Create order items
