@@ -80,19 +80,20 @@ export function Footer({ locale, dictionary }: FooterProps) {
           {/* Brand */}
           <div className="space-y-4">
             <Link href={`/${locale}`} className="flex items-center gap-3">
-              <Image
-                src="/images/logo.webp"
-                alt="Terra Verde Pizzéria"
-                width={56}
-                height={56}
-                className="h-14 w-14 object-contain"
-              />
-              <span className="font-serif text-xl font-bold">Terra Verde</span>
+              <div className="relative h-14 w-14 rounded-full overflow-hidden ring-2 ring-sidebar-primary/30 shadow-lg">
+                <Image
+                  src="/images/logo.webp"
+                  alt="Terra Verde Pizzéria"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <span className="font-serif text-xl font-semibold tracking-tight">Terra Verde</span>
             </Link>
-            <p className="text-sm text-sidebar-foreground/80">
+            <p className="text-sm text-sidebar-foreground/70 leading-relaxed">
               {locale === 'hu'
-                ? 'Autentikus olasz pizza, friss alapanyagokból.'
-                : 'Authentic Italian pizza, made with fresh ingredients.'}
+                ? 'Autentikus olasz pizza, friss alapanyagokból készítve, hagyományos receptek alapján.'
+                : 'Authentic Italian pizza, crafted with fresh ingredients following traditional recipes.'}
             </p>
           </div>
 

@@ -104,15 +104,16 @@ export function Header({ locale, dictionary }: HeaderProps) {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href={`/${locale}`} className="flex items-center gap-2">
-          <Image
-            src="/images/logo.webp"
-            alt="Terra Verde Pizzéria"
-            width={48}
-            height={48}
-            className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
-          />
-          <span className="hidden font-serif text-xl font-bold sm:inline-block">
+        <Link href={`/${locale}`} className="flex items-center gap-3">
+          <div className="relative h-11 w-11 sm:h-12 sm:w-12 rounded-full overflow-hidden ring-2 ring-primary/20 shadow-md">
+            <Image
+              src="/images/logo.webp"
+              alt="Terra Verde Pizzéria"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <span className="hidden font-serif text-xl font-semibold tracking-tight sm:inline-block">
             Terra Verde
           </span>
         </Link>

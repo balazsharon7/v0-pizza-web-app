@@ -148,67 +148,69 @@ export function MenuContent({
             <Card
               key={product.id}
               className={`
-                group overflow-hidden transition-all hover:shadow-lg
-                ${isStoreOpen ? 'cursor-pointer' : 'cursor-not-allowed opacity-75'}
+                group overflow-hidden transition-all duration-300 border-0 shadow-md bg-card
+                ${isStoreOpen ? 'cursor-pointer hover:shadow-xl hover:-translate-y-1' : 'cursor-not-allowed opacity-75'}
               `}
               onClick={() => isStoreOpen && setSelectedProduct(product)}
             >
-              <div className="aspect-square bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center relative overflow-hidden">
+              <div className="aspect-[4/3] bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center relative overflow-hidden">
                 {product.image_url ? (
                   <Image
                     src={product.image_url}
                     alt={getLocalizedName(product, locale)}
                     fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (
                   <div className="flex items-center justify-center w-full h-full">
                     {category?.slug === 'pizzas' ? (
-                      <Pizza className="h-24 w-24 text-primary/30 group-hover:scale-110 transition-transform duration-300" />
+                      <Pizza className="h-16 w-16 text-primary/20 group-hover:scale-110 transition-transform duration-300" />
                     ) : category?.slug === 'drinks' ? (
-                      <GlassWater className="h-24 w-24 text-primary/30 group-hover:scale-110 transition-transform duration-300" />
+                      <GlassWater className="h-16 w-16 text-primary/20 group-hover:scale-110 transition-transform duration-300" />
                     ) : (
-                      <Pizza className="h-24 w-24 text-primary/30 group-hover:scale-110 transition-transform duration-300" />
+                      <Pizza className="h-16 w-16 text-primary/20 group-hover:scale-110 transition-transform duration-300" />
                     )}
                   </div>
                 )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 {/* Customize button for pizzas - top right corner */}
                 {product.is_customizable && isStoreOpen && (
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="absolute top-2 right-2 shadow-md"
+                    className="absolute top-3 right-3 shadow-lg rounded-full"
                     onClick={(e) => handleCustomize(product, e)}
                   >
-                    <SlidersHorizontal className="h-4 w-4 mr-1" />
+                    <SlidersHorizontal className="h-4 w-4 mr-1.5" />
                     {locale === 'hu' ? 'Testreszabás' : 'Customize'}
                   </Button>
                 )}
               </div>
-              <CardContent className="p-4">
-                <h3 className="font-serif text-lg font-semibold group-hover:text-primary transition-colors">
+              <CardContent className="p-5">
+                <h3 className="font-serif text-lg font-semibold tracking-tight group-hover:text-primary transition-colors">
                   {getLocalizedName(product, locale)}
                 </h3>
                 {getLocalizedDescription(product, locale) && (
-                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                  <p className="mt-2 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                     {getLocalizedDescription(product, locale)}
                   </p>
                 )}
                 <div className="mt-4 flex items-center justify-between">
-                  <div>
+                  <div className="flex flex-col">
                     {product.is_customizable && (
-                      <span className="text-sm text-muted-foreground">{t.menu.from} </span>
+                      <span className="text-xs text-muted-foreground uppercase tracking-wide">{t.menu.from}</span>
                     )}
-                    <span className="font-semibold text-primary">
+                    <span className="font-serif font-semibold text-lg text-primary">
                       {formatPrice(product.base_price)} {t.common.currency}
                     </span>
                   </div>
                   <Button 
-                    size="sm" 
+                    size="sm"
+                    className="rounded-full px-4"
                     onClick={(e) => handleQuickAdd(product, e)}
                     disabled={!isStoreOpen}
                   >
-                    <ShoppingCart className="h-4 w-4 mr-1" />
+                    <ShoppingCart className="h-4 w-4 mr-1.5" />
                     {locale === 'hu' ? 'Kosárba' : 'Add'}
                   </Button>
                 </div>

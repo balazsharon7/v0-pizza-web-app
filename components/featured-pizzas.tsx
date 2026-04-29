@@ -36,35 +36,36 @@ export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasPro
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {pizzas.map((pizza) => (
-        <Card key={pizza.id} className="group overflow-hidden transition-shadow hover:shadow-lg">
-          <div className="aspect-square bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center relative overflow-hidden">
+        <Card key={pizza.id} className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-0 shadow-md bg-card">
+          <div className="aspect-[4/3] bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center relative overflow-hidden">
             {pizza.image_url ? (
               <Image
                 src={pizza.image_url}
                 alt={getLocalizedName(pizza, locale)}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
             ) : (
-              <Pizza className="h-20 w-20 text-primary/30 group-hover:scale-110 transition-transform duration-300" />
+              <Pizza className="h-16 w-16 text-primary/20 group-hover:scale-110 transition-transform duration-300" />
             )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
-          <CardContent className="p-4">
-            <h3 className="font-serif text-lg font-semibold">
+          <CardContent className="p-5">
+            <h3 className="font-serif text-lg font-semibold tracking-tight">
               {getLocalizedName(pizza, locale)}
             </h3>
-            <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+            <p className="mt-2 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
               {getLocalizedDescription(pizza, locale)}
             </p>
-            <div className="mt-3 flex items-center justify-between">
-              <div>
-                <span className="text-sm text-muted-foreground">{t.menu.from}</span>
-                <span className="ml-1 font-semibold text-primary">
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex flex-col">
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">{t.menu.from}</span>
+                <span className="font-serif font-semibold text-lg text-primary">
                   {formatPrice(pizza.base_price)} {t.common.currency}
                 </span>
               </div>
-              <Button size="sm" onClick={() => handleAddToCart(pizza)}>
-                <ShoppingCart className="h-4 w-4 mr-1" />
+              <Button size="sm" className="rounded-full px-4" onClick={() => handleAddToCart(pizza)}>
+                <ShoppingCart className="h-4 w-4 mr-1.5" />
                 {locale === 'hu' ? 'Kosárba' : 'Add'}
               </Button>
             </div>

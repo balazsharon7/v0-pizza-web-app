@@ -65,14 +65,17 @@ export default async function AboutPage({ params }: PageProps) {
                 </Link>
               </Button>
             </div>
-            <div className="relative aspect-square lg:aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
-              <Image
-                src="/images/logo.webp"
-                alt="Terra Verde Pizzeria"
-                fill
-                className="object-contain bg-[#f5f0e6] p-8"
-                priority
-              />
+            <div className="relative aspect-square max-w-md mx-auto lg:mx-0">
+              <div className="absolute inset-4 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-3xl" />
+              <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-4 ring-primary/10">
+                <Image
+                  src="/images/logo.webp"
+                  alt="Terra Verde Pizzeria"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -102,41 +105,41 @@ export default async function AboutPage({ params }: PageProps) {
             {t.about.qualityTitle}
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="pt-8 pb-6 space-y-4">
-                <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                  <Timer className="w-8 h-8 text-primary" />
+            <Card className="text-center border-0 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card">
+              <CardContent className="pt-10 pb-8 px-6 space-y-4">
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                  <Timer className="w-10 h-10 text-primary" />
                 </div>
-                <h3 className="font-serif text-xl font-semibold">
+                <h3 className="font-serif text-xl font-semibold tracking-tight">
                   {t.about.quality1Title}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   {t.about.quality1Text}
                 </p>
               </CardContent>
             </Card>
-            <Card className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="pt-8 pb-6 space-y-4">
-                <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                  <Wheat className="w-8 h-8 text-primary" />
+            <Card className="text-center border-0 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card">
+              <CardContent className="pt-10 pb-8 px-6 space-y-4">
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                  <Wheat className="w-10 h-10 text-primary" />
                 </div>
-                <h3 className="font-serif text-xl font-semibold">
+                <h3 className="font-serif text-xl font-semibold tracking-tight">
                   {t.about.quality2Title}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   {t.about.quality2Text}
                 </p>
               </CardContent>
             </Card>
-            <Card className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="pt-8 pb-6 space-y-4">
-                <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                  <ChefHat className="w-8 h-8 text-primary" />
+            <Card className="text-center border-0 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card">
+              <CardContent className="pt-10 pb-8 px-6 space-y-4">
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                  <ChefHat className="w-10 h-10 text-primary" />
                 </div>
-                <h3 className="font-serif text-xl font-semibold">
+                <h3 className="font-serif text-xl font-semibold tracking-tight">
                   {t.about.quality3Title}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   {t.about.quality3Text}
                 </p>
               </CardContent>
