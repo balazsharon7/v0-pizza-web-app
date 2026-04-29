@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { DM_Sans, Fraunces } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { locales, type Locale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
@@ -9,8 +9,8 @@ import { Footer } from '@/components/footer'
 import { CartSheet } from '@/components/cart-sheet'
 import { Toaster } from '@/components/ui/sonner'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
+const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' })
+const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-fraunces' })
 
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -58,7 +58,7 @@ export default async function LocaleLayout({
   const dictionary = await getDictionary(locale)
 
   return (
-    <div className={`${inter.variable} ${playfair.variable} min-h-screen flex flex-col`}>
+    <div className={`${dmSans.variable} ${fraunces.variable} min-h-screen flex flex-col font-sans`}>
       <CartProvider>
         <Header locale={locale} dictionary={dictionary} />
         <main className="flex-1">
