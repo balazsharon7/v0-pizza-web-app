@@ -61,10 +61,13 @@ export default async function MenuPage({
   const toppings = (toppingsResult.data || []) as Topping[]
 
   return (
-    <div className="py-8 md:py-12">
+    <div className="py-12 md:py-16">
       <div className="container mx-auto px-4">
-        <div className="mb-8 text-center">
-          <h1 className="font-serif text-3xl font-bold md:text-4xl">
+        <div className="mb-10 text-center section-divider pt-8 animate-fade-in-up">
+          <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
+            {locale === 'hu' ? 'Fedezd fel kínálatunkat' : 'Explore our selection'}
+          </span>
+          <h1 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
             {dictionary.menu.title}
           </h1>
         </div>

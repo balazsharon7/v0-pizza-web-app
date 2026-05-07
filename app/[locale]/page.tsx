@@ -69,30 +69,39 @@ export default async function HomePage({
         {/* Content */}
         <div className="container mx-auto px-4 py-20 md:py-28 lg:py-36 relative z-10">
           <div className="max-w-2xl space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary backdrop-blur-sm border border-primary/20">
+            <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary backdrop-blur-sm border border-primary/20">
               <OpenStatus locale={locale} compact />
             </div>
-            
-            <h1 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              <span className="text-foreground">Terra Verde Pizzeria</span>
+
+            <h1 className="animate-fade-in-up animation-delay-100 font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              <span className="text-foreground">Terra Verde</span>
+              <span className="block text-primary mt-1">Pizzeria</span>
             </h1>
-            
-            <p className="text-xl text-muted-foreground md:text-2xl leading-relaxed">
+
+            <div className="animate-fade-in-up animation-delay-200 flex items-center gap-3">
+              <div className="h-[2px] w-12 bg-accent rounded-full" />
+              <span className="text-accent font-serif italic text-sm tracking-wide">
+                {locale === 'hu' ? 'Autentikus olasz ízek' : 'Authentic Italian flavors'}
+              </span>
+              <div className="h-[2px] w-12 bg-accent rounded-full" />
+            </div>
+
+            <p className="animate-fade-in-up animation-delay-300 text-xl text-muted-foreground md:text-2xl leading-relaxed">
               {t.hero.subtitle}
             </p>
-            
-            <p className="text-muted-foreground leading-relaxed max-w-lg">
+
+            <p className="animate-fade-in-up animation-delay-400 text-muted-foreground leading-relaxed max-w-lg">
               {t.hero.description}
             </p>
-            
-            <div className="flex flex-col gap-4 sm:flex-row pt-4">
-              <Button asChild size="lg" className="gap-2 text-base h-12 px-8">
+
+            <div className="animate-fade-in-up animation-delay-500 flex flex-col gap-4 sm:flex-row pt-4">
+              <Button asChild size="lg" className="gap-2 text-base h-12 px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
                 <Link href={`/${locale}/menu`}>
                   {t.hero.cta}
                   <ArrowRight className="h-5 w-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-base h-12 px-8 backdrop-blur-sm bg-background/50">
+              <Button asChild variant="outline" size="lg" className="text-base h-12 px-8 backdrop-blur-sm bg-background/50 hover:bg-background/70 transition-all">
                 <Link href={`/${locale}/about`}>
                   {locale === 'hu' ? 'Rólunk' : 'About Us'}
                 </Link>
@@ -160,15 +169,15 @@ export default async function HomePage({
       {/* Featured Pizzas */}
       <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <span className="inline-block text-primary font-medium mb-2">
+          <div className="mb-14 text-center section-divider pt-8">
+            <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
               {locale === 'hu' ? 'Frissen készítve' : 'Freshly Made'}
             </span>
             <h2 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
               {locale === 'hu' ? 'Népszerű pizzáink' : 'Popular Pizzas'}
             </h2>
-            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-              {locale === 'hu' 
+            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              {locale === 'hu'
                 ? 'Fedezd fel legkedveltebb pizzáinkat, amelyeket 48 órán át kelesztett tésztából és prémium olasz alapanyagokból készítünk'
                 : 'Discover our most loved pizzas, made with 48-hour fermented dough and premium Italian ingredients'}
             </p>
@@ -190,8 +199,8 @@ export default async function HomePage({
       {/* Why Choose Us */}
       <section className="border-t bg-muted/30 py-20 md:py-28">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <span className="inline-block text-primary font-medium mb-2">
+          <div className="mb-14 text-center section-divider pt-8">
+            <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
               {locale === 'hu' ? 'Terra Verde' : 'Terra Verde'}
             </span>
             <h2 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
@@ -200,8 +209,8 @@ export default async function HomePage({
           </div>
           
           <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
-            <div className="text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-md transition-shadow">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+            <div className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300">
                 <Leaf className="h-10 w-10 text-primary" />
               </div>
               <h3 className="mb-3 font-serif text-xl font-semibold">
@@ -213,9 +222,9 @@ export default async function HomePage({
                   : 'We use fresh, locally sourced ingredients every single day.'}
               </p>
             </div>
-            
-            <div className="text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-md transition-shadow">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+
+            <div className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300">
                 <ChefHat className="h-10 w-10 text-primary" />
               </div>
               <h3 className="mb-3 font-serif text-xl font-semibold">
@@ -227,9 +236,9 @@ export default async function HomePage({
                   : 'Authentic Italian recipes passed down through generations.'}
               </p>
             </div>
-            
-            <div className="text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-md transition-shadow">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+
+            <div className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300">
                 <Truck className="h-10 w-10 text-primary" />
               </div>
               <h3 className="mb-3 font-serif text-xl font-semibold">
@@ -246,8 +255,13 @@ export default async function HomePage({
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 md:py-28 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
+      <section className="relative py-20 md:py-28 bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary-foreground/20" />
+          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-2 border-primary-foreground/20" />
+          <div className="absolute top-1/2 left-1/3 w-20 h-20 rounded-full border border-primary-foreground/15" />
+        </div>
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl mb-4">
             {locale === 'hu' ? 'Éhes vagy?' : 'Feeling Hungry?'}
           </h2>
@@ -257,13 +271,13 @@ export default async function HomePage({
               : 'Order now and enjoy the taste of freshly made pizzas!'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary" className="text-base h-12 px-8">
+            <Button asChild size="lg" variant="secondary" className="text-base h-12 px-8 shadow-lg hover:shadow-xl transition-all">
               <Link href={`/${locale}/menu`}>
                 {t.hero.cta}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="secondary" className="text-base h-12 px-8">
+            <Button asChild size="lg" variant="secondary" className="text-base h-12 px-8 shadow-lg hover:shadow-xl transition-all">
               <a href={`tel:${storeInfo.phone || '+36 1 234 5678'}`}>
                 <Phone className="mr-2 h-5 w-5" />
                 <span className="font-semibold">{storeInfo.phone || '+36 1 234 5678'}</span>

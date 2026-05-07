@@ -35,36 +35,35 @@ export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasPro
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {pizzas.map((pizza) => (
-        <Card key={pizza.id} className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-0 shadow-md bg-card">
+      {pizzas.map((pizza, index) => (
+        <Card key={pizza.id} className={`group overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 border-0 shadow-md bg-card rounded-2xl animate-fade-in-up ${index === 1 ? 'animation-delay-100' : index === 2 ? 'animation-delay-200' : index === 3 ? 'animation-delay-300' : ''}`}>
           <div className="aspect-[4/3] bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center relative overflow-hidden">
             {pizza.image_url ? (
               <Image
                 src={pizza.image_url}
                 alt={getLocalizedName(pizza, locale)}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
               />
             ) : (
               <Pizza className="h-16 w-16 text-primary/20 group-hover:scale-110 transition-transform duration-300" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute top-3 left-3">
+              <span className="inline-flex items-center rounded-full bg-accent/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-accent-foreground shadow-sm">
+                {t.menu.from} {formatPrice(pizza.base_price)} {t.common.currency}
+              </span>
+            </div>
           </div>
           <CardContent className="p-5">
-            <h3 className="font-serif text-lg font-semibold tracking-tight">
+            <h3 className="font-serif text-lg font-semibold tracking-tight group-hover:text-primary transition-colors duration-200">
               {getLocalizedName(pizza, locale)}
             </h3>
             <p className="mt-2 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
               {getLocalizedDescription(pizza, locale)}
             </p>
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex flex-col">
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">{t.menu.from}</span>
-                <span className="font-serif font-semibold text-lg text-primary">
-                  {formatPrice(pizza.base_price)} {t.common.currency}
-                </span>
-              </div>
-              <Button size="sm" className="rounded-full px-4" onClick={() => handleAddToCart(pizza)}>
+            <div className="mt-4 flex items-center justify-end">
+              <Button size="sm" className="rounded-full px-5 shadow-sm hover:shadow-md transition-all" onClick={() => handleAddToCart(pizza)}>
                 <ShoppingCart className="h-4 w-4 mr-1.5" />
                 {locale === 'hu' ? 'Kosárba' : 'Add'}
               </Button>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Pizza, GlassWater, ShoppingCart, SlidersHorizontal } from 'lucide-react'
+import { Pizza, GlassWater, ShoppingCart, SlidersHorizontal, UtensilsCrossed } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ProductModal } from '@/components/product-modal'
@@ -107,17 +107,17 @@ export function MenuContent({
       <DrinkSuggestion drinks={drinks} locale={locale} />
 
       {/* Category Selection */}
-      <div className="mb-10">
+      <div className="mb-10 animate-fade-in-up animation-delay-100">
         <div className="flex flex-wrap justify-center gap-3">
           {filteredCategories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
               className={`
-                flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-200
+                flex items-center gap-2.5 px-7 py-3.5 rounded-full font-medium transition-all duration-300 relative
                 ${activeCategory === category.id
                   ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
-                  : 'bg-muted hover:bg-muted/80 text-foreground'
+                  : 'bg-card border border-border hover:border-primary/30 hover:bg-primary/5 text-foreground hover:text-primary'
                 }
               `}
             >
@@ -141,16 +141,17 @@ export function MenuContent({
 
       {/* Products Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredProducts.map((product) => {
+        {filteredProducts.map((product, index) => {
           const category = filteredCategories.find((c) => c.id === product.category_id)
-          
+
           return (
             <Card
               key={product.id}
               className={`
-                group overflow-hidden transition-all duration-300 border-0 shadow-md bg-card
-                ${isStoreOpen ? 'cursor-pointer hover:shadow-xl hover:-translate-y-1' : 'cursor-not-allowed opacity-75'}
+                group overflow-hidden transition-all duration-300 border-0 shadow-md bg-card rounded-2xl animate-scale-in
+                ${isStoreOpen ? 'cursor-pointer hover:shadow-xl hover:-translate-y-1.5' : 'cursor-not-allowed opacity-75'}
               `}
+              style={{ animationDelay: `${Math.min(index * 60, 400)}ms` }}
               onClick={() => isStoreOpen && setSelectedProduct(product)}
             >
               <div className="aspect-[4/3] bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center relative overflow-hidden">
@@ -159,7 +160,7 @@ export function MenuContent({
                     src={product.image_url}
                     alt={getLocalizedName(product, locale)}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
                 ) : (
                   <div className="flex items-center justify-center w-full h-full">
@@ -172,13 +173,19 @@ export function MenuContent({
                     )}
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* Price badge */}
+                <div className="absolute top-3 left-3">
+                  <span className="inline-flex items-center rounded-full bg-accent/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-accent-foreground shadow-sm">
+                    {product.is_customizable && `${t.menu.from} `}{formatPrice(product.base_price)} {t.common.currency}
+                  </span>
+                </div>
                 {/* Customize button for pizzas - top right corner */}
                 {product.is_customizable && isStoreOpen && (
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="absolute top-3 right-3 shadow-lg rounded-full"
+                    className="absolute top-3 right-3 shadow-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     onClick={(e) => handleCustomize(product, e)}
                   >
                     <SlidersHorizontal className="h-4 w-4 mr-1.5" />
@@ -187,7 +194,7 @@ export function MenuContent({
                 )}
               </div>
               <CardContent className="p-5">
-                <h3 className="font-serif text-lg font-semibold tracking-tight group-hover:text-primary transition-colors">
+                <h3 className="font-serif text-lg font-semibold tracking-tight group-hover:text-primary transition-colors duration-200">
                   {getLocalizedName(product, locale)}
                 </h3>
                 {getLocalizedDescription(product, locale) && (
@@ -195,18 +202,10 @@ export function MenuContent({
                     {getLocalizedDescription(product, locale)}
                   </p>
                 )}
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex flex-col">
-                    {product.is_customizable && (
-                      <span className="text-xs text-muted-foreground uppercase tracking-wide">{t.menu.from}</span>
-                    )}
-                    <span className="font-serif font-semibold text-lg text-primary">
-                      {formatPrice(product.base_price)} {t.common.currency}
-                    </span>
-                  </div>
-                  <Button 
+                <div className="mt-4 flex items-center justify-end">
+                  <Button
                     size="sm"
-                    className="rounded-full px-4"
+                    className="rounded-full px-5 shadow-sm hover:shadow-md transition-all"
                     onClick={(e) => handleQuickAdd(product, e)}
                     disabled={!isStoreOpen}
                   >
@@ -221,8 +220,16 @@ export function MenuContent({
       </div>
 
       {filteredProducts.length === 0 && (
-        <div className="py-12 text-center text-muted-foreground">
-          {locale === 'hu' ? 'Nincs termék ebben a kategóriában' : 'No products in this category'}
+        <div className="py-20 text-center animate-fade-in">
+          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-muted">
+            <UtensilsCrossed className="h-12 w-12 text-muted-foreground/50" />
+          </div>
+          <p className="text-lg font-serif font-medium text-muted-foreground">
+            {locale === 'hu' ? 'Nincs termék ebben a kategóriában' : 'No products in this category'}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground/70">
+            {locale === 'hu' ? 'Próbálj egy másik kategóriát!' : 'Try another category!'}
+          </p>
         </div>
       )}
 

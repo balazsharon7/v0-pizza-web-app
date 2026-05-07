@@ -49,23 +49,35 @@ export default async function AboutPage({ params }: PageProps) {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20 lg:py-32">
-        <div className="container mx-auto px-4">
+      <section className="relative bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20 lg:py-32 overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 right-20 w-40 h-40 rounded-full border-2 border-primary" />
+          <div className="absolute bottom-20 left-20 w-60 h-60 rounded-full border-2 border-accent" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-balance">
+              <div className="animate-fade-in-up flex items-center gap-3">
+                <div className="h-[2px] w-10 bg-accent rounded-full" />
+                <span className="text-accent font-serif italic text-sm tracking-wide">
+                  {locale === 'hu' ? 'Rólunk' : 'About Us'}
+                </span>
+              </div>
+              <h1 className="animate-fade-in-up animation-delay-100 font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-balance">
                 {t.about.heroTitle}
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+              <p className="animate-fade-in-up animation-delay-200 text-lg md:text-xl text-muted-foreground leading-relaxed">
                 {t.about.heroDescription}
               </p>
-              <Button asChild size="lg" className="mt-4">
-                <Link href={`/${locale}/menu`}>
-                  {t.about.orderCta}
-                </Link>
-              </Button>
+              <div className="animate-fade-in-up animation-delay-300">
+                <Button asChild size="lg" className="mt-4 shadow-lg shadow-primary/25 hover:shadow-xl transition-all">
+                  <Link href={`/${locale}/menu`}>
+                    {t.about.orderCta}
+                  </Link>
+                </Button>
+              </div>
             </div>
-            <div className="relative aspect-square max-w-md mx-auto lg:mx-0">
+            <div className="relative aspect-square max-w-md mx-auto lg:mx-0 animate-scale-in animation-delay-200">
               <div className="absolute inset-4 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-3xl" />
               <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-4 ring-primary/10">
                 <Image
@@ -84,7 +96,7 @@ export default async function AboutPage({ params }: PageProps) {
       {/* Story Section */}
       <section className="py-16 lg:py-24 bg-card">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
+          <div className="max-w-3xl mx-auto text-center space-y-6 section-divider pt-8">
             <h2 className="font-serif text-3xl md:text-4xl font-bold">
               {t.about.storyTitle}
             </h2>
@@ -101,13 +113,15 @@ export default async function AboutPage({ params }: PageProps) {
       {/* Quality Section */}
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-center mb-12">
-            {t.about.qualityTitle}
-          </h2>
+          <div className="text-center mb-14 section-divider pt-8">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold">
+              {t.about.qualityTitle}
+            </h2>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center border-0 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card">
+            <Card className="group text-center border-0 shadow-md hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 bg-card rounded-2xl">
               <CardContent className="pt-10 pb-8 px-6 space-y-4">
-                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300 flex items-center justify-center">
                   <Timer className="w-10 h-10 text-primary" />
                 </div>
                 <h3 className="font-serif text-xl font-semibold tracking-tight">
@@ -118,9 +132,9 @@ export default async function AboutPage({ params }: PageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="text-center border-0 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card">
+            <Card className="group text-center border-0 shadow-md hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 bg-card rounded-2xl">
               <CardContent className="pt-10 pb-8 px-6 space-y-4">
-                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300 flex items-center justify-center">
                   <Wheat className="w-10 h-10 text-primary" />
                 </div>
                 <h3 className="font-serif text-xl font-semibold tracking-tight">
@@ -131,9 +145,9 @@ export default async function AboutPage({ params }: PageProps) {
                 </p>
               </CardContent>
             </Card>
-            <Card className="text-center border-0 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-card">
+            <Card className="group text-center border-0 shadow-md hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 bg-card rounded-2xl">
               <CardContent className="pt-10 pb-8 px-6 space-y-4">
-                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300 flex items-center justify-center">
                   <ChefHat className="w-10 h-10 text-primary" />
                 </div>
                 <h3 className="font-serif text-xl font-semibold tracking-tight">
@@ -258,17 +272,21 @@ export default async function AboutPage({ params }: PageProps) {
       )}
 
       {/* CTA Section */}
-      <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
+      <section className="relative py-16 lg:py-24 bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary-foreground/20" />
+          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-2 border-primary-foreground/20" />
+        </div>
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6">
             {locale === 'hu' ? 'Kóstold meg az igazi olasz ízeket!' : 'Taste the real Italian flavors!'}
           </h2>
           <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-            {locale === 'hu' 
+            {locale === 'hu'
               ? 'Rendeld meg kedvenc pizzádat online, és mi házhoz visszük!'
               : 'Order your favorite pizza online and we will deliver it to your door!'}
           </p>
-          <Button asChild size="lg" variant="secondary">
+          <Button asChild size="lg" variant="secondary" className="shadow-lg hover:shadow-xl transition-all">
             <Link href={`/${locale}/menu`}>
               {t.nav.viewMenu}
             </Link>

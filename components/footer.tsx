@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Phone, Mail, MapPin } from 'lucide-react'
+import { Phone, Mail, MapPin, Facebook, Instagram } from 'lucide-react'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { createClient } from '@/lib/supabase/client'
@@ -95,6 +95,26 @@ export function Footer({ locale, dictionary }: FooterProps) {
                 ? 'Autentikus olasz pizza, friss alapanyagokból készítve, hagyományos receptek alapján.'
                 : 'Authentic Italian pizza, crafted with fresh ingredients following traditional recipes.'}
             </p>
+            <div className="flex gap-3 pt-2">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-sidebar-accent hover:bg-sidebar-primary/30 transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook className="h-5 w-5" />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-sidebar-accent hover:bg-sidebar-primary/30 transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram className="h-5 w-5" />
+              </a>
+            </div>
           </div>
 
           {/* Contact */}

@@ -39,7 +39,14 @@ export function Header({ locale, dictionary }: HeaderProps) {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [scrolled, setScrolled] = useState(false)
   const t = dictionary
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     const supabase = createClient()
@@ -101,7 +108,7 @@ export function Header({ locale, dictionary }: HeaderProps) {
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-shadow duration-300 ${scrolled ? 'header-scrolled' : ''}`}>
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href={`/${locale}`} className="flex items-center gap-3">
