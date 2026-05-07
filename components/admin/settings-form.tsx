@@ -231,11 +231,11 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
                   const hours = openingHours[day] || { open: '11:00', close: '22:00', closed: false }
                   return (
                     <div key={day} className="p-3 border rounded-lg space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="font-medium min-w-0">
                           {dayNames[day][locale as 'hu' | 'en']}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="text-sm text-muted-foreground">
                             {hours.closed ? t.closed : (locale === 'hu' ? 'Nyitva' : 'Open')}
                           </span>
@@ -246,14 +246,14 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
                         </div>
                       </div>
                       {!hours.closed && (
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 gap-3">
                           <div className="space-y-1">
                             <Label className="text-xs text-muted-foreground">{t.open}</Label>
                             <Input
                               type="time"
                               value={hours.open}
                               onChange={(e) => updateOpeningHours(day, 'open', e.target.value)}
-                              className="w-full"
+                              className="h-11 w-full"
                             />
                           </div>
                           <div className="space-y-1">
@@ -262,7 +262,7 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
                               type="time"
                               value={hours.close}
                               onChange={(e) => updateOpeningHours(day, 'close', e.target.value)}
-                              className="w-full"
+                              className="h-11 w-full"
                             />
                           </div>
                         </div>

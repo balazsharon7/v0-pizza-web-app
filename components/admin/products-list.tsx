@@ -315,7 +315,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
           setIsCreating(false)
         }
       }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle>
               {editingProduct
@@ -328,48 +328,48 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                 : 'Fill in the product details in both languages.'}
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="space-y-6 py-4">
+
+          <div className="space-y-5 py-2">
             {/* Image Upload Section */}
             <div className="space-y-2">
               <Label>{locale === 'hu' ? 'Termék képe' : 'Product Image'}</Label>
-              <div className="flex items-start gap-4">
+              <div className="flex flex-col sm:flex-row items-start gap-3">
                 {formData.image_url ? (
-                  <div className="relative">
+                  <div className="relative flex-shrink-0">
                     <Image
                       src={formData.image_url}
                       alt="Product preview"
-                      width={120}
-                      height={120}
-                      className="rounded-lg object-cover w-[120px] h-[120px]"
+                      width={100}
+                      height={100}
+                      className="rounded-lg object-cover w-[100px] h-[100px]"
                     />
                     <Button
                       type="button"
                       variant="destructive"
                       size="icon"
-                      className="absolute -top-2 -right-2 h-6 w-6"
+                      className="absolute -top-2 -right-2 h-7 w-7"
                       onClick={() => setFormData({ ...formData, image_url: null })}
                     >
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
                 ) : (
-                  <div className="w-[120px] h-[120px] rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/50">
-                    <ImageIcon className="h-10 w-10 text-muted-foreground/50" />
+                  <div className="w-[100px] h-[100px] flex-shrink-0 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/50">
+                    <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
                   </div>
                 )}
-                <div className="flex-1">
+                <div className="w-full sm:flex-1">
                   <Label
                     htmlFor="image-upload"
-                    className="flex flex-col items-center justify-center w-full h-[120px] border-2 border-dashed rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
+                    className="flex flex-col items-center justify-center w-full h-[100px] border-2 border-dashed rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
                   >
-                    <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                    <Upload className="h-7 w-7 text-muted-foreground mb-1" />
                     <span className="text-sm font-medium">
                       {isUploading
                         ? (locale === 'hu' ? 'Feltöltés...' : 'Uploading...')
                         : (locale === 'hu' ? 'Kép feltöltése' : 'Upload image')}
                     </span>
-                    <span className="text-xs text-muted-foreground mt-1">PNG, JPG, WebP (max 5MB)</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">PNG, JPG, WebP (max 5MB)</span>
                   </Label>
                   <Input
                     id="image-upload"
@@ -390,7 +390,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                 value={formData.category_id}
                 onValueChange={(value) => setFormData({ ...formData, category_id: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-12">
                   <SelectValue placeholder={locale === 'hu' ? 'Válassz kategóriát' : 'Select category'} />
                 </SelectTrigger>
                 <SelectContent>
@@ -404,11 +404,12 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
             </div>
 
             {/* Names */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name_hu">{locale === 'hu' ? 'Név (magyar)' : 'Name (Hungarian)'} *</Label>
                 <Input
                   id="name_hu"
+                  className="h-12"
                   value={formData.name_hu}
                   onChange={(e) => setFormData({ ...formData, name_hu: e.target.value })}
                   placeholder="pl. Margherita"
@@ -418,6 +419,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                 <Label htmlFor="name_en">{locale === 'hu' ? 'Név (angol)' : 'Name (English)'} *</Label>
                 <Input
                   id="name_en"
+                  className="h-12"
                   value={formData.name_en}
                   onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
                   placeholder="e.g. Margherita"
@@ -426,9 +428,9 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
             </div>
 
             {/* Descriptions */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="description_hu">{locale === 'hu' ? 'Leírás (magyar)' : 'Description (Hungarian)'}</Label>
+                <Label htmlFor="description_hu">{locale === 'hu' ? 'Leírás (magyar)' : 'Description (HU)'}</Label>
                 <Textarea
                   id="description_hu"
                   value={formData.description_hu}
@@ -438,7 +440,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description_en">{locale === 'hu' ? 'Leírás (angol)' : 'Description (English)'}</Label>
+                <Label htmlFor="description_en">{locale === 'hu' ? 'Leírás (angol)' : 'Description (EN)'}</Label>
                 <Textarea
                   id="description_en"
                   value={formData.description_en}
@@ -448,7 +450,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                 />
               </div>
             </div>
-            
+
             {/* Price */}
             <div className="space-y-2">
               <Label htmlFor="base_price">{locale === 'hu' ? 'Alapár (Ft)' : 'Base Price (HUF)'}</Label>
@@ -457,40 +459,45 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                 type="number"
                 min="0"
                 step="10"
+                className="h-12"
                 value={formData.base_price}
                 onChange={(e) => setFormData({ ...formData, base_price: parseInt(e.target.value) || 0 })}
               />
             </div>
-            
+
             {/* Switches */}
-            <div className="flex flex-wrap gap-6">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex items-center justify-between sm:justify-start gap-3 p-3 border rounded-lg sm:border-0 sm:p-0">
+                <Label htmlFor="is_available" className="cursor-pointer">
+                  {locale === 'hu' ? 'Elérhető' : 'Available'}
+                </Label>
                 <Switch
                   id="is_available"
                   checked={formData.is_available}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_available: checked })}
                 />
-                <Label htmlFor="is_available">{locale === 'hu' ? 'Elérhető' : 'Available'}</Label>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between sm:justify-start gap-3 p-3 border rounded-lg sm:border-0 sm:p-0">
+                <Label htmlFor="is_customizable" className="cursor-pointer">
+                  {locale === 'hu' ? 'Testreszabható (méret, feltét)' : 'Customizable (size, toppings)'}
+                </Label>
                 <Switch
                   id="is_customizable"
                   checked={formData.is_customizable}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_customizable: checked })}
                 />
-                <Label htmlFor="is_customizable">{locale === 'hu' ? 'Testreszabható (méret, feltét)' : 'Customizable (size, toppings)'}</Label>
               </div>
             </div>
           </div>
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => {
+
+          <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
+            <Button variant="outline" className="w-full sm:w-auto h-12" onClick={() => {
               setEditingProduct(null)
               setIsCreating(false)
             }}>
               {t.common.cancel}
             </Button>
-            <Button onClick={handleSave} disabled={isSaving || isUploading}>
+            <Button className="w-full sm:w-auto h-12" onClick={handleSave} disabled={isSaving || isUploading}>
               {isSaving ? (locale === 'hu' ? 'Mentés...' : 'Saving...') : t.common.save}
             </Button>
           </DialogFooter>

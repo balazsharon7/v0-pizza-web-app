@@ -157,41 +157,43 @@ export function OrdersList({ orders, locale, dictionary, initialFromDate, initia
     <>
       {/* Date Range Filter */}
       <Card className="mb-4">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 grid grid-cols-2 gap-2">
-              <div className="space-y-1">
-                <Label className="text-xs">{locale === 'hu' ? 'Dátumtól' : 'From Date'}</Label>
-                <Input
-                  type="date"
-                  value={fromDate}
-                  onChange={(e) => setFromDate(e.target.value)}
-                  className="h-10"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">{locale === 'hu' ? 'Dátumig' : 'To Date'}</Label>
-                <Input
-                  type="date"
-                  value={toDate}
-                  onChange={(e) => setToDate(e.target.value)}
-                  className="h-10"
-                />
-              </div>
+        <CardContent className="p-4 space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">
+                {locale === 'hu' ? 'Dátumtól' : 'From Date'}
+              </Label>
+              <Input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="h-12 w-full"
+              />
             </div>
-            <div className="flex gap-2">
-              <Button onClick={handleDateFilter} className="flex-1 sm:flex-none">
-                <Search className="h-4 w-4 mr-2" />
-                {locale === 'hu' ? 'Keresés' : 'Search'}
-              </Button>
-              <Button variant="outline" onClick={handleShowToday}>
-                <Calendar className="h-4 w-4 mr-2" />
-                {locale === 'hu' ? 'Ma' : 'Today'}
-              </Button>
-              <Button variant="ghost" onClick={handleShowAll}>
-                {locale === 'hu' ? 'Mind' : 'All'}
-              </Button>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">
+                {locale === 'hu' ? 'Dátumig' : 'To Date'}
+              </Label>
+              <Input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="h-12 w-full"
+              />
             </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={handleDateFilter} className="flex-1 sm:flex-none h-11">
+              <Search className="h-4 w-4 mr-2" />
+              {locale === 'hu' ? 'Keresés' : 'Search'}
+            </Button>
+            <Button variant="outline" onClick={handleShowToday} className="flex-1 sm:flex-none h-11">
+              <Calendar className="h-4 w-4 mr-2" />
+              {locale === 'hu' ? 'Ma' : 'Today'}
+            </Button>
+            <Button variant="ghost" onClick={handleShowAll} className="flex-1 sm:flex-none h-11">
+              {locale === 'hu' ? 'Összes' : 'All'}
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -329,7 +331,7 @@ export function OrdersList({ orders, locale, dictionary, initialFromDate, initia
 
       {/* Order Detail Modal - Mobile Optimized */}
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 sm:p-6">
+        <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl max-h-[90dvh] overflow-y-auto p-0 sm:p-6">
           {selectedOrder && (
             <>
               <DialogHeader className="p-4 sm:p-0 border-b sm:border-b-0">
