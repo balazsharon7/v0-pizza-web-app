@@ -42,7 +42,8 @@ export function MenuContent({
   // Default to first category (pizzas)
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
-  const [isStoreOpen, setIsStoreOpen] = useState<boolean>(true)
+  const storeStatus = useStoreStatus() // null = loading, true = open, false = closed
+  const isStoreOpen = storeStatus !== false        // treat loading as open (optimistic)
   const { addItem } = useCart()
   const t = dictionary
 
@@ -101,7 +102,7 @@ export function MenuContent({
   return (
     <>
       {/* Closed Store Alert */}
-      <ClosedStoreAlert locale={locale} onStatusChange={setIsStoreOpen} />
+      <ClosedStoreAlert locale={locale} />
       
       {/* Drink Suggestion */}
       <DrinkSuggestion drinks={drinks} locale={locale} />
