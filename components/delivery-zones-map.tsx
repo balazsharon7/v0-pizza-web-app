@@ -130,49 +130,110 @@ export function DeliveryZonesMap({ zones, locale }: DeliveryZonesMapProps) {
   )
 }
 
-// Static fallback component (uses iframe embed with overlay image style)
+// Static fallback component
 export function DeliveryZonesStatic({ zones, locale }: DeliveryZonesMapProps) {
   const t = {
-    title: locale === 'hu' ? 'Kiszállítási információ' : 'Delivery information',
-    minOrder: locale === 'hu' ? 'Min.' : 'Min.',
-    time: locale === 'hu' ? 'Idő' : 'Time',
-    fee: locale === 'hu' ? 'Díj' : 'Fee',
+    title: locale === 'hu' ? 'Kiszállítási zónák' : 'Delivery Zones',
+    subtitle: locale === 'hu'
+      ? 'Budaörsön és a környező településeken vállalunk házhoz szállítást.'
+      : 'We deliver to Budaörs and surrounding settlements.',
+    minOrder: locale === 'hu' ? 'Min. rendelés' : 'Min. order',
+    time: locale === 'hu' ? 'Szállítási idő' : 'Delivery time',
+    fee: locale === 'hu' ? 'Szállítási díj' : 'Delivery fee',
     free: locale === 'hu' ? 'Ingyenes' : 'Free',
-    minutes: locale === 'hu' ? 'p' : 'min',
-    currency: 'HUF',
+    minutes: locale === 'hu' ? 'perc' : 'min',
+    currency: 'Ft',
+    zipCodes: locale === 'hu' ? 'Irányítószámok' : 'ZIP codes',
+    mapTitle: locale === 'hu' ? 'Kiszállítási területek térképe' : 'Delivery zones map',
   }
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-xl font-semibold">{t.title}</h3>
-      
-      {/* Zone Legend - compact style like reference */}
-      <div className="space-y-1">
-        {zones.map((zone) => (
-          <div key={zone.id} className="flex items-center gap-2 text-sm text-muted-foreground">
-            <div
-              className="w-3 h-3 rounded-full flex-shrink-0"
-              style={{ backgroundColor: zone.color }}
-            />
-            <span>
-              {t.minOrder}: {t.currency} {formatPrice(zone.min_order)}, {t.time}: {zone.delivery_time_max} {t.minutes}, {t.fee}: {zone.delivery_fee === 0 ? t.free : `${t.currency} ${formatPrice(zone.delivery_fee)}`}
-            </span>
-          </div>
-        ))}
+    <div className="space-y-10">
+      {/* Header */}
+      <div className="text-center section-divider pt-8">
+        <h2 className="font-serif text-3xl md:text-4xl font-bold">{t.title}</h2>
+        <p className="mt-3 text-muted-foreground max-w-xl mx-auto">{t.subtitle}</p>
       </div>
 
-      {/* Static Map with zones overlay image */}
-      <div className="rounded-lg overflow-hidden border">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d86000!2d18.9550!3d47.4321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4741e9b2c6c7e1f5%3A0x400c4290c1e1160!2sBuda%C3%B6rs!5e0!3m2!1shu!2shu!4v1234567890"
-          width="100%"
-          height="400"
-          style={{ border: 0 }}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          title={locale === 'hu' ? 'Kiszállítási területek térképe' : 'Delivery zones map'}
-        />
+      <div className="grid lg:grid-cols-2 gap-8 items-start">
+        {/* Zone Cards */}
+        <div className="space-y-4">
+          {zones.map((zone) => (
+            <div
+              key={zone.id}
+              className="rounded-2xl border bg-card shadow-sm p-5 flex gap-4 hover:shadow-md transition-shadow"
+            >
+              {/* Color indicator */}
+              <div
+                className="w-1.5 rounded-full flex-shrink-0 self-stretch"
+                style={{ backgroundColor: zone.color }}
+              />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <div
+                    className="w-3.5 h-3.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: zone.color }}
+                  />
+                  <h3 className="font-serif font-semibold text-lg">
+                    {locale === 'hu' ? zone.name_hu : zone.name_en}
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div className="text-center p-2.5 rounded-xl bg-muted/50">
+                    <p className="text-xs text-muted-foreground mb-0.5">{t.minOrder}</p>
+                    <p className="font-semibold text-sm">{formatPrice(zone.min_order)} {t.currency}</p>
+                  </div>
+                  <div className="text-center p-2.5 rounded-xl bg-muted/50">
+                    <p className="text-xs text-muted-foreground mb-0.5">{t.time}</p>
+                    <p className="font-semibold text-sm">
+                      {zone.delivery_time_min}–{zone.delivery_time_max} {t.minutes}
+                    </p>
+                  </div>
+                  <div className="text-center p-2.5 rounded-xl bg-muted/50">
+                    <p className="text-xs text-muted-foreground mb-0.5">{t.fee}</p>
+                    <p className="font-semibold text-sm">
+                      {zone.delivery_fee === 0
+                        ? t.free
+                        : `${formatPrice(zone.delivery_fee)} ${t.currency}`}
+                    </p>
+                  </div>
+                </div>
+
+                {zone.zip_codes && zone.zip_codes.length > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1.5">{t.zipCodes}:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {zone.zip_codes.map((zip) => (
+                        <span
+                          key={zip}
+                          className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border"
+                          style={{ borderColor: zone.color + '60', color: zone.color, backgroundColor: zone.color + '15' }}
+                        >
+                          {zip}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Map */}
+        <div className="rounded-2xl overflow-hidden border shadow-sm sticky top-24">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10784.5!2d18.9510!3d47.4611!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4741ddc1e5afe6db%3A0x397c23ec48fec7a0!2sTerra%20Verde%20Pizz%C3%A9ria!5e0!3m2!1shu!2shu!4v1699900000000"
+            width="100%"
+            height="480"
+            style={{ border: 0, display: 'block' }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title={t.mapTitle}
+          />
+        </div>
       </div>
     </div>
   )

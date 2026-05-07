@@ -160,7 +160,7 @@ export function MenuContent({
                     src={product.image_url}
                     alt={getLocalizedName(product, locale)}
                     fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                    className={`transition-transform duration-700 ease-out group-hover:scale-105 ${category?.slug === 'drinks' ? 'object-contain p-4' : 'object-cover group-hover:scale-110'}`}
                   />
                 ) : (
                   <div className="flex items-center justify-center w-full h-full">

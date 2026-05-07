@@ -1,13 +1,14 @@
 'use client'
 
 import Image from 'next/image'
-import { ShoppingCart, Pizza } from 'lucide-react'
+import { ShoppingCart, Pizza, Lock } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { formatPrice, getLocalizedName, getLocalizedDescription, type Product } from '@/lib/types'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { useCart } from '@/lib/cart-context'
+import { useStoreStatus } from '@/components/closed-store-alert'
 import { toast } from 'sonner'
 
 interface FeaturedPizzasProps {
@@ -19,8 +20,13 @@ interface FeaturedPizzasProps {
 export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasProps) {
   const t = dictionary
   const { addItem } = useCart()
+  const isStoreOpen = useStoreStatus()
 
   const handleAddToCart = (pizza: Product) => {
+    if (!isStoreOpen) {
+      toast.error(locale === 'hu' ? 'Az étterem jelenleg zárva van' : 'The restaurant is currently closed')
+      return
+    }
     addItem(pizza, null, [], 1)
     toast.success(locale === 'hu' ? 'Hozzáadva a kosárhoz!' : 'Added to cart!')
   }
@@ -63,9 +69,17 @@ export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasPro
               {getLocalizedDescription(pizza, locale)}
             </p>
             <div className="mt-4 flex items-center justify-end">
-              <Button size="sm" className="rounded-full px-5 shadow-sm hover:shadow-md transition-all" onClick={() => handleAddToCart(pizza)}>
-                <ShoppingCart className="h-4 w-4 mr-1.5" />
-                {locale === 'hu' ? 'Kosárba' : 'Add'}
+              <Button
+                size="sm"
+                className="rounded-full px-5 shadow-sm hover:shadow-md transition-all"
+                onClick={() => handleAddToCart(pizza)}
+                disabled={isStoreOpen === false}
+                title={isStoreOpen === false ? (locale === 'hu' ? 'Az étterem zárva van' : 'Restaurant is closed') : undefined}
+              >
+                {isStoreOpen === false
+                  ? <><Lock className="h-4 w-4 mr-1.5" />{locale === 'hu' ? 'Zárva' : 'Closed'}</>
+                  : <><ShoppingCart className="h-4 w-4 mr-1.5" />{locale === 'hu' ? 'Kosárba' : 'Add'}</>
+                }
               </Button>
             </div>
           </CardContent>

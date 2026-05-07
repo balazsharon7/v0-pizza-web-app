@@ -264,7 +264,7 @@ export default async function AboutPage({ params }: PageProps) {
 
       {/* Delivery Zones Section with Map */}
       {deliveryZones.length > 0 && (
-        <section className="py-16 lg:py-24">
+        <section className="py-16 lg:py-24 bg-muted/20">
           <div className="container mx-auto px-4">
             <DeliveryZonesStatic zones={deliveryZones} locale={locale} />
           </div>

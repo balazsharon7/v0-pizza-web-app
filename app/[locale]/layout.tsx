@@ -8,6 +8,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { CartSheet } from '@/components/cart-sheet'
 import { Toaster } from '@/components/ui/sonner'
+import { CookieConsent } from '@/components/cookie-consent'
 
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' })
 const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-fraunces' })
@@ -67,6 +68,7 @@ export default async function LocaleLayout({
         <Footer locale={locale} dictionary={dictionary} />
         <CartSheet locale={locale} dictionary={dictionary} />
         <Toaster position="top-center" />
+        <CookieConsent locale={locale} />
       </CartProvider>
     </div>
   )
