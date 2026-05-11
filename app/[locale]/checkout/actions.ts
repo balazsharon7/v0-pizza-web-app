@@ -19,7 +19,7 @@ interface OrderData {
   paymentMethod: PaymentMethod
   customerName: string
   customerPhone: string
-  customerEmail: string | null
+  customerEmail: string
   deliveryAddress: string | null
   deliveryCity: string | null
   deliveryZip: string | null
@@ -127,40 +127,38 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
     }
 
     // Send confirmation email
-    if (data.customerEmail) {
-      const order = {
-        id: orderId,
-        order_number: orderNumber,
-        status: 'pending' as const,
-        delivery_type: data.deliveryType,
-        customer_name: data.customerName,
-        customer_phone: data.customerPhone,
-        customer_email: data.customerEmail,
-        delivery_address: data.deliveryAddress,
-        delivery_city: data.deliveryCity,
-        delivery_zip: data.deliveryZip,
-        subtotal: data.subtotal,
-        delivery_fee: data.deliveryFee,
-        total: data.total,
-        payment_method: data.paymentMethod,
-        notes: data.notes,
-        user_id: user?.id || null,
-        created_at: new Date().toISOString(),
-        confirmed_at: null,
-        completed_at: null,
-        estimated_delivery: null,
-      }
-      
-      const emailSent = await sendOrderConfirmationEmail({
-        order: order as any,
-        items: orderItems as any,
-        locale: 'hu',
-      })
+    const order = {
+      id: orderId,
+      order_number: orderNumber,
+      status: 'pending' as const,
+      delivery_type: data.deliveryType,
+      customer_name: data.customerName,
+      customer_phone: data.customerPhone,
+      customer_email: data.customerEmail,
+      delivery_address: data.deliveryAddress,
+      delivery_city: data.deliveryCity,
+      delivery_zip: data.deliveryZip,
+      subtotal: data.subtotal,
+      delivery_fee: data.deliveryFee,
+      total: data.total,
+      payment_method: data.paymentMethod,
+      notes: data.notes,
+      user_id: user?.id || null,
+      created_at: new Date().toISOString(),
+      confirmed_at: null,
+      completed_at: null,
+      estimated_delivery: null,
+    }
+    
+    const emailSent = await sendOrderConfirmationEmail({
+      order: order as any,
+      items: orderItems as any,
+      locale: 'hu',
+    })
 
-      if (!emailSent) {
-        console.warn('Failed to send confirmation email')
-        // Don't fail the order if email fails
-      }
+    if (!emailSent) {
+      console.warn('Failed to send confirmation email')
+      // Don't fail the order if email fails
     }
 
     return { success: true, orderNumber }

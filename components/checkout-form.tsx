@@ -144,7 +144,7 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
         paymentMethod,
         customerName: formData.name,
         customerPhone: formData.phone,
-        customerEmail: formData.email || null,
+        customerEmail: formData.email,
         deliveryAddress: deliveryType === 'delivery' ? streetAddress : null,
         deliveryCity: deliveryType === 'delivery' && selectedZone ? (locale === 'hu' ? selectedZone.name_hu : selectedZone.name_en) : null,
         deliveryZip: deliveryType === 'delivery' ? selectedZip : null,
@@ -263,13 +263,14 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">{t.checkout.email}</Label>
+                <Label htmlFor="email">{t.checkout.email} *</Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </CardContent>
