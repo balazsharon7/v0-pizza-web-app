@@ -6,11 +6,14 @@ import type { DeliveryType, PaymentMethod } from '@/lib/types'
 
 interface OrderItemData {
   productId: string
+  productName: string
   sizeId: string | null
+  sizeName: string | null
   quantity: number
   unitPrice: number
   totalPrice: number
   toppingIds: string[]
+  toppingNames: string[]
   toppingPrices: number[]
 }
 
@@ -31,9 +34,9 @@ interface OrderData {
 }
 
 function generateOrderNumber(): string {
-  const timestamp = Date.now().toString(36).toUpperCase()
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase()
-  return `TV-${timestamp}-${random}`
+  // Simple 6-digit order number: TV-123456
+  const num = Math.floor(100000 + Math.random() * 900000)
+  return `TV-${num}`
 }
 
 export async function placeOrder(data: OrderData): Promise<{ success: boolean; orderNumber?: string; error?: string }> {
@@ -101,10 +104,13 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
         id: orderItemId,
         order_id: orderId,
         product_id: item.productId,
+        product_name: item.productName,
         size_id: item.sizeId,
+        size_name: item.sizeName,
         quantity: item.quantity,
         unit_price: item.unitPrice,
         total_price: item.totalPrice,
+        topping_names: item.toppingNames,
       } as any)
 
       // Create order item toppings

@@ -154,11 +154,14 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
         total,
         items: items.map((item) => ({
           productId: item.product.id,
+          productName: getLocalizedName(item.product, locale),
           sizeId: item.size?.id || null,
+          sizeName: item.size ? getLocalizedName(item.size, locale) : null,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
           totalPrice: item.totalPrice,
           toppingIds: item.toppings.map((t) => t.id),
+          toppingNames: item.toppings.map((t) => getLocalizedName(t, locale)),
           toppingPrices: item.toppings.map((t) => t.price),
         })),
       }

@@ -61,20 +61,16 @@ function formatPrice(price: number): string {
   }).format(price)
 }
 
-function getItemDescription(item: OrderItem, locale: 'hu' | 'en'): string {
-  const name = locale === 'hu' ? item.product?.name_hu : item.product?.name_en
-  let desc = `${item.quantity}x ${name || 'Termék'}`
-  if (item.size) {
-    const sizeName = locale === 'hu' ? item.size.name_hu : item.size.name_en
-    desc += ` (${sizeName})`
+function getItemDescription(item: any): string {
+  // Use product_name and size_name passed directly from checkout
+  let desc = `${item.quantity}x ${item.product_name || 'Termék'}`
+  if (item.size_name) {
+    desc += ` (${item.size_name})`
   }
-  if (item.toppings && item.toppings.length > 0) {
-    const toppingNames = item.toppings
-      .map(t => locale === 'hu' ? t.topping?.name_hu : t.topping?.name_en)
-      .filter(Boolean)
-      .join(', ')
-    if (toppingNames) {
-      desc += ` + ${toppingNames}`
+  if (item.topping_names && item.topping_names.length > 0) {
+    const toppings = item.topping_names.filter(Boolean).join(', ')
+    if (toppings) {
+      desc += ` + ${toppings}`
     }
   }
   return desc
@@ -96,7 +92,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData): Promise<
       .map(item => `
         <tr>
           <td style="padding: 12px 0; border-bottom: 1px solid #e8e4e0;">
-            ${getItemDescription(item, data.locale)}
+            ${getItemDescription(item)}
           </td>
           <td style="padding: 12px 0; border-bottom: 1px solid #e8e4e0; text-align: right; font-weight: 500;">
             ${formatPrice(item.total_price)}
