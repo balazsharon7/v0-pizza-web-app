@@ -1,8 +1,18 @@
 import { Resend } from 'resend'
 import type { Order, OrderItem } from '@/lib/types'
 
-// Only initialize Resend if API key is available
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
+// Resend client will be initialized lazily
+let resendClient: Resend | null = null
+
+function getResendClient(): Resend | null {
+  if (!process.env.RESEND_API_KEY) {
+    return null
+  }
+  if (!resendClient) {
+    resendClient = new Resend(process.env.RESEND_API_KEY)
+  }
+  return resendClient
+}
 
 interface OrderEmailData {
   order: Order
@@ -77,6 +87,8 @@ function getItemDescription(item: any): string {
 }
 
 export async function sendOrderConfirmationEmail(data: OrderEmailData): Promise<boolean> {
+  const resend = getResendClient()
+  
   // Skip if Resend is not configured
   if (!resend) {
     console.warn('[v0] Resend API key not configured, skipping email')

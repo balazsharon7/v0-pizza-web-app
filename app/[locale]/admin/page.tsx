@@ -6,6 +6,7 @@ import { ShoppingBag, DollarSign, Clock, CheckCircle, TrendingUp, Users, Truck, 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { RealtimeDashboard } from '@/components/admin/realtime-dashboard'
 
 export async function generateMetadata({
   params,
@@ -102,6 +103,7 @@ export default async function AdminDashboardPage({
   }
 
   return (
+    <RealtimeDashboard locale={locale}>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -288,5 +290,6 @@ export default async function AdminDashboardPage({
         </CardContent>
       </Card>
     </div>
+    </RealtimeDashboard>
   )
 }
