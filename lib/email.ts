@@ -251,7 +251,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData): Promise<
                 ${t.footer}
               </p>
               <p style="margin: 0; font-size: 14px; color: rgba(255,255,255,0.7);">
-                Szeged | +36 30 123 4567
+                Budaörs | +36 30 173 5918
               </p>
             </td>
           </tr>
