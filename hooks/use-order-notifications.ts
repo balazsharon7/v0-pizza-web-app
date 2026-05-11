@@ -86,6 +86,8 @@ export function useOrderNotifications({
 
     const supabase = createClient()
 
+    console.log('[v0] Setting up order notifications subscription...')
+    
     const channel = supabase
       .channel('admin-orders')
       .on(
@@ -96,6 +98,7 @@ export function useOrderNotifications({
           table: 'orders',
         },
         (payload) => {
+          console.log('[v0] New order received via realtime:', payload)
           const newOrder = payload.new as Order
           
           // Prevent duplicate notifications
@@ -121,7 +124,9 @@ export function useOrderNotifications({
           onNewOrder?.(newOrder)
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('[v0] Subscription status:', status)
+      })
 
     return () => {
       supabase.removeChannel(channel)
