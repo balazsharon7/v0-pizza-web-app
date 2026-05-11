@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
-import { User as UserIcon, Package, Settings, LogOut, MapPin, Phone, Mail, Clock } from 'lucide-react'
+import { User as UserIcon, Package, Settings, LogOut, MapPin, Phone, Mail, Clock, ExternalLink } from 'lucide-react'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 
@@ -227,10 +227,22 @@ export function ProfileContent({ user, profile, orders, locale, t }: ProfileCont
                     <span>{locale === 'hu' ? 'Összesen' : 'Total'}</span>
                     <span className="text-primary">{formatPrice(order.total)}</span>
                   </div>
-                  <div className="mt-2 text-sm text-muted-foreground">
-                    {order.delivery_type === 'delivery' 
-                      ? (locale === 'hu' ? 'Házhozszállítás' : 'Delivery')
-                      : (locale === 'hu' ? 'Elvitel' : 'Pickup')}
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="text-sm text-muted-foreground">
+                      {order.delivery_type === 'delivery' 
+                        ? (locale === 'hu' ? 'Házhozszállítás' : 'Delivery')
+                        : (locale === 'hu' ? 'Elvitel' : 'Pickup')}
+                    </div>
+                    {order.status !== 'completed' && order.status !== 'cancelled' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.push(`/${locale}/order-tracking?order=${order.order_number}`)}
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        {locale === 'hu' ? 'Követés' : 'Track'}
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
