@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CheckCircle, MapPin } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
@@ -58,16 +58,8 @@ export default async function OrderSuccessPage({
                 {t.orderSuccess.confirmation}
               </p>
 
-              <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
-                {orderNumber && (
-                  <Button asChild size="lg" variant="default">
-                    <Link href={`/${locale}/order-tracking?order=${orderNumber}`}>
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {t.orderSuccess.trackOrder}
-                    </Link>
-                  </Button>
-                )}
-                <Button asChild size="lg" variant="outline">
+              <div className="pt-4">
+                <Button asChild size="lg">
                   <Link href={`/${locale}/menu`}>
                     {t.orderSuccess.backToMenu}
                   </Link>
