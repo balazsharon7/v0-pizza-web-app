@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { sendOrderConfirmationEmail } from '@/lib/email'
 import type { DeliveryType, PaymentMethod } from '@/lib/types'
 
 interface OrderItemData {
@@ -75,6 +76,7 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
     }
 
     // Create order items
+    const orderItems = []
     for (const item of data.items) {
       const orderItemId = crypto.randomUUID()
       
@@ -95,6 +97,16 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
         return { success: false, error: `Order item creation failed: ${itemError.message}` }
       }
 
+      orderItems.push({
+        id: orderItemId,
+        order_id: orderId,
+        product_id: item.productId,
+        size_id: item.sizeId,
+        quantity: item.quantity,
+        unit_price: item.unitPrice,
+        total_price: item.totalPrice,
+      } as any)
+
       // Create order item toppings
       if (item.toppingIds.length > 0) {
         const toppingInserts = item.toppingIds.map((toppingId, index) => ({
@@ -111,6 +123,43 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
           console.error('Order toppings creation error:', toppingsError)
           // Non-critical, don't throw
         }
+      }
+    }
+
+    // Send confirmation email
+    if (data.customerEmail) {
+      const order = {
+        id: orderId,
+        order_number: orderNumber,
+        status: 'pending' as const,
+        delivery_type: data.deliveryType,
+        customer_name: data.customerName,
+        customer_phone: data.customerPhone,
+        customer_email: data.customerEmail,
+        delivery_address: data.deliveryAddress,
+        delivery_city: data.deliveryCity,
+        delivery_zip: data.deliveryZip,
+        subtotal: data.subtotal,
+        delivery_fee: data.deliveryFee,
+        total: data.total,
+        payment_method: data.paymentMethod,
+        notes: data.notes,
+        user_id: user?.id || null,
+        created_at: new Date().toISOString(),
+        confirmed_at: null,
+        completed_at: null,
+        estimated_delivery: null,
+      }
+      
+      const emailSent = await sendOrderConfirmationEmail({
+        order: order as any,
+        items: orderItems as any,
+        locale: 'hu',
+      })
+
+      if (!emailSent) {
+        console.warn('Failed to send confirmation email')
+        // Don't fail the order if email fails
       }
     }
 
