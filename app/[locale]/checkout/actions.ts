@@ -6,11 +6,14 @@ import type { DeliveryType, PaymentMethod } from '@/lib/types'
 
 interface OrderItemData {
   productId: string
+  productName: string
   sizeId: string | null
+  sizeName: string | null
   quantity: number
   unitPrice: number
   totalPrice: number
   toppingIds: string[]
+  toppingNames: string[]
   toppingPrices: number[]
 }
 
@@ -19,7 +22,7 @@ interface OrderData {
   paymentMethod: PaymentMethod
   customerName: string
   customerPhone: string
-  customerEmail: string | null
+  customerEmail: string
   deliveryAddress: string | null
   deliveryCity: string | null
   deliveryZip: string | null
@@ -31,9 +34,9 @@ interface OrderData {
 }
 
 function generateOrderNumber(): string {
-  const timestamp = Date.now().toString(36).toUpperCase()
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase()
-  return `TV-${timestamp}-${random}`
+  // Simple 6-digit order number: TV-123456
+  const num = Math.floor(100000 + Math.random() * 900000)
+  return `TV-${num}`
 }
 
 export async function placeOrder(data: OrderData): Promise<{ success: boolean; orderNumber?: string; error?: string }> {
@@ -101,10 +104,13 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
         id: orderItemId,
         order_id: orderId,
         product_id: item.productId,
+        product_name: item.productName,
         size_id: item.sizeId,
+        size_name: item.sizeName,
         quantity: item.quantity,
         unit_price: item.unitPrice,
         total_price: item.totalPrice,
+        topping_names: item.toppingNames,
       } as any)
 
       // Create order item toppings
@@ -127,40 +133,38 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
     }
 
     // Send confirmation email
-    if (data.customerEmail) {
-      const order = {
-        id: orderId,
-        order_number: orderNumber,
-        status: 'pending' as const,
-        delivery_type: data.deliveryType,
-        customer_name: data.customerName,
-        customer_phone: data.customerPhone,
-        customer_email: data.customerEmail,
-        delivery_address: data.deliveryAddress,
-        delivery_city: data.deliveryCity,
-        delivery_zip: data.deliveryZip,
-        subtotal: data.subtotal,
-        delivery_fee: data.deliveryFee,
-        total: data.total,
-        payment_method: data.paymentMethod,
-        notes: data.notes,
-        user_id: user?.id || null,
-        created_at: new Date().toISOString(),
-        confirmed_at: null,
-        completed_at: null,
-        estimated_delivery: null,
-      }
-      
-      const emailSent = await sendOrderConfirmationEmail({
-        order: order as any,
-        items: orderItems as any,
-        locale: 'hu',
-      })
+    const order = {
+      id: orderId,
+      order_number: orderNumber,
+      status: 'pending' as const,
+      delivery_type: data.deliveryType,
+      customer_name: data.customerName,
+      customer_phone: data.customerPhone,
+      customer_email: data.customerEmail,
+      delivery_address: data.deliveryAddress,
+      delivery_city: data.deliveryCity,
+      delivery_zip: data.deliveryZip,
+      subtotal: data.subtotal,
+      delivery_fee: data.deliveryFee,
+      total: data.total,
+      payment_method: data.paymentMethod,
+      notes: data.notes,
+      user_id: user?.id || null,
+      created_at: new Date().toISOString(),
+      confirmed_at: null,
+      completed_at: null,
+      estimated_delivery: null,
+    }
+    
+    const emailSent = await sendOrderConfirmationEmail({
+      order: order as any,
+      items: orderItems as any,
+      locale: 'hu',
+    })
 
-      if (!emailSent) {
-        console.warn('Failed to send confirmation email')
-        // Don't fail the order if email fails
-      }
+    if (!emailSent) {
+      console.warn('Failed to send confirmation email')
+      // Don't fail the order if email fails
     }
 
     return { success: true, orderNumber }

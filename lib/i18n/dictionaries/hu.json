@@ -93,7 +93,8 @@
     "orderNumber": "Rendelésszám",
     "thankYou": "Köszönjük a rendelést!",
     "confirmation": "Hamarosan felvesszük veled a kapcsolatot.",
-    "backToMenu": "Vissza az étlaphoz"
+    "backToMenu": "Vissza az étlaphoz",
+    "trackOrder": "Rendelés követése"
   },
   "auth": {
     "loginTitle": "Bejelentkezés",

@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { toast } from 'sonner'
+import { useOrderNotifications } from '@/hooks/use-order-notifications'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -76,6 +77,18 @@ export function OrdersList({ orders, locale, dictionary, initialFromDate, initia
   const [isUpdating, setIsUpdating] = useState(false)
   const [fromDate, setFromDate] = useState(initialFromDate || '')
   const [toDate, setToDate] = useState(initialToDate || '')
+
+  // Handle new order notification
+  const handleNewOrder = useCallback(() => {
+    router.refresh()
+  }, [router])
+
+  // Enable real-time notifications for new orders
+  useOrderNotifications({
+    onNewOrder: handleNewOrder,
+    enabled: true,
+    locale,
+  })
 
   const handleDateFilter = () => {
     const params = new URLSearchParams()

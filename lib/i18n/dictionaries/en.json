@@ -93,7 +93,8 @@
     "orderNumber": "Order Number",
     "thankYou": "Thank you for your order!",
     "confirmation": "We will contact you shortly.",
-    "backToMenu": "Back to Menu"
+    "backToMenu": "Back to Menu",
+    "trackOrder": "Track Order"
   },
   "auth": {
     "loginTitle": "Login",

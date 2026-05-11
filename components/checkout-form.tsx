@@ -144,7 +144,7 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
         paymentMethod,
         customerName: formData.name,
         customerPhone: formData.phone,
-        customerEmail: formData.email || null,
+        customerEmail: formData.email,
         deliveryAddress: deliveryType === 'delivery' ? streetAddress : null,
         deliveryCity: deliveryType === 'delivery' && selectedZone ? (locale === 'hu' ? selectedZone.name_hu : selectedZone.name_en) : null,
         deliveryZip: deliveryType === 'delivery' ? selectedZip : null,
@@ -154,11 +154,14 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
         total,
         items: items.map((item) => ({
           productId: item.product.id,
+          productName: getLocalizedName(item.product, locale),
           sizeId: item.size?.id || null,
+          sizeName: item.size ? getLocalizedName(item.size, locale) : null,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
           totalPrice: item.totalPrice,
           toppingIds: item.toppings.map((t) => t.id),
+          toppingNames: item.toppings.map((t) => getLocalizedName(t, locale)),
           toppingPrices: item.toppings.map((t) => t.price),
         })),
       }
@@ -263,13 +266,14 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">{t.checkout.email}</Label>
+                <Label htmlFor="email">{t.checkout.email} *</Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </CardContent>
