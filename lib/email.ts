@@ -173,8 +173,8 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData): Promise<
     `
 
     const response = await resend.emails.send({
-      from: 'noreply@pizzavilag.hu',
-      to: order.customer_email || 'info@pizzavilag.hu',
+      from: 'onboarding@resend.dev',
+      to: order.customer_email,
       subject: t.subject,
       html,
     })
