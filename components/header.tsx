@@ -60,12 +60,17 @@ export function Header({ locale, dictionary }: HeaderProps) {
       setProfile(profileData)
     }
 
-    // onAuthStateChange handles everything including the initial session load.
-    // INITIAL_SESSION fires after Supabase refreshes the token if needed, so
-    // it always carries a valid session (or null if the refresh token expired).
-    // This is more reliable than a separate getUser() call which returns null
-    // on an expired access token before the refresh has happened.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    // Hydrate immediately from the cached session (no network round-trip).
+    // This avoids the "Loading..." state when refreshing the page while logged in.
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const currentUser = session?.user ?? null
+      setUser(currentUser)
+      if (currentUser) await syncUser(currentUser.id)
+      setIsLoading(false)
+    })
+
+    // Track subsequent auth changes (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED, INITIAL_SESSION).
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       const currentUser = session?.user ?? null
       setUser(currentUser)
       if (currentUser) {
@@ -73,8 +78,11 @@ export function Header({ locale, dictionary }: HeaderProps) {
       } else {
         setProfile(null)
       }
-      if (event === 'INITIAL_SESSION') setIsLoading(false)
+      setIsLoading(false)
     })
+
+    // Safety fallback: never leave the UI stuck in the loading state.
+    const loadingTimeout = setTimeout(() => setIsLoading(false), 3000)
 
     // Re-verify when the tab becomes visible again (stale/old tab scenario)
     const handleVisibilityChange = async () => {
@@ -92,6 +100,7 @@ export function Header({ locale, dictionary }: HeaderProps) {
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
+      clearTimeout(loadingTimeout)
       subscription.unsubscribe()
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
