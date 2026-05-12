@@ -33,6 +33,16 @@ const dayNames: Record<string, { hu: string; en: string }> = {
 
 const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
+const fallbackOpeningHours: OpeningHours = {
+  monday: { open: '', close: '', closed: true },
+  tuesday: { open: '11:00', close: '21:00' },
+  wednesday: { open: '11:00', close: '21:00' },
+  thursday: { open: '11:00', close: '21:00' },
+  friday: { open: '', close: '', closed: true },
+  saturday: { open: '', close: '', closed: true },
+  sunday: { open: '', close: '', closed: true },
+}
+
 function getCurrentDay(): string {
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
   return days[new Date().getDay()]
@@ -112,9 +122,8 @@ export function OpenStatusDot({ locale }: { locale: string }) {
         .eq('key', 'is_open')
         .single()
       
-      if (hoursData) {
-        setOpeningHours(hoursData.value as OpeningHours)
-      }
+      const value = hoursData?.value as OpeningHours | undefined
+      setOpeningHours(value && Object.keys(value).length ? value : fallbackOpeningHours)
       
       if (overrideData) {
         setManualOverride((overrideData.value as { value: boolean }).value)
@@ -188,9 +197,8 @@ export function OpenStatus({ locale, showHours = false, compact = false }: OpenS
         .eq('key', 'is_open')
         .single()
       
-      if (hoursData) {
-        setOpeningHours(hoursData.value as OpeningHours)
-      }
+      const value = hoursData?.value as OpeningHours | undefined
+      setOpeningHours(value && Object.keys(value).length ? value : fallbackOpeningHours)
       
       if (overrideData) {
         setManualOverride((overrideData.value as { value: boolean }).value)

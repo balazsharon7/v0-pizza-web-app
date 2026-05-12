@@ -16,6 +16,16 @@ interface PageProps {
   params: Promise<{ locale: Locale }>
 }
 
+const fallbackOpeningHours = {
+  monday: { closed: true },
+  tuesday: { open: '11:00', close: '21:00' },
+  wednesday: { open: '11:00', close: '21:00' },
+  thursday: { open: '11:00', close: '21:00' },
+  friday: { closed: true },
+  saturday: { closed: true },
+  sunday: { closed: true },
+} as const
+
 export default async function AboutPage({ params }: PageProps) {
   const { locale } = await params
   const t = await getDictionary(locale)
@@ -34,7 +44,9 @@ export default async function AboutPage({ params }: PageProps) {
   settingsData?.forEach((s) => { settings[s.key] = s.value })
 
   const storeInfo = settings.store_info || {}
-  const openingHours = settings.opening_hours || {}
+  const openingHours = Object.keys(settings.opening_hours || {}).length
+    ? settings.opening_hours
+    : fallbackOpeningHours
 
   const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const
 

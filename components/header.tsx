@@ -108,12 +108,23 @@ export function Header({ locale, dictionary }: HeaderProps) {
 
   const handleSignOut = async () => {
     const supabase = createClient()
-    await supabase.auth.signOut()
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        // Fall back to a local-only sign out so the client state still clears
+        // if the global sign out request to the auth server fails.
+        await supabase.auth.signOut({ scope: 'local' })
+      }
+    } catch (err) {
+      console.error('Sign out failed:', err)
+      await supabase.auth.signOut({ scope: 'local' })
+    }
     setUser(null)
     setProfile(null)
     toast.success(locale === 'hu' ? 'Sikeres kijelentkezés!' : 'Successfully signed out!')
-    router.push(`/${locale}`)
-    router.refresh()
+    // Hard navigation to guarantee server-rendered state reflects the sign out
+    // and any stale cookies/middleware data are flushed.
+    window.location.href = `/${locale}`
   }
 
   const switchLocale = (newLocale: Locale) => {
