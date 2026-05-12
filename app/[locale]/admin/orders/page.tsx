@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import type { Locale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
 import { OrdersList } from '@/components/admin/orders-list'
-import { RealtimeDashboard } from '@/components/admin/realtime-dashboard'
 
 export async function generateMetadata({
   params,
@@ -59,20 +58,18 @@ export default async function AdminOrdersPage({
   const { data: orders } = await query
 
   return (
-    <RealtimeDashboard locale={locale}>
-      <div className="space-y-6">
-        <h1 className="font-serif text-2xl font-bold md:text-3xl">
-          {locale === 'hu' ? 'Rendelések' : 'Orders'}
-        </h1>
+    <div className="space-y-6">
+      <h1 className="font-serif text-2xl font-bold md:text-3xl">
+        {locale === 'hu' ? 'Rendelések' : 'Orders'}
+      </h1>
 
-        <OrdersList 
-          orders={orders || []} 
-          locale={locale} 
-          dictionary={dictionary}
-          initialFromDate={fromDate.toISOString().split('T')[0]}
-          initialToDate={(to ? toDate : today).toISOString().split('T')[0]}
-        />
-      </div>
-    </RealtimeDashboard>
+      <OrdersList 
+        orders={orders || []} 
+        locale={locale} 
+        dictionary={dictionary}
+        initialFromDate={fromDate.toISOString().split('T')[0]}
+        initialToDate={(to ? toDate : today).toISOString().split('T')[0]}
+      />
+    </div>
   )
 }
