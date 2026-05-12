@@ -129,14 +129,40 @@ export default async function AboutPage({ params }: PageProps) {
 
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
               <Image
-                src="/images/pizza-room.jpg"
-                alt="Kemencénk – Terra Verde"
+                src="/images/pizzak.jpg"
+                alt={locale === 'hu' ? 'Pizzáink – Terra Verde' : 'Our pizzas – Terra Verde'}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
-                {locale === 'hu' ? 'Fapellet kemencénk' : 'Our wood-fired oven'}
+                {locale === 'hu' ? 'Pizzáink' : 'Our pizzas'}
+              </p>
+            </div>
+
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
+              <Image
+                src="/images/terasz.jpg"
+                alt={locale === 'hu' ? 'Teraszunk – Terra Verde' : 'Our terrace – Terra Verde'}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
+                {locale === 'hu' ? 'Teraszunk' : 'Our terrace'}
+              </p>
+            </div>
+
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
+              <Image
+                src="/images/pizza-room.jpg"
+                alt={locale === 'hu' ? 'Konyhánk – Terra Verde' : 'Our kitchen – Terra Verde'}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
+                {locale === 'hu' ? 'Konyhánk' : 'Our kitchen'}
               </p>
             </div>
 
