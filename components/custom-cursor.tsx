@@ -12,8 +12,8 @@ export function CustomCursor() {
   const pathname = usePathname()
   const cursorRef = useRef<HTMLDivElement>(null)
   const [state, setState] = useState<CursorState>('default')
-  const [enabled, setEnabled] = useState(false)
   const [visible, setVisible] = useState(false)
+  const [active, setActive] = useState(false)
 
   // Disable on admin pages (productivity-friendly)
   const isAdminPage = pathname?.includes('/admin')
@@ -25,11 +25,18 @@ export function CustomCursor() {
     const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches
     if (isTouch) return
 
-    setEnabled(true)
-    document.body.classList.add('custom-cursor-active')
+    // Mark as active so the cursor element is mounted, then grab ref
+    setActive(true)
+  }, [isAdminPage])
+
+  // Second effect: attach listeners once the div is in the DOM
+  useEffect(() => {
+    if (!active || isAdminPage) return
 
     const cursor = cursorRef.current
     if (!cursor) return
+
+    document.body.classList.add('custom-cursor-active')
 
     let isDown = false
 
@@ -73,9 +80,9 @@ export function CustomCursor() {
       document.removeEventListener('mouseleave', onLeaveWindow)
       document.removeEventListener('mouseenter', onEnterWindow)
     }
-  }, [isAdminPage])
+  }, [active, isAdminPage])
 
-  if (!enabled || isAdminPage) return null
+  if (!active || isAdminPage) return null
 
   return (
     <div
@@ -92,8 +99,6 @@ export function CustomCursor() {
         style={{
           width: '44px',
           height: '44px',
-          // Rotate so the pizza tip points to the upper-left (cursor-like angle)
-          // Slight translate so the visual tip aligns with the actual click point
           transform: `translate(-6px, -6px) rotate(-18deg) ${state === 'active' ? 'scale(0.82)' : 'scale(1)'}`,
           transformOrigin: 'top left',
           transition: 'transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1)',
