@@ -60,21 +60,12 @@ export function Header({ locale, dictionary }: HeaderProps) {
       setProfile(profileData)
     }
 
-    // Initial load: use getUser() for a server-validated result
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      if (user) await syncUser(user.id)
-      setIsLoading(false)
-    }
-
-    fetchUser()
-
-    // Subsequent changes (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED, etc.)
-    // Skip INITIAL_SESSION — fetchUser already handles it and avoids the
-    // race condition where INITIAL_SESSION fires with null before token refresh.
+    // onAuthStateChange handles everything including the initial session load.
+    // INITIAL_SESSION fires after Supabase refreshes the token if needed, so
+    // it always carries a valid session (or null if the refresh token expired).
+    // This is more reliable than a separate getUser() call which returns null
+    // on an expired access token before the refresh has happened.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'INITIAL_SESSION') return
       const currentUser = session?.user ?? null
       setUser(currentUser)
       if (currentUser) {
@@ -82,15 +73,17 @@ export function Header({ locale, dictionary }: HeaderProps) {
       } else {
         setProfile(null)
       }
+      if (event === 'INITIAL_SESSION') setIsLoading(false)
     })
 
     // Re-verify when the tab becomes visible again (stale/old tab scenario)
     const handleVisibilityChange = async () => {
       if (document.visibilityState !== 'visible') return
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      if (user) {
-        await syncUser(user.id)
+      const { data: { session } } = await supabase.auth.getSession()
+      const currentUser = session?.user ?? null
+      setUser(currentUser)
+      if (currentUser) {
+        await syncUser(currentUser.id)
       } else {
         setProfile(null)
       }
