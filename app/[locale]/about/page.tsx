@@ -21,12 +21,7 @@ export default async function AboutPage({ params }: PageProps) {
   const t = await getDictionary(locale)
   const supabase = await createClient()
 
-  // Fetch settings
-  const { data: settingsData } = await supabase
-    .from('settings')
-    .select('key, value')
-
-  // Fetch delivery zones
+  const { data: settingsData } = await supabase.from('settings').select('key, value')
   const { data: deliveryZonesData } = await supabase
     .from('delivery_zones')
     .select('*')
@@ -36,26 +31,27 @@ export default async function AboutPage({ params }: PageProps) {
   const deliveryZones = (deliveryZonesData || []) as DeliveryZone[]
 
   const settings: Record<string, any> = {}
-  settingsData?.forEach((s) => {
-    settings[s.key] = s.value
-  })
+  settingsData?.forEach((s) => { settings[s.key] = s.value })
 
   const storeInfo = settings.store_info || {}
   const openingHours = settings.opening_hours || {}
-  const delivery = settings.delivery || {}
 
   const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const
 
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
+
+      {/* ── Hero ── */}
       <section className="relative bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
           <div className="absolute top-20 right-20 w-40 h-40 rounded-full border-2 border-primary" />
           <div className="absolute bottom-20 left-20 w-60 h-60 rounded-full border-2 border-accent" />
         </div>
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
+
+            {/* Text */}
             <div className="space-y-6">
               <div className="animate-fade-in-up flex items-center gap-3">
                 <div className="h-[2px] w-10 bg-accent rounded-full" />
@@ -71,153 +67,167 @@ export default async function AboutPage({ params }: PageProps) {
               </p>
               <div className="animate-fade-in-up animation-delay-300">
                 <Button asChild size="lg" className="mt-4 shadow-lg shadow-primary/25 hover:shadow-xl transition-all">
-                  <Link href={`/${locale}/menu`}>
-                    {t.about.orderCta}
-                  </Link>
+                  <Link href={`/${locale}/menu`}>{t.about.orderCta}</Link>
                 </Button>
               </div>
             </div>
-            <div className="relative aspect-square max-w-md mx-auto lg:mx-0 animate-scale-in animation-delay-200">
-              <div className="absolute inset-4 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-3xl" />
-              <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl ring-4 ring-primary/10">
+
+            {/* Photos — main + inset */}
+            <div className="relative animate-scale-in animation-delay-200 max-w-md mx-auto lg:mx-0 w-full">
+              {/* Main photo */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-4 ring-primary/10 aspect-[4/3]">
                 <Image
-                  src="/images/logo.webp"
-                  alt="Terra Verde Pizzeria"
+                  src="/images/pizza-fold.jpg"
+                  alt="Terra Verde – Pizza al portafoglio"
                   fill
                   className="object-cover"
                   priority
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              </div>
+
+              {/* Inset oven photo */}
+              <div className="absolute -bottom-5 -right-5 w-36 h-36 rounded-xl overflow-hidden shadow-xl ring-2 ring-background">
+                <Image
+                  src="/images/oven-room.jpg"
+                  alt="Terra Verde – Kemencénk"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              {/* 48h badge */}
+              <div className="absolute -top-4 -left-4 bg-primary text-primary-foreground rounded-full w-20 h-20 flex flex-col items-center justify-center text-center shadow-lg">
+                <span className="font-serif font-bold text-xl leading-none">48h</span>
+                <span className="text-[10px] leading-tight opacity-90 px-1">
+                  {locale === 'hu' ? 'kelesztés' : 'ferment'}
+                </span>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* Story Section */}
+      {/* ── Photo Gallery ── */}
+      <section className="py-16 lg:py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-6">
+
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
+              <Image
+                src="/images/pizza-fold.jpg"
+                alt="Pizza al Portafoglio – Terra Verde"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
+                Pizza al Portafoglio
+              </p>
+            </div>
+
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
+              <Image
+                src="/images/oven-room.jpg"
+                alt="Kemencénk – Terra Verde"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
+                {locale === 'hu' ? 'Fapellet kemencénk' : 'Our wood-fired oven'}
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── Story ── */}
       <section className="py-16 lg:py-24 bg-card">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center space-y-6 section-divider pt-8">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold">
-              {t.about.storyTitle}
-            </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {t.about.storyText1}
-            </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {t.about.storyText2}
-            </p>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold">{t.about.storyTitle}</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">{t.about.storyText1}</p>
+            <p className="text-lg text-muted-foreground leading-relaxed">{t.about.storyText2}</p>
           </div>
         </div>
       </section>
 
-      {/* Quality Section */}
+      {/* ── Quality ── */}
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14 section-divider pt-8">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold">
-              {t.about.qualityTitle}
-            </h2>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold">{t.about.qualityTitle}</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="group text-center border-0 shadow-md hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 bg-card rounded-2xl">
-              <CardContent className="pt-10 pb-8 px-6 space-y-4">
-                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300 flex items-center justify-center">
-                  <Timer className="w-10 h-10 text-primary" />
-                </div>
-                <h3 className="font-serif text-xl font-semibold tracking-tight">
-                  {t.about.quality1Title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {t.about.quality1Text}
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="group text-center border-0 shadow-md hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 bg-card rounded-2xl">
-              <CardContent className="pt-10 pb-8 px-6 space-y-4">
-                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300 flex items-center justify-center">
-                  <Wheat className="w-10 h-10 text-primary" />
-                </div>
-                <h3 className="font-serif text-xl font-semibold tracking-tight">
-                  {t.about.quality2Title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {t.about.quality2Text}
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="group text-center border-0 shadow-md hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 bg-card rounded-2xl">
-              <CardContent className="pt-10 pb-8 px-6 space-y-4">
-                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300 flex items-center justify-center">
-                  <ChefHat className="w-10 h-10 text-primary" />
-                </div>
-                <h3 className="font-serif text-xl font-semibold tracking-tight">
-                  {t.about.quality3Title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {t.about.quality3Text}
-                </p>
-              </CardContent>
-            </Card>
+            {[
+              { icon: Timer, title: t.about.quality1Title, text: t.about.quality1Text },
+              { icon: Wheat, title: t.about.quality2Title, text: t.about.quality2Text },
+              { icon: ChefHat, title: t.about.quality3Title, text: t.about.quality3Text },
+            ].map(({ icon: Icon, title, text }) => (
+              <Card key={title} className="group text-center border-0 shadow-md hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 bg-card rounded-2xl">
+                <CardContent className="pt-10 pb-8 px-6 space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300 flex items-center justify-center">
+                    <Icon className="w-10 h-10 text-primary" />
+                  </div>
+                  <h3 className="font-serif text-xl font-semibold tracking-tight">{title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{text}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Contact & Info Section */}
+      {/* ── Contact & Hours ── */}
       <section className="py-16 lg:py-24 bg-card">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12">
-            {/* Contact Info */}
+
+            {/* Contact */}
             <div className="space-y-8">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold">
-                {t.about.contactTitle}
-              </h2>
-              
+              <h2 className="font-serif text-3xl md:text-4xl font-bold">{t.about.contactTitle}</h2>
               <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <MapPin className="w-6 h-6 text-primary" />
+                {[
+                  {
+                    icon: MapPin,
+                    label: t.about.address,
+                    value: storeInfo.address || '2040 Budaörs, Szabadság út 23-25.',
+                    href: undefined as string | undefined,
+                  },
+                  {
+                    icon: Phone,
+                    label: t.about.phone,
+                    value: storeInfo.phone || '+36 30 173 5918',
+                    href: `tel:${storeInfo.phone || '+36301735918'}`,
+                  },
+                  {
+                    icon: Mail,
+                    label: t.about.email,
+                    value: storeInfo.email || 'info@terraverdepizza.hu',
+                    href: `mailto:${storeInfo.email || 'info@terraverdepizza.hu'}`,
+                  },
+                ].map(({ icon: Icon, label, value, href }) => (
+                  <div key={label} className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-1">{label}</h3>
+                      {href ? (
+                        <a href={href} className="text-muted-foreground hover:text-primary transition-colors">
+                          {value}
+                        </a>
+                      ) : (
+                        <p className="text-muted-foreground">{value}</p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{t.about.address}</h3>
-                    <p className="text-muted-foreground">
-                      {storeInfo.address || '2040 Budaors, Szabadsag ut 23-25.'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <Phone className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{t.about.phone}</h3>
-                    <a 
-                      href={`tel:${storeInfo.phone || '+36301735918'}`}
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {storeInfo.phone || '+36 30 173 5918'}
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <Mail className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{t.about.email}</h3>
-                    <a 
-                      href={`mailto:${storeInfo.email || 'info@terraverdepizza.hu'}`}
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {storeInfo.email || 'info@terraverdepizza.hu'}
-                    </a>
-                  </div>
-                </div>
+                ))}
               </div>
-
               <Separator />
-
             </div>
 
             {/* Opening Hours */}
@@ -226,28 +236,25 @@ export default async function AboutPage({ params }: PageProps) {
                 <Clock className="w-8 h-8 text-primary" />
                 {t.about.openingHoursTitle}
               </h2>
-              
               <Card className="border-none shadow-lg">
                 <CardContent className="p-6">
                   <div className="space-y-4">
                     {days.map((day) => {
                       const hours = openingHours[day]
                       const isClosed = !hours || hours.closed
-                      const dayName = t.days[day]
-                      
                       return (
-                        <div 
+                        <div
                           key={day}
                           className="flex justify-between items-center py-2 border-b border-border last:border-0"
                         >
-                          <span className="font-medium">{dayName}</span>
+                          <span className="font-medium">{t.days[day]}</span>
                           {isClosed ? (
                             <span className="text-destructive font-medium">
                               {t.common.closed.toUpperCase()}
                             </span>
                           ) : (
                             <span className="text-muted-foreground">
-                              {hours.open} - {hours.close}
+                              {hours.open} – {hours.close}
                             </span>
                           )}
                         </div>
@@ -256,13 +263,13 @@ export default async function AboutPage({ params }: PageProps) {
                   </div>
                 </CardContent>
               </Card>
-
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* Delivery Zones Section with Map */}
+      {/* ── Delivery Zones ── */}
       {deliveryZones.length > 0 && (
         <section className="py-16 lg:py-24 bg-muted/20">
           <div className="container mx-auto px-4">
@@ -271,9 +278,9 @@ export default async function AboutPage({ params }: PageProps) {
         </section>
       )}
 
-      {/* CTA Section */}
+      {/* ── CTA ── */}
       <section className="relative py-16 lg:py-24 bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary-foreground/20" />
           <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-2 border-primary-foreground/20" />
         </div>
@@ -287,12 +294,11 @@ export default async function AboutPage({ params }: PageProps) {
               : 'Order your favorite pizza online and we will deliver it to your door!'}
           </p>
           <Button asChild size="lg" variant="secondary" className="shadow-lg hover:shadow-xl transition-all">
-            <Link href={`/${locale}/menu`}>
-              {t.nav.viewMenu}
-            </Link>
+            <Link href={`/${locale}/menu`}>{t.nav.viewMenu}</Link>
           </Button>
         </div>
       </section>
+
     </main>
   )
 }
