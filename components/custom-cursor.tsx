@@ -99,8 +99,10 @@ export function CustomCursor() {
         style={{
           width: '44px',
           height: '44px',
-          transform: `translate(-6px, -6px) rotate(-18deg) ${state === 'active' ? 'scale(0.82)' : 'scale(1)'}`,
-          transformOrigin: 'top left',
+          // Rotate so the pizza tip points upper-left like a standard cursor arrow.
+          // translate() shifts the hotspot (tip) to align with the actual click point.
+          transform: `translate(-10px, -8px) rotate(-135deg) ${state === 'active' ? 'scale(0.82)' : 'scale(1)'}`,
+          transformOrigin: 'center',
           transition: 'transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
       >
