@@ -96,9 +96,9 @@ export function OpenStatusDot({ locale }: { locale: string }) {
   const [openingHours, setOpeningHours] = useState<OpeningHours | null>(null)
   const [manualOverride, setManualOverride] = useState<boolean | null>(null)
   
-  const supabase = createClient()
-  
   useEffect(() => {
+    const supabase = createClient()
+    
     const fetchSettings = async () => {
       const { data: hoursData } = await supabase
         .from('settings')
@@ -124,7 +124,7 @@ export function OpenStatusDot({ locale }: { locale: string }) {
     fetchSettings()
     const interval = setInterval(fetchSettings, 60000)
     return () => clearInterval(interval)
-  }, [supabase])
+  }, [])
   
   useEffect(() => {
     if (openingHours) {
@@ -172,9 +172,9 @@ export function OpenStatus({ locale, showHours = false, compact = false }: OpenS
   const [manualOverride, setManualOverride] = useState<boolean | null>(null)
   const [status, setStatus] = useState<{ isOpen: boolean; closesAt?: string; opensAt?: string } | null>(null)
   
-  const supabase = createClient()
-  
   useEffect(() => {
+    const supabase = createClient()
+    
     const fetchSettings = async () => {
       const { data: hoursData } = await supabase
         .from('settings')
@@ -202,7 +202,7 @@ export function OpenStatus({ locale, showHours = false, compact = false }: OpenS
     // Update status every minute
     const interval = setInterval(fetchSettings, 60000)
     return () => clearInterval(interval)
-  }, [supabase])
+  }, [])
   
   useEffect(() => {
     if (openingHours) {
