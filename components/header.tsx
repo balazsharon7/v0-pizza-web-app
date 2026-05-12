@@ -50,39 +50,58 @@ export function Header({ locale, dictionary }: HeaderProps) {
 
   useEffect(() => {
     const supabase = createClient()
-    
+
+    const syncUser = async (userId: string) => {
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('is_admin, full_name')
+        .eq('id', userId)
+        .single()
+      setProfile(profileData)
+    }
+
+    // Initial load: use getUser() for a server-validated result
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
-      
-      if (user) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('is_admin, full_name')
-          .eq('id', user.id)
-          .single()
-        setProfile(profileData)
-      }
+      if (user) await syncUser(user.id)
       setIsLoading(false)
     }
-    
+
     fetchUser()
-    
+
+    // Subsequent changes (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED, etc.)
+    // Skip INITIAL_SESSION — fetchUser already handles it and avoids the
+    // race condition where INITIAL_SESSION fires with null before token refresh.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user || null)
-      if (session?.user) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('is_admin, full_name')
-          .eq('id', session.user.id)
-          .single()
-        setProfile(profileData)
+      if (event === 'INITIAL_SESSION') return
+      const currentUser = session?.user ?? null
+      setUser(currentUser)
+      if (currentUser) {
+        await syncUser(currentUser.id)
       } else {
         setProfile(null)
       }
     })
-    
-    return () => subscription.unsubscribe()
+
+    // Re-verify when the tab becomes visible again (stale/old tab scenario)
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState !== 'visible') return
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+      if (user) {
+        await syncUser(user.id)
+      } else {
+        setProfile(null)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      subscription.unsubscribe()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [])
 
   const handleSignOut = async () => {
