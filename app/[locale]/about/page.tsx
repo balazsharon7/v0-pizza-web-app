@@ -17,13 +17,13 @@ interface PageProps {
 }
 
 const fallbackOpeningHours = {
-  monday: { closed: true },
-  tuesday: { open: '11:00', close: '21:00' },
-  wednesday: { open: '11:00', close: '21:00' },
-  thursday: { open: '11:00', close: '21:00' },
-  friday: { closed: true },
-  saturday: { closed: true },
-  sunday: { closed: true },
+  monday: { open: '11:00', close: '22:00' },
+  tuesday: { open: '11:00', close: '22:00' },
+  wednesday: { open: '11:00', close: '22:00' },
+  thursday: { open: '11:00', close: '22:00' },
+  friday: { open: '11:00', close: '23:00' },
+  saturday: { open: '12:00', close: '23:00' },
+  sunday: { open: '12:00', close: '21:00' },
 } as const
 
 export default async function AboutPage({ params }: PageProps) {

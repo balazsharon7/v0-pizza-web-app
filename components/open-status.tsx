@@ -34,13 +34,13 @@ const dayNames: Record<string, { hu: string; en: string }> = {
 const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
 const fallbackOpeningHours: OpeningHours = {
-  monday: { open: '', close: '', closed: true },
-  tuesday: { open: '11:00', close: '21:00' },
-  wednesday: { open: '11:00', close: '21:00' },
-  thursday: { open: '11:00', close: '21:00' },
-  friday: { open: '', close: '', closed: true },
-  saturday: { open: '', close: '', closed: true },
-  sunday: { open: '', close: '', closed: true },
+  monday: { open: '11:00', close: '22:00' },
+  tuesday: { open: '11:00', close: '22:00' },
+  wednesday: { open: '11:00', close: '22:00' },
+  thursday: { open: '11:00', close: '22:00' },
+  friday: { open: '11:00', close: '23:00' },
+  saturday: { open: '12:00', close: '23:00' },
+  sunday: { open: '12:00', close: '21:00' },
 }
 
 function getCurrentDay(): string {

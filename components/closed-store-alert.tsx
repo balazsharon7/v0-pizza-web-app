@@ -29,6 +29,16 @@ const dayNames: Record<string, { hu: string; en: string }> = {
 
 const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
+const fallbackOpeningHours: OpeningHours = {
+  monday: { open: '11:00', close: '22:00' },
+  tuesday: { open: '11:00', close: '22:00' },
+  wednesday: { open: '11:00', close: '22:00' },
+  thursday: { open: '11:00', close: '22:00' },
+  friday: { open: '11:00', close: '23:00' },
+  saturday: { open: '12:00', close: '23:00' },
+  sunday: { open: '12:00', close: '21:00' },
+}
+
 function getCurrentDay(): string {
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
   return days[new Date().getDay()]
@@ -109,21 +119,20 @@ export function ClosedStoreAlert({ locale, onStatusChange }: ClosedStoreAlertPro
         .eq('key', 'is_open')
         .single()
       
-      if (hoursData) {
-        const hours = hoursData.value as OpeningHours
-        const manualOverride = overrideData ? (overrideData.value as { value: boolean }).value : null
-        const status = checkIsOpen(hours, manualOverride)
-        
-        onStatusChange?.(status.isOpen)
-        
-        if (!status.isOpen && !hasShown) {
-          setNextOpenTime(status.nextOpenTime)
-          setShowAlert(true)
-          setHasShown(true)
-        }
+      const rawHours = hoursData?.value as OpeningHours | undefined
+      const hours = rawHours && Object.keys(rawHours).length ? rawHours : fallbackOpeningHours
+      const manualOverride = overrideData ? (overrideData.value as { value: boolean }).value : null
+      const status = checkIsOpen(hours, manualOverride)
+
+      onStatusChange?.(status.isOpen)
+
+      if (!status.isOpen && !hasShown) {
+        setNextOpenTime(status.nextOpenTime)
+        setShowAlert(true)
+        setHasShown(true)
       }
     }
-    
+
     checkStatus()
   }, [supabase, hasShown, onStatusChange])
   
@@ -185,14 +194,13 @@ export function useStoreStatus() {
         .eq('key', 'is_open')
         .single()
       
-      if (hoursData) {
-        const hours = hoursData.value as OpeningHours
-        const manualOverride = overrideData ? (overrideData.value as { value: boolean }).value : null
-        const status = checkIsOpen(hours, manualOverride)
-        setIsOpen(status.isOpen)
-      }
+      const rawHours = hoursData?.value as OpeningHours | undefined
+      const hours = rawHours && Object.keys(rawHours).length ? rawHours : fallbackOpeningHours
+      const manualOverride = overrideData ? (overrideData.value as { value: boolean }).value : null
+      const status = checkIsOpen(hours, manualOverride)
+      setIsOpen(status.isOpen)
     }
-    
+
     checkStatus()
     const interval = setInterval(checkStatus, 60000)
     return () => clearInterval(interval)
