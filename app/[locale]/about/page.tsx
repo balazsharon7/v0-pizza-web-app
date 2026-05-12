@@ -89,7 +89,7 @@ export default async function AboutPage({ params }: PageProps) {
               {/* Inset oven photo */}
               <div className="absolute -bottom-5 -right-5 w-36 h-36 rounded-xl overflow-hidden shadow-xl ring-2 ring-background">
                 <Image
-                  src="/images/oven-room.jpg"
+                  src="/images/pizza-room.jpg"
                   alt="Terra Verde – Kemencénk"
                   fill
                   className="object-cover"
@@ -129,7 +129,7 @@ export default async function AboutPage({ params }: PageProps) {
 
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
               <Image
-                src="/images/oven-room.jpg"
+                src="/images/pizza-room.jpg"
                 alt="Kemencénk – Terra Verde"
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
