@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight, Clock, MapPin, Phone, Mail, Leaf, ChefHat, Truck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
@@ -327,18 +328,19 @@ export default async function HomePage({
         <div className="container mx-auto px-4 max-w-6xl">
           <ScrollReveal>
             <div className="cta-card relative overflow-hidden rounded-[2rem] px-6 py-14 sm:px-12 sm:py-20 lg:py-24 text-center text-primary-foreground">
-              <div className="cta-card-bg" aria-hidden />
-              <div className="cta-card-blob cta-card-blob-1" aria-hidden />
-              <div className="cta-card-blob cta-card-blob-2" aria-hidden />
+              <Image
+                src="/images/pizzak.jpg"
+                alt=""
+                fill
+                aria-hidden
+                priority={false}
+                className="cta-card-photo object-cover"
+              />
+              <div className="cta-card-tint" aria-hidden />
               <div className="cta-card-grain" aria-hidden />
 
               <div className="relative z-10">
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs uppercase tracking-[0.22em] font-medium border border-white/20">
-                  <span aria-hidden>🍕</span>
-                  {locale === 'hu' ? 'Rendelés' : 'Order'}
-                </span>
-
-                <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mt-6 mb-5 tracking-tight">
+                <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-5 tracking-tight drop-shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
                   {locale === 'hu' ? 'Éhes vagy?' : 'Feeling Hungry?'}
                 </h2>
                 <p className="text-primary-foreground/85 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
