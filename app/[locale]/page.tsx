@@ -66,20 +66,14 @@ export default async function HomePage({
   const today = days[new Date().getDay()]
   const todayHours = openingHours[today]
 
-  // Hero showcase: two round pizzas that spin around their center.
-  // To use your own photos, drop them into public/hero/ as pizza-1.jpg + pizza-2.jpg
-  // — the paths below will pick them up automatically (Unsplash placeholders shown otherwise).
+  // Hero showcase: round pizzas that spin around their own center and crossfade.
+  // Drop your photos into public/hero/ as pizza-N.png to extend this lineup.
   const heroSlides: HeroSlide[] = [
-    {
-      src: '/hero/pizza-1.png',
-      alt: 'Pizza prosciutto e basilico',
-      label: 'Prosciutto e Basilico',
-    },
-    {
-      src: '/hero/pizza-2.png',
-      alt: 'Pizza margherita',
-      label: 'Margherita',
-    },
+    { src: '/hero/pizza-1.png', alt: 'Pizza prosciutto e basilico' },
+    { src: '/hero/pizza-2.png', alt: 'Pizza margherita' },
+    { src: '/hero/pizza-3.png', alt: 'Pizza ai capperi' },
+    { src: '/hero/pizza-4.png', alt: 'Pizza prosciutto e rucola' },
+    { src: '/hero/pizza-5.png', alt: 'Pizza salsiccia e cipolla' },
   ]
 
   return (
