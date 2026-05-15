@@ -91,8 +91,14 @@ export default async function HomePage({
 
         {/* Content */}
         <div className="container mx-auto px-4 py-10 md:py-14 lg:py-16 relative z-10">
-          <div className="grid lg:grid-cols-[1fr_1.25fr] gap-10 lg:gap-12 items-center">
-            <div className="space-y-6 lg:order-1">
+          {/*
+            Mobile flow (single column): title block → spinning pizzas → rest of copy.
+            Desktop (lg+): title and rest of copy stack in the left column while the
+            spinning pizzas occupy the right column spanning both rows.
+          */}
+          <div className="grid gap-8 lg:gap-12 lg:grid-cols-[1fr_1.25fr] lg:grid-rows-[auto_1fr]">
+            {/* 1) Title block */}
+            <div className="space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
                 <OpenStatus locale={locale} compact />
               </div>
@@ -101,7 +107,22 @@ export default async function HomePage({
                 <span className="text-foreground">Terra Verde</span>
                 <span className="block text-primary mt-1">Pizzeria</span>
               </h1>
+            </div>
 
+            {/* 2) Round pizza showcase — each pizza spins around its center, crossfades to the next.
+                Clicking takes the visitor straight to the menu. */}
+            <div className="animate-fade-in animation-delay-200 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
+              <HeroCarousel
+                slides={heroSlides}
+                intervalMs={5000}
+                spinSeconds={50}
+                href={`/${locale}/menu`}
+                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[680px] mx-auto"
+              />
+            </div>
+
+            {/* 3) Rest of the copy */}
+            <div className="space-y-5 lg:col-start-1 lg:row-start-2 lg:self-start">
               <div className="animate-fade-in-up animation-delay-200 flex items-center gap-3">
                 <div className="h-[2px] w-12 bg-accent rounded-full" />
                 <span className="text-accent font-serif italic text-sm tracking-wide">
@@ -118,7 +139,7 @@ export default async function HomePage({
                 {t.hero.description}
               </p>
 
-              <div className="animate-fade-in-up animation-delay-500 flex flex-col gap-4 sm:flex-row pt-4">
+              <div className="animate-fade-in-up animation-delay-500 flex flex-col gap-4 sm:flex-row pt-2">
                 <Button asChild size="lg" className="gap-2 text-base h-12 px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
                   <Link href={`/${locale}/menu`}>
                     {t.hero.cta}
@@ -131,18 +152,6 @@ export default async function HomePage({
                   </Link>
                 </Button>
               </div>
-            </div>
-
-            {/* Round pizza showcase — each pizza spins around its center, crossfades to the next.
-                Clicking anywhere on the pizza takes the visitor straight to the menu. */}
-            <div className="lg:order-2 animate-fade-in animation-delay-200">
-              <HeroCarousel
-                slides={heroSlides}
-                intervalMs={5000}
-                spinSeconds={50}
-                href={`/${locale}/menu`}
-                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[680px] mx-auto"
-              />
             </div>
           </div>
         </div>
