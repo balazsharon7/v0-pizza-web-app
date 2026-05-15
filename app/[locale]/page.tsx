@@ -59,12 +59,12 @@ export default async function HomePage({
   // — the paths below will pick them up automatically (Unsplash placeholders shown otherwise).
   const heroSlides: HeroSlide[] = [
     {
-      src: '/hero/pizza-1.jpg',
+      src: '/hero/pizza-1.png',
       alt: 'Pizza prosciutto e basilico',
       label: 'Prosciutto e Basilico',
     },
     {
-      src: '/hero/pizza-2.jpg',
+      src: '/hero/pizza-2.png',
       alt: 'Pizza margherita',
       label: 'Margherita',
     },
