@@ -9,7 +9,6 @@ import { OpenStatus } from '@/components/open-status'
 import { AuroraBg } from '@/components/animations/aurora-bg'
 import { ScrollReveal } from '@/components/animations/scroll-reveal'
 import { Marquee } from '@/components/animations/marquee'
-import { WaveDivider } from '@/components/animations/wave-divider'
 import { HeroCarousel, type HeroSlide } from '@/components/hero-carousel'
 
 // Disable caching to always show fresh data
@@ -252,97 +251,129 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="relative border-t bg-muted/30 py-20 md:py-28 overflow-hidden">
-        <WaveDivider color="var(--background)" />
+      {/* Why Choose Us — refined */}
+      <section className="relative bg-muted/30 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
         <div className="container mx-auto px-4 relative">
-          <ScrollReveal className="mb-14 text-center pt-8">
-            <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
-              {locale === 'hu' ? 'Terra Verde' : 'Terra Verde'}
-            </span>
-            <h2 className="heading-underline font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
+          <ScrollReveal className="mb-16 text-center">
+            <div className="inline-flex items-center gap-3 mb-5">
+              <span className="h-px w-10 bg-accent/50" />
+              <span className="text-accent font-serif italic text-xs tracking-[0.25em] uppercase">
+                Terra Verde
+              </span>
+              <span className="h-px w-10 bg-accent/50" />
+            </div>
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               {locale === 'hu' ? 'Miért minket válassz?' : 'Why Choose Us?'}
             </h2>
+            <p className="mt-4 text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              {locale === 'hu'
+                ? 'Három dolog, amitől más a Terra Verde pizzája.'
+                : 'Three things that make Terra Verde different.'}
+            </p>
           </ScrollReveal>
 
-          <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
-            <ScrollReveal delay={0} className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-xl hover:-translate-y-2 hover:rotate-[-0.5deg] transition-all duration-500">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-all duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
-                <Leaf className="h-10 w-10 text-primary transition-transform duration-500 group-hover:-rotate-12" />
-              </div>
-              <h3 className="mb-3 font-serif text-xl font-semibold transition-colors group-hover:text-primary">
-                {locale === 'hu' ? 'Friss alapanyagok' : 'Fresh Ingredients'}
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {locale === 'hu'
-                  ? 'Minden nap friss, helyi termelőktől származó alapanyagokat használunk.'
-                  : 'We use fresh, locally sourced ingredients every single day.'}
-              </p>
-            </ScrollReveal>
-
-            <ScrollReveal delay={120} className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-all duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
-                <ChefHat className="h-10 w-10 text-primary transition-transform duration-500 group-hover:-rotate-12" />
-              </div>
-              <h3 className="mb-3 font-serif text-xl font-semibold transition-colors group-hover:text-primary">
-                {locale === 'hu' ? 'Hagyományos receptek' : 'Traditional Recipes'}
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {locale === 'hu'
-                  ? 'Eredeti olasz receptek, generációkon át öröklődő tudással.'
-                  : 'Authentic Italian recipes passed down through generations.'}
-              </p>
-            </ScrollReveal>
-
-            <ScrollReveal delay={240} className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-xl hover:-translate-y-2 hover:rotate-[0.5deg] transition-all duration-500">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-all duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
-                <Truck className="h-10 w-10 text-primary transition-transform duration-500 group-hover:translate-x-1" />
-              </div>
-              <h3 className="mb-3 font-serif text-xl font-semibold transition-colors group-hover:text-primary">
-                {locale === 'hu' ? 'Gyors kiszállítás' : 'Fast Delivery'}
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                {locale === 'hu'
-                  ? 'Rendelésed 1 órán belül nálad van.'
-                  : 'Your order arrives in under 1 hour.'}
-              </p>
-            </ScrollReveal>
+          <div className="grid gap-6 lg:gap-8 md:grid-cols-3 max-w-6xl mx-auto">
+            {[
+              {
+                icon: Leaf,
+                title: locale === 'hu' ? 'Friss alapanyagok' : 'Fresh Ingredients',
+                desc:
+                  locale === 'hu'
+                    ? 'Minden nap friss, helyi termelőktől származó alapanyagokat használunk.'
+                    : 'We use fresh, locally sourced ingredients every single day.',
+              },
+              {
+                icon: ChefHat,
+                title: locale === 'hu' ? 'Hagyományos receptek' : 'Traditional Recipes',
+                desc:
+                  locale === 'hu'
+                    ? 'Eredeti olasz receptek, generációkon át öröklődő tudással.'
+                    : 'Authentic Italian recipes passed down through generations.',
+              },
+              {
+                icon: Truck,
+                title: locale === 'hu' ? 'Gyors kiszállítás' : 'Fast Delivery',
+                desc:
+                  locale === 'hu'
+                    ? 'Rendelésed 1 órán belül nálad van.'
+                    : 'Your order arrives in under 1 hour.',
+              },
+            ].map((f, i) => {
+              const Icon = f.icon
+              return (
+                <ScrollReveal key={f.title} delay={i * 120}>
+                  <article className="feature-card group h-full">
+                    <span className="feature-num" aria-hidden>
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <div className="feature-icon">
+                      <Icon className="h-9 w-9" />
+                    </div>
+                    <h3 className="font-serif text-xl font-semibold tracking-tight mb-2">
+                      {f.title}
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">{f.desc}</p>
+                  </article>
+                </ScrollReveal>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative py-20 md:py-28 bg-gradient-drift text-primary-foreground overflow-hidden">
-        <WaveDivider color="var(--muted)" flip={false} />
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary-foreground/30 animate-[spin-slow_28s_linear_infinite]" />
-          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-2 border-primary-foreground/30 animate-[spin-slow_42s_linear_infinite_reverse]" />
-          <div className="absolute top-1/2 left-1/3 w-20 h-20 rounded-full border border-primary-foreground/25 animate-[float-orbit_9s_ease-in-out_infinite]" />
-        </div>
-        <div className="container mx-auto px-4 text-center relative z-10">
+      {/* CTA Section — refined */}
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        <div className="container mx-auto px-4 max-w-6xl">
           <ScrollReveal>
-            <h2 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl mb-4">
-              {locale === 'hu' ? 'Éhes vagy?' : 'Feeling Hungry?'}
-            </h2>
-            <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
-              {locale === 'hu'
-                ? 'Rendelj most és élvezd a frissen készült pizzák ízét!'
-                : 'Order now and enjoy the taste of freshly made pizzas!'}
-            </p>
-          </ScrollReveal>
-          <ScrollReveal delay={150} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary" className="cta-glow text-base h-12 px-8 shadow-lg hover:shadow-xl transition-all">
-              <Link href={`/${locale}/menu`}>
-                {t.hero.cta}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="secondary" className="text-base h-12 px-8 shadow-lg hover:shadow-xl transition-all">
-              <a href={`tel:${storeInfo.phone || '+36 1 234 5678'}`}>
-                <Phone className="mr-2 h-5 w-5" />
-                <span className="font-semibold">{storeInfo.phone || '+36 1 234 5678'}</span>
-              </a>
-            </Button>
+            <div className="cta-card relative overflow-hidden rounded-[2rem] px-6 py-14 sm:px-12 sm:py-20 lg:py-24 text-center text-primary-foreground">
+              <div className="cta-card-bg" aria-hidden />
+              <div className="cta-card-blob cta-card-blob-1" aria-hidden />
+              <div className="cta-card-blob cta-card-blob-2" aria-hidden />
+              <div className="cta-card-grain" aria-hidden />
+
+              <div className="relative z-10">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs uppercase tracking-[0.22em] font-medium border border-white/20">
+                  <span aria-hidden>🍕</span>
+                  {locale === 'hu' ? 'Rendelés' : 'Order'}
+                </span>
+
+                <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mt-6 mb-5 tracking-tight">
+                  {locale === 'hu' ? 'Éhes vagy?' : 'Feeling Hungry?'}
+                </h2>
+                <p className="text-primary-foreground/85 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+                  {locale === 'hu'
+                    ? 'Rendelj most és élvezd a frissen készült pizzák ízét — egy órán belül nálad van.'
+                    : 'Order now and enjoy the taste of freshly made pizzas — at your door within an hour.'}
+                </p>
+
+                <div className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-white text-primary hover:bg-white/95 hover:scale-[1.02] h-12 px-8 text-base font-semibold shadow-xl shadow-black/20 transition-all"
+                  >
+                    <Link href={`/${locale}/menu`}>
+                      {t.hero.cta}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="lg"
+                    className="text-primary-foreground hover:bg-white/10 hover:text-white h-12 px-6 border border-white/20"
+                  >
+                    <a href={`tel:${storeInfo.phone || '+36 1 234 5678'}`}>
+                      <Phone className="mr-2 h-5 w-5" />
+                      <span className="font-medium">
+                        {storeInfo.phone || '+36 1 234 5678'}
+                      </span>
+                    </a>
+                  </Button>
+                </div>
+              </div>
+            </div>
           </ScrollReveal>
         </div>
       </section>

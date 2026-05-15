@@ -34,8 +34,15 @@ export function HeroCarousel({
 }: HeroCarouselProps) {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
-  const touchStartX = useRef<number | null>(null)
+  const dragRef = useRef<{ x: number; y: number; id: number | null; dragged: boolean }>({
+    x: 0,
+    y: 0,
+    id: null,
+    dragged: false,
+  })
+  const suppressClickRef = useRef(false)
   const count = slides.length
+  const SWIPE_THRESHOLD = 24
 
   const go = useCallback(
     (n: number) => {
@@ -57,14 +64,37 @@ export function HeroCarousel({
     if (e.key === 'ArrowRight') go(index + 1)
     else if (e.key === 'ArrowLeft') go(index - 1)
   }
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    dragRef.current = { x: e.clientX, y: e.clientY, id: e.pointerId, dragged: false }
   }
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current == null) return
-    const dx = e.changedTouches[0].clientX - touchStartX.current
-    if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1))
-    touchStartX.current = null
+  const onPointerMove = (e: React.PointerEvent) => {
+    const d = dragRef.current
+    if (d.id !== e.pointerId) return
+    const dx = e.clientX - d.x
+    const dy = e.clientY - d.y
+    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+      d.dragged = true
+    }
+  }
+  const onPointerUp = (e: React.PointerEvent) => {
+    const d = dragRef.current
+    if (d.id !== e.pointerId) return
+    const dx = e.clientX - d.x
+    const dy = e.clientY - d.y
+    if (d.dragged && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+      go(index + (dx < 0 ? 1 : -1))
+      suppressClickRef.current = true
+    }
+    dragRef.current = { x: 0, y: 0, id: null, dragged: false }
+  }
+  // Cancel a pending click if we just finished a swipe gesture
+  const onClickCapture = (e: React.MouseEvent) => {
+    if (suppressClickRef.current) {
+      e.preventDefault()
+      e.stopPropagation()
+      suppressClickRef.current = false
+    }
   }
 
   if (count === 0) return null
@@ -76,13 +106,17 @@ export function HeroCarousel({
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onClickCapture={onClickCapture}
       onKeyDown={onKeyDown}
       tabIndex={0}
       role="region"
       aria-roledescription="carousel"
       aria-label="Pizza showcase"
+      style={{ touchAction: 'pan-y' }}
     >
       {/* Soft warm glow halo behind the pizza */}
       <div className="pizza-showcase-halo" aria-hidden />
