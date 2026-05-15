@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export interface HeroSlide {
@@ -15,6 +16,8 @@ interface HeroCarouselProps {
   className?: string
   /** seconds for one full self-rotation of the pizza image */
   spinSeconds?: number
+  /** Optional URL — when set, the whole pizza becomes a clickable link */
+  href?: string
 }
 
 /**
@@ -27,6 +30,7 @@ export function HeroCarousel({
   intervalMs = 5000,
   className = '',
   spinSeconds = 50,
+  href,
 }: HeroCarouselProps) {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -84,42 +88,46 @@ export function HeroCarousel({
       <div className="pizza-showcase-halo" aria-hidden />
 
       {/* The round stage */}
-      <div className="pizza-showcase-stage">
-        {slides.map((s, i) => {
-          const active = i === index
-          return (
-            <div
-              key={i}
-              className={`pizza-slide ${active ? 'is-active' : ''}`}
-              aria-hidden={!active}
-            >
-              <div
-                className="pizza-spin"
-                style={{
-                  animationDuration: `${spinSeconds}s`,
-                  animationPlayState: paused ? 'paused' : 'running',
-                }}
-              >
-                <Image
-                  src={s.src}
-                  alt={s.alt}
-                  fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-contain"
-                  priority={i === 0}
-                />
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Label of currently active pizza */}
-      {slides[index]?.label && (
-        <div className="pizza-showcase-label">
-          <span>{slides[index].label}</span>
-        </div>
-      )}
+      {(() => {
+        const stage = (
+          <div className="pizza-showcase-stage">
+            {slides.map((s, i) => {
+              const active = i === index
+              return (
+                <div
+                  key={i}
+                  className={`pizza-slide ${active ? 'is-active' : ''}`}
+                  aria-hidden={!active}
+                >
+                  <div
+                    className="pizza-spin"
+                    style={{
+                      animationDuration: `${spinSeconds}s`,
+                      animationPlayState: paused ? 'paused' : 'running',
+                    }}
+                  >
+                    <Image
+                      src={s.src}
+                      alt={s.alt}
+                      fill
+                      sizes="(min-width: 1024px) 55vw, 100vw"
+                      className="object-contain"
+                      priority={i === 0}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )
+        return href ? (
+          <Link href={href} aria-label={slides[index]?.alt} className="pizza-showcase-link">
+            {stage}
+          </Link>
+        ) : (
+          stage
+        )
+      })()}
 
       {/* Dots */}
       {count > 1 && (
