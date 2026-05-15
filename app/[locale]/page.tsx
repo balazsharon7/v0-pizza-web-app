@@ -90,8 +90,8 @@ export default async function HomePage({
         <AuroraBg className="opacity-75" intensity={1.2} />
 
         {/* Content */}
-        <div className="container mx-auto px-4 py-16 md:py-24 lg:py-28 relative z-10">
-          <div className="grid lg:grid-cols-[1fr_1.7fr] gap-10 lg:gap-12 items-center">
+        <div className="container mx-auto px-4 py-10 md:py-14 lg:py-16 relative z-10">
+          <div className="grid lg:grid-cols-[1fr_1.25fr] gap-10 lg:gap-12 items-center">
             <div className="space-y-6 lg:order-1">
               <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
                 <OpenStatus locale={locale} compact />
@@ -135,13 +135,13 @@ export default async function HomePage({
 
             {/* Round pizza showcase — each pizza spins around its center, crossfades to the next.
                 Clicking anywhere on the pizza takes the visitor straight to the menu. */}
-            <div className="lg:order-2 animate-fade-in animation-delay-200 pb-8">
+            <div className="lg:order-2 animate-fade-in animation-delay-200">
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
                 spinSeconds={50}
                 href={`/${locale}/menu`}
-                className="max-w-[560px] sm:max-w-[760px] lg:max-w-none lg:w-full mx-auto"
+                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[680px] mx-auto"
               />
             </div>
           </div>
