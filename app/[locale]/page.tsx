@@ -7,6 +7,12 @@ import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { FeaturedPizzas } from '@/components/featured-pizzas'
 import { OpenStatus } from '@/components/open-status'
+import { AuroraBg } from '@/components/animations/aurora-bg'
+import { ScrollReveal } from '@/components/animations/scroll-reveal'
+import { SpinningPizza } from '@/components/animations/spinning-pizza'
+import { Marquee } from '@/components/animations/marquee'
+import { WaveDivider } from '@/components/animations/wave-divider'
+import { FloatingDots } from '@/components/animations/floating-dots'
 
 // Disable caching to always show fresh data
 export const dynamic = 'force-dynamic'
@@ -53,29 +59,38 @@ export default async function HomePage({
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[600px] lg:min-h-[700px] overflow-hidden">
+      <section className="relative min-h-[640px] lg:min-h-[760px] overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pizza.png-rUKL61RQ8vj4HmsJXCeunknykWsExk.webp"
             alt="Fresh pizzas with Italian ingredients"
             fill
-            className="object-cover"
+            className="object-cover scale-105"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
         </div>
 
+        {/* Interactive aurora glow reacting to the pointer */}
+        <AuroraBg className="mix-blend-soft-light opacity-90" intensity={1.1} />
+        <FloatingDots count={10} className="opacity-60" />
+
         {/* Content */}
         <div className="container mx-auto px-4 py-20 md:py-28 lg:py-36 relative z-10">
+          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
           <div className="max-w-2xl space-y-6">
             <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary backdrop-blur-sm border border-primary/20">
+              <span className="relative inline-flex h-2.5 w-2.5">
+                <span className="pulse-dot absolute inset-0 rounded-full bg-primary" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
+              </span>
               <OpenStatus locale={locale} compact />
             </div>
 
             <h1 className="animate-fade-in-up animation-delay-100 font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               <span className="text-foreground">Terra Verde</span>
-              <span className="block text-primary mt-1">Pizzeria</span>
+              <span className="block text-shimmer mt-1">Pizzeria</span>
             </h1>
 
             <div className="animate-fade-in-up animation-delay-200 flex items-center gap-3">
@@ -95,10 +110,10 @@ export default async function HomePage({
             </p>
 
             <div className="animate-fade-in-up animation-delay-500 flex flex-col gap-4 sm:flex-row pt-4">
-              <Button asChild size="lg" className="gap-2 text-base h-12 px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
+              <Button asChild size="lg" className="cta-glow gap-2 text-base h-12 px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
                 <Link href={`/${locale}/menu`}>
                   {t.hero.cta}
-                  <ArrowRight className="h-5 w-5" />
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="text-base h-12 px-8 backdrop-blur-sm bg-background/50 hover:bg-background/70 transition-all">
@@ -108,15 +123,37 @@ export default async function HomePage({
               </Button>
             </div>
           </div>
+            {/* Floating pizza emblem */}
+            <div className="hidden lg:block animate-fade-in animation-delay-300">
+              <SpinningPizza />
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* Marquee accent strip */}
+      <section className="bg-gradient-drift text-primary-foreground overflow-hidden">
+        <Marquee
+          speed={38}
+          items={[
+            locale === 'hu' ? 'Fa-tüzelésű kemence' : 'Wood-fired oven',
+            locale === 'hu' ? '48 órás kelesztés' : '48h fermented dough',
+            'San Marzano',
+            locale === 'hu' ? 'Friss bazsalikom' : 'Fresh basil',
+            'Mozzarella di Bufala',
+            locale === 'hu' ? 'Helyi termelőktől' : 'Locally sourced',
+            'Olio extravergine',
+            locale === 'hu' ? 'Autentikus olasz' : 'Authentic Italian',
+          ]}
+        />
       </section>
 
       {/* Quick Info Bar */}
       <section className="border-y bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="grid gap-6 py-8 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <ScrollReveal delay={0} className="flex items-center gap-4 group">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
                 <Clock className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -127,10 +164,10 @@ export default async function HomePage({
                     : `${todayHours?.open || '11:00'} - ${todayHours?.close || '22:00'}`}
                 </p>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            </ScrollReveal>
+
+            <ScrollReveal delay={80} className="flex items-center gap-4 group">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
                 <Phone className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -139,20 +176,20 @@ export default async function HomePage({
                   {storeInfo.phone || '+36 1 234 5678'}
                 </a>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            </ScrollReveal>
+
+            <ScrollReveal delay={160} className="flex items-center gap-4 group">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
                 <MapPin className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">{locale === 'hu' ? 'Címünk' : 'Address'}</p>
                 <p className="font-semibold">{storeInfo.address || 'Budaörs'}</p>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            </ScrollReveal>
+
+            <ScrollReveal delay={240} className="flex items-center gap-4 group">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
                 <Mail className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -161,19 +198,20 @@ export default async function HomePage({
                   {storeInfo.email || 'info@terraverde.hu'}
                 </a>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* Featured Pizzas */}
-      <section className="py-20 md:py-28">
-        <div className="container mx-auto px-4">
-          <div className="mb-14 text-center section-divider pt-8">
+      <section className="relative py-20 md:py-28">
+        <FloatingDots count={8} className="opacity-40" />
+        <div className="container mx-auto px-4 relative">
+          <ScrollReveal className="mb-14 text-center pt-8">
             <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
               {locale === 'hu' ? 'Frissen készítve' : 'Freshly Made'}
             </span>
-            <h2 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
+            <h2 className="heading-underline font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
               {locale === 'hu' ? 'Népszerű pizzáink' : 'Popular Pizzas'}
             </h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
@@ -181,7 +219,7 @@ export default async function HomePage({
                 ? 'Fedezd fel legkedveltebb pizzáinkat, amelyeket 48 órán át kelesztett tésztából és prémium olasz alapanyagokból készítünk'
                 : 'Discover our most loved pizzas, made with 48-hour fermented dough and premium Italian ingredients'}
             </p>
-          </div>
+          </ScrollReveal>
           
           <FeaturedPizzas pizzas={pizzas || []} locale={locale} dictionary={dictionary} />
           
@@ -197,23 +235,24 @@ export default async function HomePage({
       </section>
 
       {/* Why Choose Us */}
-      <section className="border-t bg-muted/30 py-20 md:py-28">
-        <div className="container mx-auto px-4">
-          <div className="mb-14 text-center section-divider pt-8">
+      <section className="relative border-t bg-muted/30 py-20 md:py-28 overflow-hidden">
+        <WaveDivider color="var(--background)" />
+        <div className="container mx-auto px-4 relative">
+          <ScrollReveal className="mb-14 text-center pt-8">
             <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
               {locale === 'hu' ? 'Terra Verde' : 'Terra Verde'}
             </span>
-            <h2 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
+            <h2 className="heading-underline font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
               {locale === 'hu' ? 'Miért minket válassz?' : 'Why Choose Us?'}
             </h2>
-          </div>
-          
+          </ScrollReveal>
+
           <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
-            <div className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300">
-                <Leaf className="h-10 w-10 text-primary" />
+            <ScrollReveal delay={0} className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-xl hover:-translate-y-2 hover:rotate-[-0.5deg] transition-all duration-500">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-all duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
+                <Leaf className="h-10 w-10 text-primary transition-transform duration-500 group-hover:-rotate-12" />
               </div>
-              <h3 className="mb-3 font-serif text-xl font-semibold">
+              <h3 className="mb-3 font-serif text-xl font-semibold transition-colors group-hover:text-primary">
                 {locale === 'hu' ? 'Friss alapanyagok' : 'Fresh Ingredients'}
               </h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -221,13 +260,13 @@ export default async function HomePage({
                   ? 'Minden nap friss, helyi termelőktől származó alapanyagokat használunk.'
                   : 'We use fresh, locally sourced ingredients every single day.'}
               </p>
-            </div>
+            </ScrollReveal>
 
-            <div className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300">
-                <ChefHat className="h-10 w-10 text-primary" />
+            <ScrollReveal delay={120} className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-all duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
+                <ChefHat className="h-10 w-10 text-primary transition-transform duration-500 group-hover:-rotate-12" />
               </div>
-              <h3 className="mb-3 font-serif text-xl font-semibold">
+              <h3 className="mb-3 font-serif text-xl font-semibold transition-colors group-hover:text-primary">
                 {locale === 'hu' ? 'Hagyományos receptek' : 'Traditional Recipes'}
               </h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -235,13 +274,13 @@ export default async function HomePage({
                   ? 'Eredeti olasz receptek, generációkon át öröklődő tudással.'
                   : 'Authentic Italian recipes passed down through generations.'}
               </p>
-            </div>
+            </ScrollReveal>
 
-            <div className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300">
-                <Truck className="h-10 w-10 text-primary" />
+            <ScrollReveal delay={240} className="group text-center p-8 rounded-2xl bg-background border shadow-sm hover:shadow-xl hover:-translate-y-2 hover:rotate-[0.5deg] transition-all duration-500">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-all duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
+                <Truck className="h-10 w-10 text-primary transition-transform duration-500 group-hover:translate-x-1" />
               </div>
-              <h3 className="mb-3 font-serif text-xl font-semibold">
+              <h3 className="mb-3 font-serif text-xl font-semibold transition-colors group-hover:text-primary">
                 {locale === 'hu' ? 'Gyors kiszállítás' : 'Fast Delivery'}
               </h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -249,29 +288,33 @@ export default async function HomePage({
                   ? 'Rendelésed 1 órán belül nálad van.'
                   : 'Your order arrives in under 1 hour.'}
               </p>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-20 md:py-28 bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary-foreground/20" />
-          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-2 border-primary-foreground/20" />
-          <div className="absolute top-1/2 left-1/3 w-20 h-20 rounded-full border border-primary-foreground/15" />
+      <section className="relative py-20 md:py-28 bg-gradient-drift text-primary-foreground overflow-hidden">
+        <WaveDivider color="var(--muted)" flip={false} />
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-2 border-primary-foreground/30 animate-[spin-slow_28s_linear_infinite]" />
+          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-2 border-primary-foreground/30 animate-[spin-slow_42s_linear_infinite_reverse]" />
+          <div className="absolute top-1/2 left-1/3 w-20 h-20 rounded-full border border-primary-foreground/25 animate-[float-orbit_9s_ease-in-out_infinite]" />
         </div>
+        <FloatingDots count={12} className="opacity-30" />
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h2 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl mb-4">
-            {locale === 'hu' ? 'Éhes vagy?' : 'Feeling Hungry?'}
-          </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
-            {locale === 'hu'
-              ? 'Rendelj most és élvezd a frissen készült pizzák ízét!'
-              : 'Order now and enjoy the taste of freshly made pizzas!'}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary" className="text-base h-12 px-8 shadow-lg hover:shadow-xl transition-all">
+          <ScrollReveal>
+            <h2 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl mb-4">
+              {locale === 'hu' ? 'Éhes vagy?' : 'Feeling Hungry?'}
+            </h2>
+            <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
+              {locale === 'hu'
+                ? 'Rendelj most és élvezd a frissen készült pizzák ízét!'
+                : 'Order now and enjoy the taste of freshly made pizzas!'}
+            </p>
+          </ScrollReveal>
+          <ScrollReveal delay={150} className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" variant="secondary" className="cta-glow text-base h-12 px-8 shadow-lg hover:shadow-xl transition-all">
               <Link href={`/${locale}/menu`}>
                 {t.hero.cta}
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -283,7 +326,7 @@ export default async function HomePage({
                 <span className="font-semibold">{storeInfo.phone || '+36 1 234 5678'}</span>
               </a>
             </Button>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
     </div>
