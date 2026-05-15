@@ -226,16 +226,20 @@ export default async function HomePage({
       <section className="relative py-20 md:py-28">
         <div className="container mx-auto px-4 relative">
           <ScrollReveal className="mb-14 text-center pt-8">
-            <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
-              {locale === 'hu' ? 'Frissen készítve' : 'Freshly Made'}
-            </span>
-            <h2 className="heading-underline font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
+            <div className="inline-flex items-center gap-3 mb-5">
+              <span className="h-px w-10 bg-accent/50" />
+              <span className="text-accent font-serif italic text-xs tracking-[0.25em] uppercase">
+                {locale === 'hu' ? 'Frissen készítve' : 'Freshly Made'}
+              </span>
+              <span className="h-px w-10 bg-accent/50" />
+            </div>
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               {locale === 'hu' ? 'Népszerű pizzáink' : 'Popular Pizzas'}
             </h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               {locale === 'hu'
-                ? 'Fedezd fel legkedveltebb pizzáinkat, amelyeket 48 órán át kelesztett tésztából és prémium olasz alapanyagokból készítünk'
-                : 'Discover our most loved pizzas, made with 48-hour fermented dough and premium Italian ingredients'}
+                ? 'Fedezd fel legkedveltebb pizzáinkat, amelyeket 48 órán át kelesztett tésztából és prémium olasz alapanyagokból készítünk.'
+                : 'Discover our most loved pizzas, made with 48-hour fermented dough and premium Italian ingredients.'}
             </p>
           </ScrollReveal>
           
