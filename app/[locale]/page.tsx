@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowRight, Clock, MapPin, Phone, Mail, Leaf, ChefHat, Truck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
@@ -9,10 +8,10 @@ import { FeaturedPizzas } from '@/components/featured-pizzas'
 import { OpenStatus } from '@/components/open-status'
 import { AuroraBg } from '@/components/animations/aurora-bg'
 import { ScrollReveal } from '@/components/animations/scroll-reveal'
-import { SpinningPizza } from '@/components/animations/spinning-pizza'
 import { Marquee } from '@/components/animations/marquee'
 import { WaveDivider } from '@/components/animations/wave-divider'
-import { FloatingDots } from '@/components/animations/floating-dots'
+import { HeroCarousel, type HeroSlide } from '@/components/hero-carousel'
+import { getLocalizedName } from '@/lib/types'
 
 // Disable caching to always show fresh data
 export const dynamic = 'force-dynamic'
@@ -56,76 +55,101 @@ export default async function HomePage({
   const today = days[new Date().getDay()]
   const todayHours = openingHours[today]
 
+  // Hero carousel slides — prefer real product images, fall back to curated stock
+  const fallbackHero: HeroSlide[] = [
+    {
+      src: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Napoletana pizza with prosciutto and basil',
+      label: locale === 'hu' ? 'Prosciutto e Basilico' : 'Prosciutto e Basilico',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Classic margherita pizza',
+      label: 'Margherita',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Pepperoni pizza fresh from the oven',
+      label: 'Diavola',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1571066811602-716837d681de?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Quattro formaggi pizza',
+      label: 'Quattro Formaggi',
+    },
+  ]
+  const productSlides: HeroSlide[] = (pizzas || [])
+    .filter((p) => !!p.image_url)
+    .slice(0, 5)
+    .map((p) => ({
+      src: p.image_url as string,
+      alt: getLocalizedName(p, locale),
+      label: getLocalizedName(p, locale),
+    }))
+  const heroSlides: HeroSlide[] = productSlides.length >= 2 ? productSlides : fallbackHero
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[640px] lg:min-h-[760px] overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pizza.png-rUKL61RQ8vj4HmsJXCeunknykWsExk.webp"
-            alt="Fresh pizzas with Italian ingredients"
-            fill
-            className="object-cover scale-105"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
-        </div>
-
-        {/* Interactive aurora glow reacting to the pointer */}
-        <AuroraBg className="mix-blend-soft-light opacity-90" intensity={1.1} />
-        <FloatingDots count={10} className="opacity-60" />
+      <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/40">
+        {/* Soft aurora glow behind everything, very subtle */}
+        <AuroraBg className="opacity-40 mix-blend-multiply" intensity={0.7} />
 
         {/* Content */}
-        <div className="container mx-auto px-4 py-20 md:py-28 lg:py-36 relative z-10">
-          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
-          <div className="max-w-2xl space-y-6">
-            <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary backdrop-blur-sm border border-primary/20">
-              <span className="relative inline-flex h-2.5 w-2.5">
-                <span className="pulse-dot absolute inset-0 rounded-full bg-primary" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
-              </span>
-              <OpenStatus locale={locale} compact />
+        <div className="container mx-auto px-4 py-16 md:py-24 lg:py-28 relative z-10">
+          <div className="grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-center">
+            <div className="space-y-6 order-2 lg:order-1">
+              <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
+                <span className="relative inline-flex h-2.5 w-2.5">
+                  <span className="pulse-dot absolute inset-0 rounded-full bg-primary" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
+                </span>
+                <OpenStatus locale={locale} compact />
+              </div>
+
+              <h1 className="animate-fade-in-up animation-delay-100 font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+                <span className="text-foreground">Terra Verde</span>
+                <span className="block text-primary mt-1">Pizzeria</span>
+              </h1>
+
+              <div className="animate-fade-in-up animation-delay-200 flex items-center gap-3">
+                <div className="h-[2px] w-12 bg-accent rounded-full" />
+                <span className="text-accent font-serif italic text-sm tracking-wide">
+                  {locale === 'hu' ? 'Autentikus olasz ízek' : 'Authentic Italian flavors'}
+                </span>
+                <div className="h-[2px] w-12 bg-accent rounded-full" />
+              </div>
+
+              <p className="animate-fade-in-up animation-delay-300 text-xl text-muted-foreground md:text-2xl leading-relaxed">
+                {t.hero.subtitle}
+              </p>
+
+              <p className="animate-fade-in-up animation-delay-400 text-muted-foreground leading-relaxed max-w-lg">
+                {t.hero.description}
+              </p>
+
+              <div className="animate-fade-in-up animation-delay-500 flex flex-col gap-4 sm:flex-row pt-4">
+                <Button asChild size="lg" className="gap-2 text-base h-12 px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
+                  <Link href={`/${locale}/menu`}>
+                    {t.hero.cta}
+                    <ArrowRight className="h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="text-base h-12 px-8 hover:bg-muted/70 transition-all">
+                  <Link href={`/${locale}/about`}>
+                    {locale === 'hu' ? 'Rólunk' : 'About Us'}
+                  </Link>
+                </Button>
+              </div>
             </div>
 
-            <h1 className="animate-fade-in-up animation-delay-100 font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              <span className="text-foreground">Terra Verde</span>
-              <span className="block text-shimmer mt-1">Pizzeria</span>
-            </h1>
-
-            <div className="animate-fade-in-up animation-delay-200 flex items-center gap-3">
-              <div className="h-[2px] w-12 bg-accent rounded-full" />
-              <span className="text-accent font-serif italic text-sm tracking-wide">
-                {locale === 'hu' ? 'Autentikus olasz ízek' : 'Authentic Italian flavors'}
-              </span>
-              <div className="h-[2px] w-12 bg-accent rounded-full" />
-            </div>
-
-            <p className="animate-fade-in-up animation-delay-300 text-xl text-muted-foreground md:text-2xl leading-relaxed">
-              {t.hero.subtitle}
-            </p>
-
-            <p className="animate-fade-in-up animation-delay-400 text-muted-foreground leading-relaxed max-w-lg">
-              {t.hero.description}
-            </p>
-
-            <div className="animate-fade-in-up animation-delay-500 flex flex-col gap-4 sm:flex-row pt-4">
-              <Button asChild size="lg" className="cta-glow gap-2 text-base h-12 px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
-                <Link href={`/${locale}/menu`}>
-                  {t.hero.cta}
-                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="text-base h-12 px-8 backdrop-blur-sm bg-background/50 hover:bg-background/70 transition-all">
-                <Link href={`/${locale}/about`}>
-                  {locale === 'hu' ? 'Rólunk' : 'About Us'}
-                </Link>
-              </Button>
-            </div>
-          </div>
-            {/* Floating pizza emblem */}
-            <div className="hidden lg:block animate-fade-in animation-delay-300">
-              <SpinningPizza />
+            {/* Pizza carousel — auto-advances to the right */}
+            <div className="order-1 lg:order-2 animate-fade-in animation-delay-200">
+              <HeroCarousel
+                slides={heroSlides}
+                intervalMs={5000}
+                className="aspect-[4/5] sm:aspect-[5/4] lg:aspect-square w-full bg-neutral-950"
+              />
             </div>
           </div>
         </div>
@@ -205,7 +229,6 @@ export default async function HomePage({
 
       {/* Featured Pizzas */}
       <section className="relative py-20 md:py-28">
-        <FloatingDots count={8} className="opacity-40" />
         <div className="container mx-auto px-4 relative">
           <ScrollReveal className="mb-14 text-center pt-8">
             <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
@@ -301,7 +324,6 @@ export default async function HomePage({
           <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-2 border-primary-foreground/30 animate-[spin-slow_42s_linear_infinite_reverse]" />
           <div className="absolute top-1/2 left-1/3 w-20 h-20 rounded-full border border-primary-foreground/25 animate-[float-orbit_9s_ease-in-out_infinite]" />
         </div>
-        <FloatingDots count={12} className="opacity-30" />
         <div className="container mx-auto px-4 text-center relative z-10">
           <ScrollReveal>
             <h2 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl mb-4">

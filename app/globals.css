@@ -528,6 +528,82 @@
   z-index: -1;
 }
 
+/* Hero carousel */
+.hero-carousel {
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.35),
+    0 12px 30px -10px rgba(0, 0, 0, 0.25);
+  outline: none;
+}
+.hero-carousel:focus-visible {
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, var(--ring) 60%, transparent),
+    0 30px 60px -20px rgba(0, 0, 0, 0.35);
+}
+.hero-carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  color: oklch(0.18 0.02 45);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  transition: transform 200ms ease, background-color 200ms ease, opacity 200ms ease;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+}
+.hero-carousel:hover .hero-carousel-arrow,
+.hero-carousel:focus-within .hero-carousel-arrow {
+  opacity: 1;
+}
+.hero-carousel-arrow:hover {
+  transform: translateY(-50%) scale(1.08);
+  background: rgba(255, 255, 255, 1);
+}
+.hero-carousel-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+@media (max-width: 768px) {
+  .hero-carousel-arrow { opacity: 1 }
+}
+.hero-carousel-dot {
+  position: relative;
+  width: 26px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.35);
+  overflow: hidden;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: width 250ms ease, background-color 250ms ease;
+}
+.hero-carousel-dot.active {
+  width: 44px;
+  background: rgba(255, 255, 255, 0.55);
+}
+.hero-carousel-dot-fill {
+  position: absolute;
+  inset: 0;
+  background: white;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+.hero-carousel-dot.active .hero-carousel-dot-fill {
+  animation: dot-progress linear forwards;
+}
+@keyframes dot-progress {
+  from { transform: scaleX(0) }
+  to   { transform: scaleX(1) }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .pizza-emblem .pizza-disc,
@@ -542,6 +618,7 @@
     animation: none !important;
   }
   .tilt-card .tilt-inner { transform: none !important }
+  .hero-carousel-dot-fill { animation: none !important }
 }
 
 /* Custom cursor — hide native cursor when active (desktop only) */
