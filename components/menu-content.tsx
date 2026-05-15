@@ -155,26 +155,42 @@ export function MenuContent({
               style={{ animationDelay: `${Math.min(index * 60, 400)}ms` }}
               onClick={() => isStoreOpen && setSelectedProduct(product)}
             >
-              <div className="aspect-[4/3] bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center relative overflow-hidden">
+              {(() => {
+                const isPizza = category?.slug === 'pizzas'
+                const isDrink = category?.slug === 'drinks'
+                const transparent = isPizza || isDrink
+                const stageClasses = transparent
+                  ? 'aspect-square relative pizza-card-stage'
+                  : 'aspect-[4/3] bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center relative overflow-hidden'
+                return (
+              <div className={stageClasses}>
+                {transparent && <div className="pizza-card-halo" aria-hidden />}
                 {product.image_url ? (
                   <Image
                     src={product.image_url}
                     alt={getLocalizedName(product, locale)}
                     fill
-                    className={`transition-transform duration-700 ease-out group-hover:scale-105 ${category?.slug === 'drinks' ? 'object-contain p-4' : 'object-cover group-hover:scale-110'}`}
+                    sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className={`transition-transform duration-700 ease-out ${
+                      transparent
+                        ? 'object-contain p-4 drop-shadow-[0_18px_28px_rgba(0,0,0,0.18)] group-hover:scale-[1.06]'
+                        : 'object-cover group-hover:scale-110'
+                    }`}
                   />
                 ) : (
                   <div className="flex items-center justify-center w-full h-full">
-                    {category?.slug === 'pizzas' ? (
+                    {isPizza ? (
                       <Pizza className="h-16 w-16 text-primary/20 group-hover:scale-110 transition-transform duration-300" />
-                    ) : category?.slug === 'drinks' ? (
+                    ) : isDrink ? (
                       <GlassWater className="h-16 w-16 text-primary/20 group-hover:scale-110 transition-transform duration-300" />
                     ) : (
                       <Pizza className="h-16 w-16 text-primary/20 group-hover:scale-110 transition-transform duration-300" />
                     )}
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {!transparent && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                )}
                 {/* Price badge */}
                 <div className="absolute top-3 left-3">
                   <span className="inline-flex items-center rounded-full bg-accent/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-accent-foreground shadow-sm">
@@ -194,6 +210,8 @@ export function MenuContent({
                   </Button>
                 )}
               </div>
+                )
+              })()}
               <CardContent className="p-5">
                 <h3 className="font-serif text-lg font-semibold tracking-tight group-hover:text-primary transition-colors duration-200">
                   {getLocalizedName(product, locale)}

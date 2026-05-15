@@ -49,21 +49,20 @@ export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasPro
           className={`rounded-2xl animate-fade-in-up ${index === 1 ? 'animation-delay-100' : index === 2 ? 'animation-delay-200' : index === 3 ? 'animation-delay-300' : ''}`}
         >
           <Card className="group overflow-hidden transition-all duration-300 hover:shadow-2xl border-0 shadow-md bg-card rounded-2xl">
-            <div className="aspect-[4/3] bg-gradient-to-br from-muted/50 to-muted flex items-center justify-center relative overflow-hidden">
+            <div className="pizza-card-stage aspect-square relative">
+              <div className="pizza-card-halo" aria-hidden />
               {pizza.image_url ? (
                 <Image
                   src={pizza.image_url}
                   alt={getLocalizedName(pizza, locale)}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
+                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-contain p-4 drop-shadow-[0_18px_28px_rgba(0,0,0,0.18)] group-hover:scale-[1.06] transition-transform duration-[1200ms] ease-out"
                 />
               ) : (
                 <Pizza className="h-16 w-16 text-primary/20 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500" />
               )}
-              {/* shimmer sweep */}
-              <div className="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute top-3 left-3 transition-transform duration-300 group-hover:-translate-y-0.5">
+              <div className="absolute top-3 left-3 z-10 transition-transform duration-300 group-hover:-translate-y-0.5">
                 <span className="inline-flex items-center rounded-full bg-accent/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-accent-foreground shadow-sm">
                   {t.menu.from} {formatPrice(pizza.base_price)} {t.common.currency}
                 </span>
