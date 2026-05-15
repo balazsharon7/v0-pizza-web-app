@@ -111,7 +111,7 @@ export default async function HomePage({
 
             {/* 2) Round pizza showcase — each pizza spins around its center, crossfades to the next.
                 Clicking takes the visitor straight to the menu. */}
-            <div className="animate-fade-in animation-delay-200 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
+            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
