@@ -528,75 +528,122 @@
   z-index: -1;
 }
 
-/* Hero carousel */
-.hero-carousel {
-  box-shadow:
-    0 30px 60px -20px rgba(0, 0, 0, 0.35),
-    0 12px 30px -10px rgba(0, 0, 0, 0.25);
-  outline: none;
-}
-.hero-carousel:focus-visible {
-  box-shadow:
-    0 0 0 3px color-mix(in oklch, var(--ring) 60%, transparent),
-    0 30px 60px -20px rgba(0, 0, 0, 0.35);
-}
-.hero-carousel-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
+/* Circular pizza showcase carousel */
+.pizza-showcase {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
   align-items: center;
   justify-content: center;
+  outline: none;
+}
+.pizza-showcase:focus-visible .pizza-showcase-stage {
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, var(--ring) 60%, transparent),
+    0 40px 80px -24px rgba(0, 0, 0, 0.45);
+}
+.pizza-showcase-halo {
+  position: absolute;
+  inset: -8%;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.85);
-  color: oklch(0.18 0.02 45);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
-  transition: transform 200ms ease, background-color 200ms ease, opacity 200ms ease;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklch, var(--accent) 35%, transparent),
+    color-mix(in oklch, var(--primary) 20%, transparent) 45%,
+    transparent 70%
+  );
+  filter: blur(28px);
+  z-index: 0;
+  animation: float-slow 8s ease-in-out infinite;
+}
+.pizza-showcase-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow:
+    0 40px 80px -24px rgba(0, 0, 0, 0.45),
+    0 18px 40px -12px rgba(0, 0, 0, 0.3);
+}
+.pizza-slide {
+  position: absolute;
+  inset: 0;
   opacity: 0;
-  cursor: pointer;
-  border: none;
+  transition: opacity 900ms cubic-bezier(0.65, 0, 0.35, 1);
+  pointer-events: none;
 }
-.hero-carousel:hover .hero-carousel-arrow,
-.hero-carousel:focus-within .hero-carousel-arrow {
+.pizza-slide.is-active {
   opacity: 1;
+  pointer-events: auto;
 }
-.hero-carousel-arrow:hover {
-  transform: translateY(-50%) scale(1.08);
-  background: rgba(255, 255, 255, 1);
+.pizza-spin {
+  position: absolute;
+  inset: 0;
+  animation: spin-slow linear infinite;
+  will-change: transform;
 }
-.hero-carousel-arrow:active {
-  transform: translateY(-50%) scale(0.95);
+.pizza-slide img {
+  user-select: none;
+  -webkit-user-drag: none;
 }
-@media (max-width: 768px) {
-  .hero-carousel-arrow { opacity: 1 }
+.pizza-showcase-label {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
 }
-.hero-carousel-dot {
+.pizza-showcase-label span {
+  display: inline-block;
+  padding: 0.45rem 1.1rem;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  font-family: var(--font-serif);
+  font-style: italic;
+  letter-spacing: 0.01em;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+  animation: fade-in 500ms ease both;
+}
+.pizza-showcase-dots {
+  position: absolute;
+  bottom: -2.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 4;
+}
+.pizza-dot {
   position: relative;
   width: 26px;
   height: 4px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.35);
+  background: color-mix(in oklch, var(--foreground) 18%, transparent);
   overflow: hidden;
   border: none;
   padding: 0;
   cursor: pointer;
   transition: width 250ms ease, background-color 250ms ease;
 }
-.hero-carousel-dot.active {
-  width: 44px;
-  background: rgba(255, 255, 255, 0.55);
+.pizza-dot.active {
+  width: 48px;
+  background: color-mix(in oklch, var(--primary) 25%, transparent);
 }
-.hero-carousel-dot-fill {
+.pizza-dot-fill {
   position: absolute;
   inset: 0;
-  background: white;
+  background: var(--primary);
   transform-origin: left center;
   transform: scaleX(0);
 }
-.hero-carousel-dot.active .hero-carousel-dot-fill {
+.pizza-dot.active .pizza-dot-fill {
   animation: dot-progress linear forwards;
 }
 @keyframes dot-progress {
@@ -618,7 +665,9 @@
     animation: none !important;
   }
   .tilt-card .tilt-inner { transform: none !important }
-  .hero-carousel-dot-fill { animation: none !important }
+  .pizza-spin,
+  .pizza-showcase-halo,
+  .pizza-dot-fill { animation: none !important }
 }
 
 /* Custom cursor — hide native cursor when active (desktop only) */

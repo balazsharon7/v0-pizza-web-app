@@ -11,7 +11,6 @@ import { ScrollReveal } from '@/components/animations/scroll-reveal'
 import { Marquee } from '@/components/animations/marquee'
 import { WaveDivider } from '@/components/animations/wave-divider'
 import { HeroCarousel, type HeroSlide } from '@/components/hero-carousel'
-import { getLocalizedName } from '@/lib/types'
 
 // Disable caching to always show fresh data
 export const dynamic = 'force-dynamic'
@@ -55,38 +54,21 @@ export default async function HomePage({
   const today = days[new Date().getDay()]
   const todayHours = openingHours[today]
 
-  // Hero carousel slides — prefer real product images, fall back to curated stock
-  const fallbackHero: HeroSlide[] = [
+  // Hero showcase: two round pizzas that spin around their center.
+  // To use your own photos, drop them into public/hero/ as pizza-1.jpg + pizza-2.jpg
+  // — the paths below will pick them up automatically (Unsplash placeholders shown otherwise).
+  const heroSlides: HeroSlide[] = [
     {
-      src: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Napoletana pizza with prosciutto and basil',
-      label: locale === 'hu' ? 'Prosciutto e Basilico' : 'Prosciutto e Basilico',
+      src: '/hero/pizza-1.jpg',
+      alt: 'Pizza prosciutto e basilico',
+      label: 'Prosciutto e Basilico',
     },
     {
-      src: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Classic margherita pizza',
+      src: '/hero/pizza-2.jpg',
+      alt: 'Pizza margherita',
       label: 'Margherita',
     },
-    {
-      src: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Pepperoni pizza fresh from the oven',
-      label: 'Diavola',
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1571066811602-716837d681de?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Quattro formaggi pizza',
-      label: 'Quattro Formaggi',
-    },
   ]
-  const productSlides: HeroSlide[] = (pizzas || [])
-    .filter((p) => !!p.image_url)
-    .slice(0, 5)
-    .map((p) => ({
-      src: p.image_url as string,
-      alt: getLocalizedName(p, locale),
-      label: getLocalizedName(p, locale),
-    }))
-  const heroSlides: HeroSlide[] = productSlides.length >= 2 ? productSlides : fallbackHero
 
   return (
     <div className="flex flex-col">
@@ -143,12 +125,13 @@ export default async function HomePage({
               </div>
             </div>
 
-            {/* Pizza carousel — auto-advances to the right */}
-            <div className="order-1 lg:order-2 animate-fade-in animation-delay-200">
+            {/* Round pizza showcase — each pizza spins around its center, crossfades to the next */}
+            <div className="order-1 lg:order-2 animate-fade-in animation-delay-200 pb-8">
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
-                className="aspect-[4/5] sm:aspect-[5/4] lg:aspect-square w-full bg-neutral-950"
+                spinSeconds={50}
+                className="max-w-[480px] mx-auto"
               />
             </div>
           </div>

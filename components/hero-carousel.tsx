@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export interface HeroSlide {
   src: string
@@ -14,14 +13,21 @@ interface HeroCarouselProps {
   slides: HeroSlide[]
   intervalMs?: number
   className?: string
+  /** seconds for one full self-rotation of the pizza image */
+  spinSeconds?: number
 }
 
 /**
- * Auto-advancing hero pizza carousel.
- * Slides horizontally to the right, pauses on hover/focus, supports
- * arrows + dots + swipe + keyboard arrows.
+ * Circular pizza showcase: each slide is a round image that spins around its
+ * own center, and the carousel crossfades to the next pizza every intervalMs.
+ * Pauses on hover/focus. Dots below jump to a specific slide.
  */
-export function HeroCarousel({ slides, intervalMs = 5000, className = '' }: HeroCarouselProps) {
+export function HeroCarousel({
+  slides,
+  intervalMs = 5000,
+  className = '',
+  spinSeconds = 50,
+}: HeroCarouselProps) {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const touchStartX = useRef<number | null>(null)
@@ -34,8 +40,6 @@ export function HeroCarousel({ slides, intervalMs = 5000, className = '' }: Hero
     },
     [count],
   )
-  const next = useCallback(() => go(index + 1), [go, index])
-  const prev = useCallback(() => go(index - 1), [go, index])
 
   useEffect(() => {
     if (paused || count < 2) return
@@ -46,17 +50,16 @@ export function HeroCarousel({ slides, intervalMs = 5000, className = '' }: Hero
   }, [paused, count, intervalMs])
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowRight') next()
-    else if (e.key === 'ArrowLeft') prev()
+    if (e.key === 'ArrowRight') go(index + 1)
+    else if (e.key === 'ArrowLeft') go(index - 1)
   }
-
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
   }
   const onTouchEnd = (e: React.TouchEvent) => {
     if (touchStartX.current == null) return
     const dx = e.changedTouches[0].clientX - touchStartX.current
-    if (Math.abs(dx) > 40) (dx < 0 ? next : prev)()
+    if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1))
     touchStartX.current = null
   }
 
@@ -64,7 +67,7 @@ export function HeroCarousel({ slides, intervalMs = 5000, className = '' }: Hero
 
   return (
     <div
-      className={`hero-carousel relative overflow-hidden rounded-3xl ${className}`}
+      className={`pizza-showcase relative ${className}`}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -77,67 +80,50 @@ export function HeroCarousel({ slides, intervalMs = 5000, className = '' }: Hero
       aria-roledescription="carousel"
       aria-label="Pizza showcase"
     >
-      <div
-        className="hero-carousel-track flex h-full w-full"
-        style={{
-          transform: `translate3d(-${index * 100}%, 0, 0)`,
-          transition: 'transform 800ms cubic-bezier(0.65, 0, 0.35, 1)',
-        }}
-      >
-        {slides.map((s, i) => (
-          <div
-            key={i}
-            className="relative shrink-0 grow-0 basis-full h-full"
-            aria-hidden={i !== index}
-          >
-            <Image
-              src={s.src}
-              alt={s.alt}
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className={`object-cover transition-transform duration-[6000ms] ease-out ${
-                i === index ? 'scale-105' : 'scale-100'
-              }`}
-              priority={i === 0}
-            />
-            {/* edge vignette for depth */}
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.45)_100%)]" />
-            {s.label && (
-              <div className="absolute bottom-5 left-5 right-5 flex justify-center pointer-events-none">
-                <span className="rounded-full bg-background/85 backdrop-blur px-4 py-1.5 text-sm font-serif italic tracking-wide text-foreground shadow-md">
-                  {s.label}
-                </span>
+      {/* Soft warm glow halo behind the pizza */}
+      <div className="pizza-showcase-halo" aria-hidden />
+
+      {/* The round stage */}
+      <div className="pizza-showcase-stage">
+        {slides.map((s, i) => {
+          const active = i === index
+          return (
+            <div
+              key={i}
+              className={`pizza-slide ${active ? 'is-active' : ''}`}
+              aria-hidden={!active}
+            >
+              <div
+                className="pizza-spin"
+                style={{
+                  animationDuration: `${spinSeconds}s`,
+                  animationPlayState: paused ? 'paused' : 'running',
+                }}
+              >
+                <Image
+                  src={s.src}
+                  alt={s.alt}
+                  fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover"
+                  priority={i === 0}
+                />
               </div>
-            )}
-          </div>
-        ))}
+            </div>
+          )
+        })}
       </div>
 
-      {/* arrows */}
-      {count > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={prev}
-            aria-label="Previous slide"
-            className="hero-carousel-arrow left-3"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            onClick={next}
-            aria-label="Next slide"
-            className="hero-carousel-arrow right-3"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </>
+      {/* Label of currently active pizza */}
+      {slides[index]?.label && (
+        <div className="pizza-showcase-label">
+          <span>{slides[index].label}</span>
+        </div>
       )}
 
-      {/* dots */}
+      {/* Dots */}
       {count > 1 && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
+        <div className="pizza-showcase-dots">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -145,10 +131,10 @@ export function HeroCarousel({ slides, intervalMs = 5000, className = '' }: Hero
               onClick={() => go(i)}
               aria-label={`Go to slide ${i + 1}`}
               aria-current={i === index}
-              className={`hero-carousel-dot ${i === index ? 'active' : ''}`}
+              className={`pizza-dot ${i === index ? 'active' : ''}`}
             >
               <span
-                className="hero-carousel-dot-fill"
+                className="pizza-dot-fill"
                 style={{
                   animationDuration: `${intervalMs}ms`,
                   animationPlayState: i === index && !paused ? 'running' : 'paused',
