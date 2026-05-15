@@ -50,20 +50,21 @@ export function Header({ locale, dictionary }: HeaderProps) {
 
   useEffect(() => {
     const supabase = createClient()
+    let cancelled = false
 
-    const syncUser = async (userId: string) => {
+    const syncUser = async (userId: string, currentUser: SupabaseUser | null) => {
       try {
         const { data: profileData, error } = await supabase
           .from('profiles')
           .select('is_admin, full_name')
           .eq('id', userId)
           .single()
+        if (cancelled) return
         if (error) {
           console.warn('[header] profile fetch failed', error)
-          // Fallback: read is_admin from the JWT's user_metadata if present.
-          // Lets the admin link render even if the profiles RLS migration
-          // (scripts/005_fix_rls_recursion.sql) hasn't been applied yet.
-          const meta = (await supabase.auth.getUser()).data.user?.user_metadata as
+          // Fallback to JWT user_metadata so the admin link still works even
+          // before scripts/005_fix_rls_recursion.sql has been applied.
+          const meta = currentUser?.user_metadata as
             | { is_admin?: boolean; full_name?: string }
             | undefined
           setProfile({
@@ -74,51 +75,72 @@ export function Header({ locale, dictionary }: HeaderProps) {
         }
         setProfile(profileData)
       } catch (err) {
+        if (cancelled) return
         console.warn('[header] profile fetch threw', err)
-        setProfile(null)
       }
     }
 
-    // Hydrate immediately from the cached session (no network round-trip).
-    // This avoids the "Loading..." state when refreshing the page while logged in.
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      const currentUser = session?.user ?? null
-      setUser(currentUser)
-      if (currentUser) await syncUser(currentUser.id)
-      setIsLoading(false)
-    })
-
-    // Track subsequent auth changes (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED, INITIAL_SESSION).
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const currentUser = session?.user ?? null
-      setUser(currentUser)
-      if (currentUser) {
-        await syncUser(currentUser.id)
-      } else {
+    const applySession = async (
+      session: { user: SupabaseUser } | null,
+      { clearOnNull }: { clearOnNull: boolean },
+    ) => {
+      if (cancelled) return
+      const nextUser = session?.user ?? null
+      if (nextUser) {
+        setUser(nextUser)
+        await syncUser(nextUser.id, nextUser)
+      } else if (clearOnNull) {
+        setUser(null)
         setProfile(null)
       }
+      // If clearOnNull is false (transient checks like visibilitychange or
+      // a getSession that returned null due to a network blip), we keep
+      // whatever user we already have. The auth listener below is the
+      // single source of truth for explicit SIGNED_OUT.
       setIsLoading(false)
-    })
+    }
+
+    // Hydrate from the cached session. If this fails, we keep whatever the
+    // listener tells us next — don't preemptively flag the user as signed out.
+    supabase.auth
+      .getSession()
+      .then(({ data, error }) => {
+        if (error) console.warn('[header] getSession failed', error)
+        applySession(data?.session ?? null, { clearOnNull: false })
+      })
+      .catch((err) => {
+        console.warn('[header] getSession threw', err)
+        if (!cancelled) setIsLoading(false)
+      })
+
+    // SIGNED_IN / SIGNED_OUT / TOKEN_REFRESHED / INITIAL_SESSION come through
+    // here. SIGNED_OUT explicitly clears state; everything else only updates
+    // when there's actually a user attached.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        const clear = event === 'SIGNED_OUT'
+        applySession(session, { clearOnNull: clear })
+      },
+    )
 
     // Safety fallback: never leave the UI stuck in the loading state.
-    const loadingTimeout = setTimeout(() => setIsLoading(false), 3000)
+    const loadingTimeout = setTimeout(() => {
+      if (!cancelled) setIsLoading(false)
+    }, 3000)
 
-    // Re-verify when the tab becomes visible again (stale/old tab scenario)
-    const handleVisibilityChange = async () => {
+    // Re-verify when the tab becomes visible again. Do NOT clear the user if
+    // the lookup transiently fails — the auth listener handles real sign-outs.
+    const handleVisibilityChange = () => {
       if (document.visibilityState !== 'visible') return
-      const { data: { session } } = await supabase.auth.getSession()
-      const currentUser = session?.user ?? null
-      setUser(currentUser)
-      if (currentUser) {
-        await syncUser(currentUser.id)
-      } else {
-        setProfile(null)
-      }
+      supabase.auth
+        .getSession()
+        .then(({ data }) => applySession(data?.session ?? null, { clearOnNull: false }))
+        .catch((err) => console.warn('[header] visibility getSession threw', err))
     }
-
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
+      cancelled = true
       clearTimeout(loadingTimeout)
       subscription.unsubscribe()
       document.removeEventListener('visibilitychange', handleVisibilityChange)

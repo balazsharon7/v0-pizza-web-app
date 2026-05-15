@@ -31,15 +31,29 @@ export async function updateSession(request: NextRequest) {
     },
   )
 
-  // Do not run code between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-
+  // Do not run code between createServerClient and supabase.auth.getUser().
+  // A simple mistake could make it very hard to debug issues with users
+  // being randomly logged out.
+  //
   // IMPORTANT: If you remove getUser() and you use server-side rendering
   // with the Supabase client, your users may be randomly logged out.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  //
+  // We wrap getUser() in a try/catch so a transient Supabase auth outage
+  // doesn't propagate as an unhandled error from the middleware (which
+  // would surface to the browser as a 500 and the user would appear to be
+  // signed out on the next request). On failure we just pass the request
+  // through with the existing cookies and let the page/server components
+  // re-check auth themselves.
+  let user: Awaited<ReturnType<typeof supabase.auth.getUser>>['data']['user'] = null
+  try {
+    const { data, error } = await supabase.auth.getUser()
+    if (error && error.message && !error.message.includes('Auth session missing')) {
+      console.warn('[middleware] getUser error', error.message)
+    }
+    user = data.user
+  } catch (err) {
+    console.warn('[middleware] getUser threw', err)
+  }
 
   if (
     // if the user is not logged in and the app path, in this case, /protected, is accessed, redirect to the login page
