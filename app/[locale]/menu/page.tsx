@@ -3,6 +3,7 @@ import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { MenuContent } from '@/components/menu-content'
 import type { Category, Product, Size, Topping } from '@/lib/types'
+import { AuroraBg } from '@/components/animations/aurora-bg'
 
 // Disable caching to always show fresh data
 export const dynamic = 'force-dynamic'
@@ -61,8 +62,9 @@ export default async function MenuPage({
   const toppings = (toppingsResult.data || []) as Topping[]
 
   return (
-    <div className="py-12 md:py-16">
-      <div className="container mx-auto px-4">
+    <div className="relative py-12 md:py-16 overflow-hidden">
+      <AuroraBg className="opacity-55" intensity={1} />
+      <div className="container mx-auto px-4 relative z-10">
         <div className="mb-10 text-center section-divider pt-8 animate-fade-in-up">
           <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
             {locale === 'hu' ? 'Fedezd fel kínálatunkat' : 'Explore our selection'}
