@@ -22,14 +22,26 @@ export default async function AdminLayout({
     redirect(`/${locale}/auth/login`)
   }
 
-  // Check if user is admin
-  const { data: profile } = await supabase
+  // Check if user is admin. Try the profiles table first; if that errors
+  // (e.g. RLS recursion before scripts/005_fix_rls_recursion.sql has been
+  // applied), fall back to the JWT user_metadata flag so a real admin isn't
+  // locked out of their own panel by a database policy bug.
+  let isAdmin = false
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('is_admin')
     .eq('id', user.id)
     .single()
 
-  if (!profile?.is_admin) {
+  if (profileError) {
+    console.warn('[admin layout] profile fetch failed', profileError)
+    const meta = user.user_metadata as { is_admin?: boolean } | undefined
+    isAdmin = !!meta?.is_admin
+  } else {
+    isAdmin = !!profile?.is_admin
+  }
+
+  if (!isAdmin) {
     redirect(`/${locale}`)
   }
 

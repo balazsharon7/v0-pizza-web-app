@@ -52,12 +52,31 @@ export function Header({ locale, dictionary }: HeaderProps) {
     const supabase = createClient()
 
     const syncUser = async (userId: string) => {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('is_admin, full_name')
-        .eq('id', userId)
-        .single()
-      setProfile(profileData)
+      try {
+        const { data: profileData, error } = await supabase
+          .from('profiles')
+          .select('is_admin, full_name')
+          .eq('id', userId)
+          .single()
+        if (error) {
+          console.warn('[header] profile fetch failed', error)
+          // Fallback: read is_admin from the JWT's user_metadata if present.
+          // Lets the admin link render even if the profiles RLS migration
+          // (scripts/005_fix_rls_recursion.sql) hasn't been applied yet.
+          const meta = (await supabase.auth.getUser()).data.user?.user_metadata as
+            | { is_admin?: boolean; full_name?: string }
+            | undefined
+          setProfile({
+            is_admin: !!meta?.is_admin,
+            full_name: meta?.full_name ?? null,
+          })
+          return
+        }
+        setProfile(profileData)
+      } catch (err) {
+        console.warn('[header] profile fetch threw', err)
+        setProfile(null)
+      }
     }
 
     // Hydrate immediately from the cached session (no network round-trip).
