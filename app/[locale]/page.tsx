@@ -86,13 +86,13 @@ export default async function HomePage({
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/40">
-        {/* Soft aurora glow behind everything, very subtle */}
-        <AuroraBg className="opacity-40 mix-blend-multiply" intensity={0.7} />
+        {/* Interactive shader-style background — follows the pointer and ripples on click */}
+        <AuroraBg className="opacity-75" intensity={1.2} />
 
         {/* Content */}
         <div className="container mx-auto px-4 py-16 md:py-24 lg:py-28 relative z-10">
-          <div className="grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-center">
-            <div className="space-y-6 order-2 lg:order-1">
+          <div className="grid lg:grid-cols-[1fr_1.15fr] gap-10 lg:gap-16 items-center">
+            <div className="space-y-6 lg:order-1">
               <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
                 <OpenStatus locale={locale} compact />
               </div>
@@ -134,12 +134,12 @@ export default async function HomePage({
             </div>
 
             {/* Round pizza showcase — each pizza spins around its center, crossfades to the next */}
-            <div className="order-1 lg:order-2 animate-fade-in animation-delay-200 pb-8">
+            <div className="lg:order-2 animate-fade-in animation-delay-200 pb-8">
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
                 spinSeconds={50}
-                className="max-w-[480px] mx-auto"
+                className="max-w-[420px] sm:max-w-[520px] lg:max-w-[640px] mx-auto"
               />
             </div>
           </div>

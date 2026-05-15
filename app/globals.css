@@ -432,10 +432,6 @@
   font-size: 1.125rem;
   color: color-mix(in oklch, var(--primary-foreground) 88%, transparent);
 }
-.marquee-item::after {
-  content: '✦';
-  color: color-mix(in oklch, var(--primary-foreground) 55%, transparent);
-}
 
 /* Wave divider sits flush */
 .wave-divider {
