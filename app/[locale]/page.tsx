@@ -35,6 +35,18 @@ export default async function HomePage({
     .order('sort_order')
     .limit(4)
 
+  // Fetch every pizza name for the scrolling marquee strip
+  const { data: allPizzas } = await supabase
+    .from('products')
+    .select('name_hu, name_en')
+    .eq('is_available', true)
+    .eq('is_customizable', true)
+    .order('sort_order')
+
+  const pizzaNames = (allPizzas ?? [])
+    .map((p) => (locale === 'hu' ? p.name_hu : p.name_en))
+    .filter((n): n is string => !!n && n.trim().length > 0)
+
   // Fetch settings
   const { data: settingsData } = await supabase
     .from('settings')
@@ -82,10 +94,6 @@ export default async function HomePage({
           <div className="grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-center">
             <div className="space-y-6 order-2 lg:order-1">
               <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
-                <span className="relative inline-flex h-2.5 w-2.5">
-                  <span className="pulse-dot absolute inset-0 rounded-full bg-primary" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
-                </span>
                 <OpenStatus locale={locale} compact />
               </div>
 
@@ -138,20 +146,22 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* Marquee accent strip */}
+      {/* Marquee accent strip — full pizza lineup scrolling sideways */}
       <section className="bg-gradient-drift text-primary-foreground overflow-hidden">
         <Marquee
-          speed={38}
-          items={[
-            locale === 'hu' ? 'Fa-tüzelésű kemence' : 'Wood-fired oven',
-            locale === 'hu' ? '48 órás kelesztés' : '48h fermented dough',
-            'San Marzano',
-            locale === 'hu' ? 'Friss bazsalikom' : 'Fresh basil',
-            'Mozzarella di Bufala',
-            locale === 'hu' ? 'Helyi termelőktől' : 'Locally sourced',
-            'Olio extravergine',
-            locale === 'hu' ? 'Autentikus olasz' : 'Authentic Italian',
-          ]}
+          speed={Math.max(28, pizzaNames.length * 4)}
+          items={
+            pizzaNames.length > 0
+              ? pizzaNames
+              : [
+                  'Margherita',
+                  'Prosciutto e Basilico',
+                  'Diavola',
+                  'Quattro Formaggi',
+                  'Capricciosa',
+                  'Funghi',
+                ]
+          }
         />
       </section>
 

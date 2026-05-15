@@ -105,7 +105,7 @@ export function HeroCarousel({
                   alt={s.alt}
                   fill
                   sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover"
+                  className="object-contain"
                   priority={i === 0}
                 />
               </div>

@@ -528,7 +528,7 @@
   z-index: -1;
 }
 
-/* Circular pizza showcase carousel */
+/* Pizza showcase — bare transparent PNG, no circle/background/halo */
 .pizza-showcase {
   position: relative;
   width: 100%;
@@ -537,36 +537,17 @@
   align-items: center;
   justify-content: center;
   outline: none;
-}
-.pizza-showcase:focus-visible .pizza-showcase-stage {
-  box-shadow:
-    0 0 0 3px color-mix(in oklch, var(--ring) 60%, transparent),
-    0 40px 80px -24px rgba(0, 0, 0, 0.45);
+  background: transparent;
 }
 .pizza-showcase-halo {
-  position: absolute;
-  inset: -8%;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle at 50% 50%,
-    color-mix(in oklch, var(--accent) 35%, transparent),
-    color-mix(in oklch, var(--primary) 20%, transparent) 45%,
-    transparent 70%
-  );
-  filter: blur(28px);
-  z-index: 0;
-  animation: float-slow 8s ease-in-out infinite;
+  display: none;
 }
 .pizza-showcase-stage {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 9999px;
-  overflow: hidden;
+  background: transparent;
   z-index: 1;
-  box-shadow:
-    0 40px 80px -24px rgba(0, 0, 0, 0.45),
-    0 18px 40px -12px rgba(0, 0, 0, 0.3);
 }
 .pizza-slide {
   position: absolute;
@@ -584,10 +565,12 @@
   inset: 0;
   animation: spin-slow linear infinite;
   will-change: transform;
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.22));
 }
 .pizza-slide img {
   user-select: none;
   -webkit-user-drag: none;
+  object-fit: contain !important;
 }
 .pizza-showcase-label {
   position: absolute;
