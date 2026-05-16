@@ -147,9 +147,13 @@ export function MenuContent({
                     <Image
                       src={img}
                       alt=""
-                      width={80}
-                      height={80}
-                      className="h-full w-full object-contain p-0.5"
+                      width={96}
+                      height={96}
+                      className={
+                        category.slug === 'pizzas'
+                          ? 'h-full w-full object-cover scale-[1.35]'
+                          : 'h-full w-full object-contain p-0.5'
+                      }
                       aria-hidden
                     />
                   ) : category.slug === 'pizzas' ? (
