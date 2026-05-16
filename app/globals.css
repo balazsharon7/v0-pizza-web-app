@@ -524,13 +524,14 @@
   z-index: -1;
 }
 
-/* Wood-fired oven hero decoration — anchored to the right edge */
+/* Wood-fired oven hero decoration — anchored to the right edge,
+   fully inside the viewport (no overflow). */
 .hero-oven {
   position: absolute;
   top: 50%;
-  right: -3%;
-  width: 28%;
-  max-width: 420px;
+  right: 2%;
+  width: 24%;
+  max-width: 360px;
   aspect-ratio: 2 / 3;
   transform: translateY(-50%);
   z-index: 1;
