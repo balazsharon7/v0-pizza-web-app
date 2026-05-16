@@ -490,8 +490,15 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
                   <Input
                     id="min_order"
                     type="number"
-                    value={formData.min_order}
-                    onChange={(e) => setFormData({ ...formData, min_order: Number(e.target.value) })}
+                    inputMode="numeric"
+                    min="0"
+                    placeholder="0"
+                    value={formData.min_order === 0 ? '' : formData.min_order}
+                    onChange={(e) => {
+                      const raw = e.target.value
+                      const n = raw === '' ? 0 : parseInt(raw, 10)
+                      setFormData({ ...formData, min_order: Number.isFinite(n) && n >= 0 ? n : 0 })
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
@@ -499,8 +506,15 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
                   <Input
                     id="delivery_fee"
                     type="number"
-                    value={formData.delivery_fee}
-                    onChange={(e) => setFormData({ ...formData, delivery_fee: Number(e.target.value) })}
+                    inputMode="numeric"
+                    min="0"
+                    placeholder="0"
+                    value={formData.delivery_fee === 0 ? '' : formData.delivery_fee}
+                    onChange={(e) => {
+                      const raw = e.target.value
+                      const n = raw === '' ? 0 : parseInt(raw, 10)
+                      setFormData({ ...formData, delivery_fee: Number.isFinite(n) && n >= 0 ? n : 0 })
+                    }}
                   />
                 </div>
               </div>
@@ -511,8 +525,15 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
                   <Input
                     id="delivery_time_min"
                     type="number"
-                    value={formData.delivery_time_min}
-                    onChange={(e) => setFormData({ ...formData, delivery_time_min: Number(e.target.value) })}
+                    inputMode="numeric"
+                    min="0"
+                    placeholder="0"
+                    value={formData.delivery_time_min === 0 ? '' : formData.delivery_time_min}
+                    onChange={(e) => {
+                      const raw = e.target.value
+                      const n = raw === '' ? 0 : parseInt(raw, 10)
+                      setFormData({ ...formData, delivery_time_min: Number.isFinite(n) && n >= 0 ? n : 0 })
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
@@ -520,8 +541,15 @@ export function DeliveryZonesForm({ locale, initialZones }: DeliveryZonesFormPro
                   <Input
                     id="delivery_time_max"
                     type="number"
-                    value={formData.delivery_time_max}
-                    onChange={(e) => setFormData({ ...formData, delivery_time_max: Number(e.target.value) })}
+                    inputMode="numeric"
+                    min="0"
+                    placeholder="0"
+                    value={formData.delivery_time_max === 0 ? '' : formData.delivery_time_max}
+                    onChange={(e) => {
+                      const raw = e.target.value
+                      const n = raw === '' ? 0 : parseInt(raw, 10)
+                      setFormData({ ...formData, delivery_time_max: Number.isFinite(n) && n >= 0 ? n : 0 })
+                    }}
                   />
                 </div>
               </div>

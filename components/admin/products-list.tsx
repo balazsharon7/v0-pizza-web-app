@@ -459,9 +459,22 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                 type="number"
                 min="0"
                 step="10"
+                inputMode="numeric"
+                placeholder="0"
                 className="h-12"
-                value={formData.base_price}
-                onChange={(e) => setFormData({ ...formData, base_price: parseInt(e.target.value) || 0 })}
+                value={formData.base_price === 0 ? '' : formData.base_price}
+                onChange={(e) => {
+                  const raw = e.target.value
+                  if (raw === '') {
+                    setFormData({ ...formData, base_price: 0 })
+                    return
+                  }
+                  const n = parseInt(raw, 10)
+                  setFormData({
+                    ...formData,
+                    base_price: Number.isFinite(n) && n >= 0 ? n : 0,
+                  })
+                }}
               />
             </div>
 
