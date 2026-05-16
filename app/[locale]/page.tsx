@@ -124,7 +124,7 @@ export default async function HomePage({
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-8 lg:gap-8 xl:gap-12 lg:grid-cols-3 lg:grid-rows-[auto_1fr]">
+          <div className="grid gap-8 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
             {/* 1) Title block */}
             <div className="space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
@@ -137,36 +137,34 @@ export default async function HomePage({
               </h1>
             </div>
 
-            {/* 2) Round pizza showcase — center column on desktop, so text /
-                pizza / oven each occupy roughly a third of the section. */}
-            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
+            {/* 2) Round pizza showcase with oven in the background */}
+            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
+              {/* Wood-fired oven — absolutely positioned behind the pizza.
+                  mix-blend-screen drops the PNG's black bg so only the
+                  watercolor brushwork is visible. */}
+              <div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
+                style={{ width: '80%', aspectRatio: '2/3', zIndex: 0 }}
+                aria-hidden
+              >
+                <div className="hero-oven relative w-full h-full">
+                  <Image
+                    src="/hero/oven.png"
+                    alt=""
+                    fill
+                    sizes="40vw"
+                    className="object-contain mix-blend-screen"
+                    priority={false}
+                  />
+                </div>
+              </div>
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
                 spinSeconds={50}
                 href={`/${locale}/menu`}
-                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[460px] mx-auto"
+                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[600px] mx-auto relative"
               />
-            </div>
-
-            {/* Wood-fired oven decoration — third column on desktop. Hidden on
-                mobile so the title stays uncluttered. mix-blend-mode: screen
-                drops the source PNG's black background against the cream page
-                bg, leaving only the watercolor brushwork visible. */}
-            <div
-              className="hidden lg:flex lg:col-start-3 lg:row-start-1 lg:row-span-2 lg:items-center lg:justify-center pointer-events-none select-none"
-              aria-hidden
-            >
-              <div className="hero-oven relative w-full max-w-[360px] aspect-[2/3]">
-                <Image
-                  src="/hero/oven.png"
-                  alt=""
-                  fill
-                  sizes="33vw"
-                  className="object-contain mix-blend-screen"
-                  priority={false}
-                />
-              </div>
             </div>
 
             {/* 3) Rest of the copy */}

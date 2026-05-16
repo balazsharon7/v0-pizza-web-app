@@ -524,26 +524,26 @@
   z-index: -1;
 }
 
-/* Wood-fired oven hero decoration — flows in the third grid column,
-   subtle and softly masked so it reads as background art. */
+/* Wood-fired oven hero decoration — sits behind the spinning pizza as a
+   background element. mix-blend-screen removes the black PNG bg. */
 .hero-oven {
-  opacity: 0.55;
+  opacity: 0.7;
   filter: contrast(1.05) saturate(0.95);
   -webkit-mask-image:
-    radial-gradient(ellipse 70% 80% at 50% 50%, black 38%, transparent 90%);
+    radial-gradient(ellipse 85% 90% at 50% 50%, black 45%, transparent 88%);
           mask-image:
-    radial-gradient(ellipse 70% 80% at 50% 50%, black 38%, transparent 90%);
+    radial-gradient(ellipse 85% 90% at 50% 50%, black 45%, transparent 88%);
   animation: oven-breathe 9s ease-in-out infinite;
   will-change: transform, opacity;
 }
 @keyframes oven-breathe {
   0%, 100% {
     transform: scale(1);
-    opacity: 0.55;
+    opacity: 0.7;
   }
   50% {
     transform: scale(1.02);
-    opacity: 0.7;
+    opacity: 0.85;
   }
 }
 
@@ -730,6 +730,7 @@
   justify-content: center;
   outline: none;
   background: transparent;
+  z-index: 1;
 }
 .pizza-showcase-halo {
   display: none;
