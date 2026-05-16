@@ -62,31 +62,44 @@ export function FeaturedPizzas({ pizzas, locale, dictionary }: FeaturedPizzasPro
               ) : (
                 <Pizza className="h-16 w-16 text-primary/20 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500" />
               )}
-              <div className="absolute top-3 left-3 z-10 transition-transform duration-300 group-hover:-translate-y-0.5">
-                <span className="inline-flex items-center rounded-full bg-accent/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-accent-foreground shadow-sm">
-                  {t.menu.from} {formatPrice(pizza.base_price)} {t.common.currency}
-                </span>
-              </div>
             </div>
-            <CardContent className="p-5">
+            <CardContent className="p-5 pt-4">
               <h3 className="font-serif text-lg font-semibold tracking-tight group-hover:text-primary transition-colors duration-200">
                 {getLocalizedName(pizza, locale)}
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+              <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed min-h-[2.5rem]">
                 {getLocalizedDescription(pizza, locale)}
               </p>
-              <div className="mt-4 flex items-center justify-end">
+              <div className="mt-5 flex items-end justify-between gap-3 pt-4 border-t border-border/50">
+                <div className="flex flex-col leading-none">
+                  <span className="text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground/80">
+                    {t.menu.from}
+                  </span>
+                  <span className="mt-1 font-serif text-2xl font-bold text-foreground tabular-nums">
+                    {formatPrice(pizza.base_price)}
+                    <span className="ml-1 text-sm font-medium text-muted-foreground">
+                      {t.common.currency}
+                    </span>
+                  </span>
+                </div>
                 <Button
                   size="sm"
-                  className="rounded-full px-5 shadow-sm hover:shadow-md hover:scale-105 transition-all"
+                  className="rounded-full h-10 px-5 shadow-sm shadow-primary/20 hover:shadow-md hover:shadow-primary/30 hover:scale-[1.03] transition-all"
                   onClick={() => handleAddToCart(pizza)}
                   disabled={isStoreOpen === false}
                   title={isStoreOpen === false ? (locale === 'hu' ? 'Az étterem zárva van' : 'Restaurant is closed') : undefined}
                 >
-                  {isStoreOpen === false
-                    ? <><Lock className="h-4 w-4 mr-1.5" />{locale === 'hu' ? 'Zárva' : 'Closed'}</>
-                    : <><ShoppingCart className="h-4 w-4 mr-1.5 transition-transform group-hover:-translate-y-0.5" />{locale === 'hu' ? 'Kosárba' : 'Add'}</>
-                  }
+                  {isStoreOpen === false ? (
+                    <>
+                      <Lock className="h-4 w-4 mr-1.5" />
+                      {locale === 'hu' ? 'Zárva' : 'Closed'}
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="h-4 w-4 mr-1.5 transition-transform group-hover:-translate-y-0.5" />
+                      {locale === 'hu' ? 'Kosárba' : 'Add'}
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>

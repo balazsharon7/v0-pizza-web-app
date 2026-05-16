@@ -246,18 +246,12 @@ export function MenuContent({
                 {!transparent && (
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 )}
-                {/* Price badge */}
-                <div className="absolute top-3 left-3">
-                  <span className="inline-flex items-center rounded-full bg-accent/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-accent-foreground shadow-sm">
-                    {product.is_customizable && `${t.menu.from} `}{formatPrice(product.base_price)} {t.common.currency}
-                  </span>
-                </div>
                 {/* Customize button for pizzas - top right corner */}
                 {product.is_customizable && isStoreOpen && (
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="absolute top-3 right-3 shadow-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    className="absolute top-3 right-3 shadow-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
                     onClick={(e) => handleCustomize(product, e)}
                   >
                     <SlidersHorizontal className="h-4 w-4 mr-1.5" />
@@ -267,19 +261,32 @@ export function MenuContent({
               </div>
                 )
               })()}
-              <CardContent className="p-5">
+              <CardContent className="p-5 pt-4">
                 <h3 className="font-serif text-lg font-semibold tracking-tight group-hover:text-primary transition-colors duration-200">
                   {getLocalizedName(product, locale)}
                 </h3>
                 {getLocalizedDescription(product, locale) && (
-                  <p className="mt-2 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                  <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed min-h-[2.5rem]">
                     {getLocalizedDescription(product, locale)}
                   </p>
                 )}
-                <div className="mt-4 flex items-center justify-end">
+                <div className="mt-5 flex items-end justify-between gap-3 pt-4 border-t border-border/50">
+                  <div className="flex flex-col leading-none">
+                    {product.is_customizable && (
+                      <span className="text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground/80">
+                        {t.menu.from}
+                      </span>
+                    )}
+                    <span className={`font-serif text-2xl font-bold text-foreground tabular-nums ${product.is_customizable ? 'mt-1' : ''}`}>
+                      {formatPrice(product.base_price)}
+                      <span className="ml-1 text-sm font-medium text-muted-foreground">
+                        {t.common.currency}
+                      </span>
+                    </span>
+                  </div>
                   <Button
                     size="sm"
-                    className="rounded-full px-5 shadow-sm hover:shadow-md transition-all"
+                    className="rounded-full h-10 px-5 shadow-sm shadow-primary/20 hover:shadow-md hover:shadow-primary/30 hover:scale-[1.03] transition-all"
                     onClick={(e) => handleQuickAdd(product, e)}
                     disabled={!isStoreOpen}
                   >
