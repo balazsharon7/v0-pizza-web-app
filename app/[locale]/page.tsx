@@ -114,25 +114,6 @@ export default async function HomePage({
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/40">
-        {/* Wood-fired oven decoration on the left, behind the aurora.
-            mix-blend-mode: screen drops the source PNG's black background
-            against the cream page bg, leaving only the watercolor oven +
-            smoke + flame. Sits under the text on desktop, hidden on mobile
-            to keep the title legible. */}
-        <div
-          className="hero-oven hidden lg:block pointer-events-none select-none"
-          aria-hidden
-        >
-          <Image
-            src="/hero/oven.png"
-            alt=""
-            fill
-            sizes="50vw"
-            className="object-contain object-left mix-blend-screen"
-            priority={false}
-          />
-        </div>
-
         {/* Interactive shader-style background — follows the pointer and ripples on click */}
         <AuroraBg className="opacity-75" intensity={1.2} />
 
@@ -143,7 +124,7 @@ export default async function HomePage({
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-8 lg:gap-12 lg:grid-cols-[1fr_1.1fr] lg:grid-rows-[auto_1fr]">
+          <div className="grid gap-8 lg:gap-8 xl:gap-12 lg:grid-cols-3 lg:grid-rows-[auto_1fr]">
             {/* 1) Title block */}
             <div className="space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
@@ -156,19 +137,36 @@ export default async function HomePage({
               </h1>
             </div>
 
-            {/* 2) Round pizza showcase — each pizza spins around its center, crossfades to the next.
-                Clicking takes the visitor straight to the menu. On desktop it
-                sits in the right grid column, but nudged slightly left so it
-                reads as visually central while the oven decoration drifts on
-                the far right side. */}
-            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center lg:-translate-x-6">
+            {/* 2) Round pizza showcase — center column on desktop, so text /
+                pizza / oven each occupy roughly a third of the section. */}
+            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
                 spinSeconds={50}
                 href={`/${locale}/menu`}
-                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[520px] mx-auto"
+                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[460px] mx-auto"
               />
+            </div>
+
+            {/* Wood-fired oven decoration — third column on desktop. Hidden on
+                mobile so the title stays uncluttered. mix-blend-mode: screen
+                drops the source PNG's black background against the cream page
+                bg, leaving only the watercolor brushwork visible. */}
+            <div
+              className="hidden lg:flex lg:col-start-3 lg:row-start-1 lg:row-span-2 lg:items-center lg:justify-center pointer-events-none select-none"
+              aria-hidden
+            >
+              <div className="hero-oven relative w-full max-w-[360px] aspect-[2/3]">
+                <Image
+                  src="/hero/oven.png"
+                  alt=""
+                  fill
+                  sizes="33vw"
+                  className="object-contain mix-blend-screen"
+                  priority={false}
+                />
+              </div>
             </div>
 
             {/* 3) Rest of the copy */}
