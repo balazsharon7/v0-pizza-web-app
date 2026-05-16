@@ -528,30 +528,30 @@
 .hero-oven {
   position: absolute;
   top: 50%;
-  left: -2%;
-  width: 38%;
-  max-width: 560px;
+  left: 50%;
+  width: 34%;
+  max-width: 500px;
   aspect-ratio: 2 / 3;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   z-index: 1;
-  opacity: 0.55;
+  opacity: 0.4;
   filter: contrast(1.05) saturate(0.95);
   /* fade the edges so it blends into the cream background instead of
      showing a hard edge where the watercolor wash ends */
   -webkit-mask-image:
-    radial-gradient(ellipse 70% 80% at 55% 50%, black 35%, transparent 88%);
+    radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 88%);
           mask-image:
-    radial-gradient(ellipse 70% 80% at 55% 50%, black 35%, transparent 88%);
+    radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 88%);
   animation: oven-breathe 9s ease-in-out infinite;
 }
 @keyframes oven-breathe {
   0%, 100% {
-    transform: translateY(-50%) scale(1);
-    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.4;
   }
   50% {
-    transform: translateY(-51%) scale(1.015);
-    opacity: 0.65;
+    transform: translate(-50%, -51%) scale(1.015);
+    opacity: 0.5;
   }
 }
 
