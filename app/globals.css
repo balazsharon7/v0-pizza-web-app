@@ -524,6 +524,37 @@
   z-index: -1;
 }
 
+/* Wood-fired oven hero decoration */
+.hero-oven {
+  position: absolute;
+  top: 50%;
+  left: -2%;
+  width: 38%;
+  max-width: 560px;
+  aspect-ratio: 2 / 3;
+  transform: translateY(-50%);
+  z-index: 1;
+  opacity: 0.55;
+  filter: contrast(1.05) saturate(0.95);
+  /* fade the edges so it blends into the cream background instead of
+     showing a hard edge where the watercolor wash ends */
+  -webkit-mask-image:
+    radial-gradient(ellipse 70% 80% at 55% 50%, black 35%, transparent 88%);
+          mask-image:
+    radial-gradient(ellipse 70% 80% at 55% 50%, black 35%, transparent 88%);
+  animation: oven-breathe 9s ease-in-out infinite;
+}
+@keyframes oven-breathe {
+  0%, 100% {
+    transform: translateY(-50%) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(-51%) scale(1.015);
+    opacity: 0.65;
+  }
+}
+
 /* Pizza-card stage — used in featured pizzas + pizza category cards on the
    menu so a transparent PNG floats inside the card with a soft warm halo
    behind it, same vibe as the spinning hero pizzas. */
@@ -858,7 +889,8 @@
   .tilt-card .tilt-inner { transform: none !important }
   .pizza-spin,
   .pizza-showcase-halo,
-  .pizza-dot-fill { animation: none !important }
+  .pizza-dot-fill,
+  .hero-oven { animation: none !important }
 }
 
 /* Custom cursor — hide native cursor when active (desktop only) */

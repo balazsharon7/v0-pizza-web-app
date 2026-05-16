@@ -114,6 +114,25 @@ export default async function HomePage({
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/40">
+        {/* Wood-fired oven decoration on the left, behind the aurora.
+            mix-blend-mode: screen drops the source PNG's black background
+            against the cream page bg, leaving only the watercolor oven +
+            smoke + flame. Sits under the text on desktop, hidden on mobile
+            to keep the title legible. */}
+        <div
+          className="hero-oven hidden lg:block pointer-events-none select-none"
+          aria-hidden
+        >
+          <Image
+            src="/hero/oven.png"
+            alt=""
+            fill
+            sizes="50vw"
+            className="object-contain object-left mix-blend-screen"
+            priority={false}
+          />
+        </div>
+
         {/* Interactive shader-style background — follows the pointer and ripples on click */}
         <AuroraBg className="opacity-75" intensity={1.2} />
 
