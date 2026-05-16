@@ -27,16 +27,19 @@ export default async function HomePage({
   const supabase = await createClient()
   
   // Fetch featured pizzas — admin flags them via the "Megjelenik a főoldalon"
-  // toggle on the product edit form. If no product has been flagged yet, fall
-  // back to the first 4 available customizable pizzas so the section is never
-  // empty on a fresh install.
-  let { data: pizzas } = await supabase
+  // toggle on the product edit form. Falls back to the first 4 available
+  // customizable products if nothing is flagged yet (or if the is_featured
+  // column doesn't exist because scripts/006_add_is_featured.sql hasn't been
+  // applied yet — keeps the homepage usable on a half-migrated database).
+  const featuredResult = await supabase
     .from('products')
     .select('*, category:categories(*)')
     .eq('is_available', true)
     .eq('is_featured', true)
     .order('sort_order')
     .limit(8)
+
+  let pizzas = featuredResult.error ? null : featuredResult.data
 
   if (!pizzas || pizzas.length === 0) {
     const fallback = await supabase

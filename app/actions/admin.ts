@@ -16,19 +16,33 @@ export async function updateProduct(productId: string, data: {
   category_id?: string
 }) {
   const supabase = await createClient()
-  
-  const { error } = await supabase
-    .from('products')
-    .update({ ...data, updated_at: new Date().toISOString() })
-    .eq('id', productId)
-  
+
+  const isMissingFeaturedColumn = (msg: string) =>
+    /is_featured|featured/i.test(msg) && /column|schema cache|find/i.test(msg)
+
+  const tryUpdate = async (payload: Record<string, unknown>) =>
+    supabase
+      .from('products')
+      .update({ ...payload, updated_at: new Date().toISOString() })
+      .eq('id', productId)
+
+  let { error } = await tryUpdate(data)
+  // If the is_featured column hasn't been migrated yet (scripts/006...) the
+  // first attempt fails. Strip the flag and retry so admins can keep editing
+  // products in the meantime — but only when that's the actual problem.
+  if (error && data.is_featured !== undefined && isMissingFeaturedColumn(error.message)) {
+    const { is_featured: _omit, ...rest } = data
+    const retry = await tryUpdate(rest)
+    error = retry.error
+  }
+
   if (error) {
     return { success: false, error: error.message }
   }
-  
+
   revalidatePath('/[locale]', 'layout')
   revalidatePath('/[locale]/menu', 'page')
-  
+
   return { success: true }
 }
 
@@ -45,18 +59,24 @@ export async function createProduct(data: {
   category_id: string
 }) {
   const supabase = await createClient()
-  
-  const { error } = await supabase
-    .from('products')
-    .insert(data)
-  
+
+  const isMissingFeaturedColumn = (msg: string) =>
+    /is_featured|featured/i.test(msg) && /column|schema cache|find/i.test(msg)
+
+  let { error } = await supabase.from('products').insert(data)
+  if (error && data.is_featured !== undefined && isMissingFeaturedColumn(error.message)) {
+    const { is_featured: _omit, ...rest } = data
+    const retry = await supabase.from('products').insert(rest)
+    error = retry.error
+  }
+
   if (error) {
     return { success: false, error: error.message }
   }
-  
+
   revalidatePath('/[locale]', 'layout')
   revalidatePath('/[locale]/menu', 'page')
-  
+
   return { success: true }
 }
 
