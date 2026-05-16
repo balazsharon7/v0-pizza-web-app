@@ -113,6 +113,10 @@ export function MenuContent({
           {filteredCategories.map((category) => {
             const isActive = activeCategory === category.id
             const img = categoryImage(category.slug)
+            // Pizza photo is on black -> dark chip. Cola bottle is dark on
+            // a black source -> use a white chip so it's clearly visible.
+            const chipBg = category.slug === 'drinks' ? 'bg-white' : 'bg-black'
+            const fallbackIconColor = category.slug === 'drinks' ? 'text-foreground/70' : 'text-white/80'
             return (
               <button
                 key={category.id}
@@ -131,9 +135,10 @@ export function MenuContent({
                   className={`
                     relative h-10 w-10 rounded-full overflow-hidden flex items-center justify-center
                     transition-all duration-500
+                    ${chipBg}
                     ${isActive
-                      ? 'bg-black ring-2 ring-primary-foreground/30 shadow-inner'
-                      : 'bg-black/85 ring-1 ring-border'
+                      ? 'ring-2 ring-primary-foreground/40 shadow-inner'
+                      : 'ring-1 ring-border'
                     }
                     group-hover/cat:scale-105
                   `}
@@ -142,15 +147,15 @@ export function MenuContent({
                     <Image
                       src={img}
                       alt=""
-                      width={64}
-                      height={64}
-                      className="h-full w-full object-cover scale-110"
+                      width={80}
+                      height={80}
+                      className="h-full w-full object-contain p-0.5"
                       aria-hidden
                     />
                   ) : category.slug === 'pizzas' ? (
-                    <Pizza className="h-5 w-5 text-white/80" />
+                    <Pizza className={`h-5 w-5 ${fallbackIconColor}`} />
                   ) : (
-                    <GlassWater className="h-5 w-5 text-white/80" />
+                    <GlassWater className={`h-5 w-5 ${fallbackIconColor}`} />
                   )}
                 </span>
                 <span className="font-serif text-base tracking-tight">
