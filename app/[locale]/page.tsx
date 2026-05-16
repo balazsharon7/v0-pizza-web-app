@@ -143,31 +143,31 @@ export default async function HomePage({
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-8 lg:gap-x-10 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:grid-rows-[auto_1fr]">
+          <div className="grid gap-8 lg:gap-12 lg:grid-cols-[1fr_1.1fr] lg:grid-rows-[auto_1fr]">
             {/* 1) Title block */}
             <div className="space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
                 <OpenStatus locale={locale} compact />
               </div>
 
-              <h1 className="animate-fade-in-up animation-delay-100 font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+              <h1 className="animate-fade-in-up animation-delay-100 font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                 <span className="text-foreground">Terra Verde</span>
                 <span className="block text-primary mt-1">Pizzeria</span>
               </h1>
             </div>
 
             {/* 2) Round pizza showcase — each pizza spins around its center, crossfades to the next.
-                Clicking takes the visitor straight to the menu. Sits in the
-                centre auto column on desktop so it lands at the visual middle
-                of the section, with text on the left and the oven decoration
-                on the right. */}
-            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
+                Clicking takes the visitor straight to the menu. On desktop it
+                sits in the right grid column, but nudged slightly left so it
+                reads as visually central while the oven decoration drifts on
+                the far right side. */}
+            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center lg:-translate-x-6">
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
                 spinSeconds={50}
                 href={`/${locale}/menu`}
-                className="max-w-[520px] sm:max-w-[640px] lg:w-[460px] lg:max-w-[460px] mx-auto"
+                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[520px] mx-auto"
               />
             </div>
 
