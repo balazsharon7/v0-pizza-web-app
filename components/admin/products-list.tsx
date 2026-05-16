@@ -185,7 +185,10 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
       router.refresh()
     } catch (error) {
       console.error('Save error:', error)
-      toast.error(locale === 'hu' ? 'Hiba történt' : 'Error occurred')
+      const message = error instanceof Error ? error.message : String(error)
+      toast.error(
+        (locale === 'hu' ? 'Hiba történt: ' : 'Error: ') + message,
+      )
     } finally {
       setIsSaving(false)
     }
