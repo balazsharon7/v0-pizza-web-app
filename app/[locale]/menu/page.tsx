@@ -65,13 +65,22 @@ export default async function MenuPage({
     <div className="relative py-12 md:py-16 overflow-hidden">
       <AuroraBg className="opacity-55" intensity={1} />
       <div className="container mx-auto px-4 relative z-10">
-        <div className="mb-10 text-center section-divider pt-8 animate-fade-in-up">
-          <span className="inline-block text-accent font-serif italic text-sm tracking-wide mb-3">
-            {locale === 'hu' ? 'Fedezd fel kínálatunkat' : 'Explore our selection'}
-          </span>
-          <h1 className="font-serif text-3xl font-bold md:text-4xl lg:text-5xl">
+        <div className="mb-10 text-center pt-4 animate-fade-in-up">
+          <div className="inline-flex items-center gap-3 mb-5">
+            <span className="h-px w-10 bg-accent/50" />
+            <span className="text-accent font-serif italic text-xs tracking-[0.25em] uppercase">
+              {locale === 'hu' ? 'Fedezd fel kínálatunkat' : 'Explore our selection'}
+            </span>
+            <span className="h-px w-10 bg-accent/50" />
+          </div>
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
             {dictionary.menu.title}
           </h1>
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            {locale === 'hu'
+              ? 'Válassz kategóriát, és rendeld meg a kedvenced — minden pizza kézzel készül, fa-tüzelésű kemencében.'
+              : 'Pick a category and order your favorite — every pizza is hand-made in a wood-fired oven.'}
+          </p>
         </div>
         
         <MenuContent

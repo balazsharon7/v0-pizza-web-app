@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Pizza, GlassWater, ShoppingCart, SlidersHorizontal, UtensilsCrossed } from 'lucide-react'
+import { Pizza, GlassWater, ShoppingCart, SlidersHorizontal, UtensilsCrossed, Clock } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ProductModal } from '@/components/product-modal'
@@ -68,12 +68,12 @@ export function MenuContent({
     .filter((p) => p.category_id === activeCategory)
     .sort((a, b) => getLocalizedName(a, locale).localeCompare(getLocalizedName(b, locale), locale))
 
-  const getCategoryIcon = (slug: string) => {
+  const categoryImage = (slug: string): string | null => {
     switch (slug) {
       case 'pizzas':
-        return <Pizza className="h-5 w-5" />
+        return '/menu/pizzas.png'
       case 'drinks':
-        return <GlassWater className="h-5 w-5" />
+        return '/menu/drinks.png'
       default:
         return null
     }
@@ -109,34 +109,80 @@ export function MenuContent({
 
       {/* Category Selection */}
       <div className="mb-10 animate-fade-in-up animation-delay-100">
-        <div className="flex flex-wrap justify-center gap-3">
-          {filteredCategories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`
-                flex items-center gap-2.5 px-7 py-3.5 rounded-full font-medium transition-all duration-300 relative
-                ${activeCategory === category.id
-                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
-                  : 'bg-card border border-border hover:border-primary/30 hover:bg-primary/5 text-foreground hover:text-primary'
-                }
-              `}
-            >
-              {getCategoryIcon(category.slug)}
-              {getLocalizedName(category, locale)}
-            </button>
-          ))}
+        <div className="mx-auto flex w-fit gap-2 rounded-full border border-border/60 bg-background/70 p-1.5 backdrop-blur-sm shadow-sm">
+          {filteredCategories.map((category) => {
+            const isActive = activeCategory === category.id
+            const img = categoryImage(category.slug)
+            return (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`
+                  group/cat relative flex items-center gap-3 rounded-full pl-2.5 pr-6 py-2.5 font-medium
+                  transition-all duration-300
+                  ${isActive
+                    ? 'bg-primary text-primary-foreground shadow-md shadow-primary/30'
+                    : 'text-muted-foreground hover:text-foreground'
+                  }
+                `}
+                aria-pressed={isActive}
+              >
+                <span
+                  className={`
+                    relative h-10 w-10 rounded-full overflow-hidden flex items-center justify-center
+                    transition-all duration-500
+                    ${isActive
+                      ? 'bg-black ring-2 ring-primary-foreground/30 shadow-inner'
+                      : 'bg-black/85 ring-1 ring-border'
+                    }
+                    group-hover/cat:scale-105
+                  `}
+                >
+                  {img ? (
+                    <Image
+                      src={img}
+                      alt=""
+                      width={64}
+                      height={64}
+                      className="h-full w-full object-cover scale-110"
+                      aria-hidden
+                    />
+                  ) : category.slug === 'pizzas' ? (
+                    <Pizza className="h-5 w-5 text-white/80" />
+                  ) : (
+                    <GlassWater className="h-5 w-5 text-white/80" />
+                  )}
+                </span>
+                <span className="font-serif text-base tracking-tight">
+                  {getLocalizedName(category, locale)}
+                </span>
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* Store Closed Banner */}
       {!isStoreOpen && (
-        <div className="mb-8 p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-center">
-          <p className="text-destructive font-medium">
-            {locale === 'hu' 
-              ? 'Az étterem jelenleg zárva van. Rendelést csak nyitvatartási időben fogadunk.'
-              : 'The restaurant is currently closed. We only accept orders during opening hours.'}
-          </p>
+        <div className="mb-10 mx-auto max-w-3xl">
+          <div className="relative overflow-hidden rounded-2xl border border-destructive/25 bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent px-6 py-5">
+            <div className="absolute -top-12 -right-8 w-40 h-40 rounded-full bg-destructive/15 blur-3xl" aria-hidden />
+            <div className="relative flex items-start gap-4">
+              <div className="shrink-0 flex h-11 w-11 items-center justify-center rounded-full bg-destructive/15 ring-1 ring-destructive/30">
+                <Clock className="h-5 w-5 text-destructive" />
+              </div>
+              <div className="flex-1">
+                <p className="font-serif text-lg font-semibold text-destructive">
+                  {locale === 'hu' ? 'Most zárva tartunk' : "We're closed right now"}
+                </p>
+                <p className="mt-1 text-sm text-foreground/75 leading-relaxed">
+                  {locale === 'hu'
+                    ? 'Nyitvatartási időben szívesen várjuk a rendelésedet — addig nyugodtan nézz körül az étlapon.'
+                    : 'We accept orders during opening hours — feel free to browse the menu in the meantime.'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
