@@ -797,19 +797,35 @@
 }
 .pizza-dot {
   position: relative;
-  width: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: stretch;
+  /* large transparent tap target; visible bar is a child below */
+  width: 32px;
+  height: 28px;
+  padding: 12px 3px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  box-sizing: content-box;
+}
+.pizza-dot-bar {
+  position: relative;
+  flex: 1;
   height: 4px;
   border-radius: 9999px;
   background: color-mix(in oklch, var(--foreground) 18%, transparent);
   overflow: hidden;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: width 250ms ease, background-color 250ms ease;
+  transition: background-color 250ms ease;
+}
+.pizza-dot.active .pizza-dot-bar {
+  background: color-mix(in oklch, var(--primary) 25%, transparent);
+}
+.pizza-dot {
+  transition: width 250ms ease;
 }
 .pizza-dot.active {
-  width: 48px;
-  background: color-mix(in oklch, var(--primary) 25%, transparent);
+  width: 52px;
 }
 .pizza-dot-fill {
   position: absolute;

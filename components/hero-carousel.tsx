@@ -163,25 +163,39 @@ export function HeroCarousel({
         )
       })()}
 
-      {/* Dots */}
+      {/* Dots — clicking jumps to that slide. Stop pointer events from
+          bubbling up to the showcase so the swipe-gesture handler doesn't
+          interpret the tap as a click on the pizza (which would navigate to
+          the menu). */}
       {count > 1 && (
-        <div className="pizza-showcase-dots">
+        <div
+          className="pizza-showcase-dots"
+          onPointerDown={(e) => e.stopPropagation()}
+          onPointerUp={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        >
           {slides.map((_, i) => (
             <button
               key={i}
               type="button"
-              onClick={() => go(i)}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation()
+                go(i)
+              }}
               aria-label={`Go to slide ${i + 1}`}
               aria-current={i === index}
               className={`pizza-dot ${i === index ? 'active' : ''}`}
             >
-              <span
-                className="pizza-dot-fill"
-                style={{
-                  animationDuration: `${intervalMs}ms`,
-                  animationPlayState: i === index && !paused ? 'running' : 'paused',
-                }}
-              />
+              <span className="pizza-dot-bar">
+                <span
+                  className="pizza-dot-fill"
+                  style={{
+                    animationDuration: `${intervalMs}ms`,
+                    animationPlayState: i === index && !paused ? 'running' : 'paused',
+                  }}
+                />
+              </span>
             </button>
           ))}
         </div>
