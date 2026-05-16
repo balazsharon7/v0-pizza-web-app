@@ -143,7 +143,7 @@ export default async function HomePage({
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-8 lg:gap-12 lg:grid-cols-[1fr_1.25fr] lg:grid-rows-[auto_1fr]">
+          <div className="grid gap-8 lg:gap-16 lg:grid-cols-[1fr_1.15fr] lg:grid-rows-[auto_1fr]">
             {/* 1) Title block */}
             <div className="space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
@@ -157,14 +157,16 @@ export default async function HomePage({
             </div>
 
             {/* 2) Round pizza showcase — each pizza spins around its center, crossfades to the next.
-                Clicking takes the visitor straight to the menu. */}
+                Clicking takes the visitor straight to the menu. On desktop it
+                hugs the right edge so it doesn't overlap with the centered
+                wood-fired oven decoration. */}
             <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
                 spinSeconds={50}
                 href={`/${locale}/menu`}
-                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[680px] mx-auto"
+                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[640px] mx-auto lg:mr-0 lg:ml-auto"
               />
             </div>
 
