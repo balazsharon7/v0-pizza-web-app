@@ -26,31 +26,48 @@ export default async function HomePage({
   
   const supabase = await createClient()
   
-  // Fetch featured pizzas — admin flags them via the "Megjelenik a főoldalon"
-  // toggle on the product edit form. Falls back to the first 4 available
-  // customizable products if nothing is flagged yet (or if the is_featured
-  // column doesn't exist because scripts/006_add_is_featured.sql hasn't been
-  // applied yet — keeps the homepage usable on a half-migrated database).
-  const featuredResult = await supabase
-    .from('products')
-    .select('*, category:categories(*)')
-    .eq('is_available', true)
-    .eq('is_featured', true)
-    .order('sort_order')
-    .limit(8)
-
-  let pizzas = featuredResult.error ? null : featuredResult.data
-
-  if (!pizzas || pizzas.length === 0) {
-    const fallback = await supabase
+  // Featured pizzas = the actual most-ordered ones. The product_order_counts()
+  // SECURITY DEFINER RPC aggregates order_items across the whole table while
+  // bypassing per-user RLS (it only returns counts, no PII). Ties get a
+  // Fisher–Yates shuffle within the tied group, so a brand-new shop with
+  // zero orders shows a random rotation and two equally popular pizzas
+  // don't always render in the same order.
+  const [productsResult, countsResult] = await Promise.all([
+    supabase
       .from('products')
       .select('*, category:categories(*)')
       .eq('is_available', true)
-      .eq('is_customizable', true)
-      .order('sort_order')
-      .limit(4)
-    pizzas = fallback.data
+      .eq('is_customizable', true),
+    supabase.rpc('product_order_counts'),
+  ])
+
+  const orderCounts: Record<string, number> = {}
+  ;(countsResult.data ?? []).forEach((row: { product_id: string; total_quantity: number | string }) => {
+    if (!row?.product_id) return
+    orderCounts[row.product_id] = Number(row.total_quantity ?? 0)
+  })
+
+  const availableProducts = productsResult.data ?? []
+  // Group products by their order count, shuffle within each group with
+  // Fisher–Yates, then flatten from highest count to lowest.
+  const groups = new Map<number, typeof availableProducts>()
+  for (const p of availableProducts) {
+    const c = orderCounts[p.id] ?? 0
+    const bucket = groups.get(c) ?? []
+    bucket.push(p)
+    groups.set(c, bucket)
   }
+  const countsDesc = [...groups.keys()].sort((a, b) => b - a)
+  const ranked: typeof availableProducts = []
+  for (const c of countsDesc) {
+    const bucket = [...(groups.get(c) ?? [])]
+    for (let i = bucket.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[bucket[i], bucket[j]] = [bucket[j], bucket[i]]
+    }
+    ranked.push(...bucket)
+  }
+  const pizzas = ranked.slice(0, 4)
 
   // Fetch every pizza name for the scrolling marquee strip
   const { data: allPizzas } = await supabase

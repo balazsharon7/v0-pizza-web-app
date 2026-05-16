@@ -507,16 +507,6 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                   onCheckedChange={(checked) => setFormData({ ...formData, is_customizable: checked })}
                 />
               </div>
-              <div className="flex items-center justify-between sm:justify-start gap-3 p-3 border rounded-lg sm:border-0 sm:p-0">
-                <Label htmlFor="is_featured" className="cursor-pointer">
-                  {locale === 'hu' ? 'Megjelenik a főoldalon' : 'Show on homepage'}
-                </Label>
-                <Switch
-                  id="is_featured"
-                  checked={formData.is_featured}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
-                />
-              </div>
             </div>
           </div>
 
