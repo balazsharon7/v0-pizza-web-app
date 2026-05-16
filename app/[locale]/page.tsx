@@ -26,14 +26,28 @@ export default async function HomePage({
   
   const supabase = await createClient()
   
-  // Fetch featured pizzas (first 4)
-  const { data: pizzas } = await supabase
+  // Fetch featured pizzas — admin flags them via the "Megjelenik a főoldalon"
+  // toggle on the product edit form. If no product has been flagged yet, fall
+  // back to the first 4 available customizable pizzas so the section is never
+  // empty on a fresh install.
+  let { data: pizzas } = await supabase
     .from('products')
     .select('*, category:categories(*)')
     .eq('is_available', true)
-    .eq('is_customizable', true)
+    .eq('is_featured', true)
     .order('sort_order')
-    .limit(4)
+    .limit(8)
+
+  if (!pizzas || pizzas.length === 0) {
+    const fallback = await supabase
+      .from('products')
+      .select('*, category:categories(*)')
+      .eq('is_available', true)
+      .eq('is_customizable', true)
+      .order('sort_order')
+      .limit(4)
+    pizzas = fallback.data
+  }
 
   // Fetch every pizza name for the scrolling marquee strip
   const { data: allPizzas } = await supabase

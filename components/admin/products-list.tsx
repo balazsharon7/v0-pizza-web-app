@@ -68,6 +68,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
     image_url: '' as string | null,
     is_available: true,
     is_customizable: true,
+    is_featured: false,
   })
 
   const handleEdit = (product: Product) => {
@@ -81,6 +82,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
       image_url: product.image_url,
       is_available: product.is_available,
       is_customizable: product.is_customizable,
+      is_featured: product.is_featured ?? false,
     })
     setEditingProduct(product)
   }
@@ -96,6 +98,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
       image_url: null,
       is_available: true,
       is_customizable: true,
+      is_featured: false,
     })
     setIsCreating(true)
   }
@@ -161,6 +164,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
         image_url: formData.image_url || undefined,
         is_available: formData.is_available,
         is_customizable: formData.is_customizable,
+        is_featured: formData.is_featured,
       }
 
       if (editingProduct) {
@@ -498,6 +502,16 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                   id="is_customizable"
                   checked={formData.is_customizable}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_customizable: checked })}
+                />
+              </div>
+              <div className="flex items-center justify-between sm:justify-start gap-3 p-3 border rounded-lg sm:border-0 sm:p-0">
+                <Label htmlFor="is_featured" className="cursor-pointer">
+                  {locale === 'hu' ? 'Megjelenik a főoldalon' : 'Show on homepage'}
+                </Label>
+                <Switch
+                  id="is_featured"
+                  checked={formData.is_featured}
+                  onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
                 />
               </div>
             </div>

@@ -12,6 +12,7 @@ export async function updateProduct(productId: string, data: {
   image_url?: string
   is_available?: boolean
   is_customizable?: boolean
+  is_featured?: boolean
   category_id?: string
 }) {
   const supabase = await createClient()
@@ -40,6 +41,7 @@ export async function createProduct(data: {
   image_url?: string
   is_available?: boolean
   is_customizable?: boolean
+  is_featured?: boolean
   category_id: string
 }) {
   const supabase = await createClient()
