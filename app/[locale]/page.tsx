@@ -295,8 +295,21 @@ export default async function HomePage({
           </ScrollReveal>
           
           <FeaturedPizzas pizzas={pizzas || []} locale={locale} dictionary={dictionary} />
-          
-          <div className="mt-12 text-center">
+
+          <div className="mt-10 flex justify-end">
+            <ScrollReveal>
+              <video
+                src="/videos/pizza-promo.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-64 sm:w-72 md:w-80 rounded-2xl shadow-xl object-cover aspect-video"
+              />
+            </ScrollReveal>
+          </div>
+
+          <div className="mt-8 text-center">
             <Button asChild size="lg" className="gap-2 text-base h-12 px-8">
               <Link href={`/${locale}/menu`}>
                 {t.nav.viewMenu}
