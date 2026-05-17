@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { DM_Sans, Fraunces } from 'next/font/google'
+import { Inter, Cormorant_Garamond } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { locales, type Locale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
@@ -11,8 +11,18 @@ import { Toaster } from '@/components/ui/sonner'
 import { CookieConsent } from '@/components/cookie-consent'
 import { CustomCursor } from '@/components/custom-cursor'
 
-const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' })
-const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-fraunces' })
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
+  display: 'swap',
+})
 
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -60,7 +70,7 @@ export default async function LocaleLayout({
   const dictionary = await getDictionary(locale)
 
   return (
-    <div className={`${dmSans.variable} ${fraunces.variable} min-h-screen flex flex-col font-sans`}>
+    <div className={`${inter.variable} ${cormorant.variable} min-h-screen flex flex-col font-sans`}>
       <CartProvider>
         <Header locale={locale} dictionary={dictionary} />
         <main className="flex-1">

@@ -6,11 +6,11 @@ import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { FeaturedPizzas } from '@/components/featured-pizzas'
-import { OpenStatus } from '@/components/open-status'
 import { AuroraBg } from '@/components/animations/aurora-bg'
 import { ScrollReveal } from '@/components/animations/scroll-reveal'
 import { Marquee } from '@/components/animations/marquee'
 import { HeroCarousel, type HeroSlide } from '@/components/hero-carousel'
+import { HeroSign } from '@/components/hero-sign'
 
 // Disable caching to always show fresh data
 export const dynamic = 'force-dynamic'
@@ -124,49 +124,35 @@ export default async function HomePage({
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-8 lg:gap-8 xl:gap-12 lg:grid-cols-3 lg:grid-rows-[auto_1fr]">
-            {/* 1) Title block */}
-            <div className="space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
-              <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
-                <OpenStatus locale={locale} compact />
+          <div className="grid gap-8 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
+            {/* 1) Title block — on mobile the hanging sign sits up here at
+                title height; on desktop it moves to the pizza column. */}
+            <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
+              <HeroSign className="lg:hidden absolute -top-2 right-0 w-24 sm:w-28 z-20 -rotate-3" />
+              <div className="relative w-fit">
+                <h1 className="animate-fade-in-up font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl relative z-10">
+                  <span className="text-foreground">Terra Verde</span>
+                  <span className="block text-primary mt-1">Pizzéria</span>
+                </h1>
+                <div
+                  className="hidden md:block absolute top-1/2 -translate-y-1/2 left-full ml-3 lg:ml-5 w-[clamp(140px,18vw,260px)] aspect-square pointer-events-none select-none z-0"
+                  aria-hidden
+                >
+                  <Image src="/images/logo-hero.png" alt="" fill className="object-contain" priority />
+                </div>
               </div>
-
-              <h1 className="animate-fade-in-up animation-delay-100 font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                <span className="text-foreground">Terra Verde</span>
-                <span className="block text-primary mt-1">Pizzeria</span>
-              </h1>
             </div>
 
-            {/* 2) Round pizza showcase — center column on desktop, so text /
-                pizza / oven each occupy roughly a third of the section. */}
-            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
+            {/* 2) Round pizza showcase + hanging open/closed sign (desktop) */}
+            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
+              <HeroSign className="hidden lg:block absolute -top-6 -right-4 w-36 z-20 -rotate-3 hover:rotate-0 transition-transform duration-500" />
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
                 spinSeconds={50}
                 href={`/${locale}/menu`}
-                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[460px] mx-auto"
+                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[600px] mx-auto"
               />
-            </div>
-
-            {/* Wood-fired oven decoration — third column on desktop. Hidden on
-                mobile so the title stays uncluttered. mix-blend-mode: screen
-                drops the source PNG's black background against the cream page
-                bg, leaving only the watercolor brushwork visible. */}
-            <div
-              className="hidden lg:flex lg:col-start-3 lg:row-start-1 lg:row-span-2 lg:items-center lg:justify-center pointer-events-none select-none"
-              aria-hidden
-            >
-              <div className="hero-oven relative w-full max-w-[360px] aspect-[2/3]">
-                <Image
-                  src="/hero/oven.png"
-                  alt=""
-                  fill
-                  sizes="33vw"
-                  className="object-contain mix-blend-screen"
-                  priority={false}
-                />
-              </div>
             </div>
 
             {/* 3) Rest of the copy */}
@@ -280,7 +266,15 @@ export default async function HomePage({
       </section>
 
       {/* Featured Pizzas */}
-      <section className="relative py-20 md:py-28">
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        {/* Pizza hot-air balloons — one drifts left → right across the section,
+            then 10s later the other balloon does the same. 60s loop. */}
+        <div className="balloon-cross" aria-hidden>
+          <Image src="/hero/balloon-1.png" alt="" fill sizes="24vw" className="object-contain" priority={false} />
+        </div>
+        <div className="balloon-cross balloon-cross-2" aria-hidden>
+          <Image src="/hero/balloon-2.png" alt="" fill sizes="24vw" className="object-contain" priority={false} />
+        </div>
         <div className="container mx-auto px-4 relative">
           <ScrollReveal className="mb-14 text-center pt-8">
             <div className="inline-flex items-center gap-3 mb-5">
@@ -301,8 +295,22 @@ export default async function HomePage({
           </ScrollReveal>
           
           <FeaturedPizzas pizzas={pizzas || []} locale={locale} dictionary={dictionary} />
-          
-          <div className="mt-12 text-center">
+
+          <div className="mt-10 flex justify-end">
+            <ScrollReveal>
+              <div className="relative w-48 sm:w-56 md:w-64 aspect-[2/3]">
+                <Image
+                  src="/hero/pizza-boat.png"
+                  alt={locale === 'hu' ? 'Pizza vitorláshajó illusztráció' : 'Pizza sailboat illustration'}
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  sizes="(max-width: 768px) 50vw, 256px"
+                />
+              </div>
+            </ScrollReveal>
+          </div>
+
+          <div className="mt-8 text-center">
             <Button asChild size="lg" className="gap-2 text-base h-12 px-8">
               <Link href={`/${locale}/menu`}>
                 {t.nav.viewMenu}
@@ -380,6 +388,20 @@ export default async function HomePage({
                 </ScrollReveal>
               )
             })}
+          </div>
+
+          <div className="mt-12 flex justify-start">
+            <ScrollReveal>
+              <div className="relative w-56 sm:w-64 md:w-80 aspect-[3/2]">
+                <Image
+                  src="/hero/pizza-bike.png"
+                  alt={locale === 'hu' ? 'Pizza kerékpár illusztráció' : 'Pizza bicycle illustration'}
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  sizes="(max-width: 768px) 60vw, 320px"
+                />
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>

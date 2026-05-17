@@ -105,8 +105,8 @@
 }
 
 @theme inline {
-  --font-sans: 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif;
-  --font-serif: 'Fraunces', 'Georgia', serif;
+  --font-sans: 'Inter', 'Inter Fallback', system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond', 'Cormorant Garamond Fallback', 'Garamond', 'Georgia', serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -524,27 +524,123 @@
   z-index: -1;
 }
 
-/* Wood-fired oven hero decoration — flows in the third grid column,
-   subtle and softly masked so it reads as background art. */
+/* Wood-fired oven hero decoration — sits behind the spinning pizza as a
+   background element. mix-blend-screen removes the black PNG bg. */
 .hero-oven {
-  opacity: 0.55;
+  opacity: 0.7;
   filter: contrast(1.05) saturate(0.95);
   -webkit-mask-image:
-    radial-gradient(ellipse 70% 80% at 50% 50%, black 38%, transparent 90%);
+    radial-gradient(ellipse 85% 90% at 50% 50%, black 45%, transparent 88%);
           mask-image:
-    radial-gradient(ellipse 70% 80% at 50% 50%, black 38%, transparent 90%);
+    radial-gradient(ellipse 85% 90% at 50% 50%, black 45%, transparent 88%);
   animation: oven-breathe 9s ease-in-out infinite;
   will-change: transform, opacity;
 }
 @keyframes oven-breathe {
   0%, 100% {
     transform: scale(1);
-    opacity: 0.55;
+    opacity: 0.7;
   }
   50% {
     transform: scale(1.02);
-    opacity: 0.7;
+    opacity: 0.85;
   }
+}
+
+/* Hero hanging sign — subtle pendulum sway animation */
+.hero-sign {
+  animation: sign-sway 6s ease-in-out infinite;
+  transform-origin: top center;
+}
+@keyframes sign-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(2deg);  }
+}
+.hero-sign:hover {
+  animation-play-state: paused;
+}
+
+/* ── Pizza hot-air balloons ──────────────────────────────────────────────── */
+/* One balloon drifts left → right across the Popular Pizzas section in 20s,
+   exits offscreen, then 10s later the other balloon repeats the journey.
+   Total cycle = 60s shared by both, balloon-2 offset by 30s.
+   A radial mask softens the PNG's black rectangular background into an
+   elliptical vignette so the balloon reads as floating in a soft halo. */
+.balloon-cross {
+  position: absolute;
+  top: 2%;
+  left: 0;
+  width: clamp(70px, 8vw, 120px);
+  aspect-ratio: 3 / 4;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+  opacity: 0;
+  z-index: 20;
+  -webkit-mask-image: radial-gradient(ellipse 60% 90% at 50% 50%, black 55%, transparent 94%);
+          mask-image: radial-gradient(ellipse 60% 90% at 50% 50%, black 55%, transparent 94%);
+  animation: balloon-cross 80s ease-in-out infinite;
+}
+.balloon-cross-2 {
+  animation-delay: 40s;
+}
+@keyframes balloon-cross {
+  /* Off-screen left, invisible */
+  0% {
+    transform: translateX(-25vw) translateY(0) rotate(-3deg);
+    opacity: 0;
+  }
+  /* Just entering — fade in */
+  3% {
+    transform: translateX(-12vw) translateY(-8px) rotate(-2deg);
+    opacity: 0.95;
+  }
+  /* First peak — drifting up */
+  9% {
+    transform: translateX(12vw) translateY(-38px) rotate(2deg);
+    opacity: 0.95;
+  }
+  /* Dip down */
+  16% {
+    transform: translateX(34vw) translateY(12px) rotate(-2deg);
+    opacity: 0.95;
+  }
+  /* Second peak — up again */
+  22% {
+    transform: translateX(58vw) translateY(-32px) rotate(2.5deg);
+    opacity: 0.95;
+  }
+  /* Final dip */
+  28% {
+    transform: translateX(86vw) translateY(6px) rotate(-1.5deg);
+    opacity: 0.95;
+  }
+  /* Near exit */
+  30% {
+    transform: translateX(102vw) translateY(-4px) rotate(1deg);
+    opacity: 0.95;
+  }
+  /* Exited right — fade out */
+  33% {
+    transform: translateX(125vw) translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  /* Hold off-screen until the next iteration */
+  100% {
+    transform: translateX(125vw);
+    opacity: 0;
+  }
+}
+@media (max-width: 639px) {
+  .balloon-cross { display: none; }
+}
+
+/* About-page oven — right-side background watercolor art on the Story section.
+   Fades out left so the centered text stays legible. */
+.about-oven-bg {
+  opacity: 0.13;
+  -webkit-mask-image: linear-gradient(to left, black 0%, black 30%, transparent 75%);
+          mask-image: linear-gradient(to left, black 0%, black 30%, transparent 75%);
 }
 
 /* Pizza-card stage — used in featured pizzas + pizza category cards on the
@@ -730,6 +826,7 @@
   justify-content: center;
   outline: none;
   background: transparent;
+  z-index: 1;
 }
 .pizza-showcase-halo {
   display: none;
@@ -882,7 +979,8 @@
   .pizza-spin,
   .pizza-showcase-halo,
   .pizza-dot-fill,
-  .hero-oven { animation: none !important }
+  .hero-oven,
+  .balloon-cross { animation: none !important }
 }
 
 /* Custom cursor — hide native cursor when active (desktop only) */
