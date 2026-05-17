@@ -568,17 +568,17 @@
    elliptical vignette so the balloon reads as floating in a soft halo. */
 .balloon-cross {
   position: absolute;
-  top: 6%;
+  top: 2%;
   left: 0;
-  width: clamp(200px, 24vw, 340px);
+  width: clamp(70px, 8vw, 120px);
   aspect-ratio: 3 / 4;
   pointer-events: none;
   user-select: none;
   will-change: transform, opacity;
   opacity: 0;
-  z-index: 0;
-  -webkit-mask-image: radial-gradient(ellipse 58% 88% at 50% 50%, black 46%, transparent 92%);
-          mask-image: radial-gradient(ellipse 58% 88% at 50% 50%, black 46%, transparent 92%);
+  z-index: 20;
+  -webkit-mask-image: radial-gradient(ellipse 60% 90% at 50% 50%, black 55%, transparent 94%);
+          mask-image: radial-gradient(ellipse 60% 90% at 50% 50%, black 55%, transparent 94%);
   animation: balloon-cross 60s ease-in-out infinite;
 }
 .balloon-cross-2 {
@@ -587,23 +587,38 @@
 @keyframes balloon-cross {
   /* Off-screen left, invisible */
   0% {
-    transform: translateX(-30vw) translateY(0) rotate(-3deg);
+    transform: translateX(-25vw) translateY(0) rotate(-3deg);
     opacity: 0;
   }
   /* Just entering — fade in */
   3% {
-    transform: translateX(-15vw) translateY(-6px) rotate(-2deg);
-    opacity: 0.85;
+    transform: translateX(-12vw) translateY(-8px) rotate(-2deg);
+    opacity: 0.95;
   }
-  /* Middle of journey, peak bob */
-  17% {
-    transform: translateX(45vw) translateY(-30px) rotate(2.5deg);
-    opacity: 0.85;
+  /* First peak — drifting up */
+  9% {
+    transform: translateX(12vw) translateY(-38px) rotate(2deg);
+    opacity: 0.95;
   }
-  /* Approaching right edge */
+  /* Dip down */
+  16% {
+    transform: translateX(34vw) translateY(12px) rotate(-2deg);
+    opacity: 0.95;
+  }
+  /* Second peak — up again */
+  22% {
+    transform: translateX(58vw) translateY(-32px) rotate(2.5deg);
+    opacity: 0.95;
+  }
+  /* Final dip */
+  28% {
+    transform: translateX(86vw) translateY(6px) rotate(-1.5deg);
+    opacity: 0.95;
+  }
+  /* Near exit */
   30% {
-    transform: translateX(105vw) translateY(-8px) rotate(-1.5deg);
-    opacity: 0.85;
+    transform: translateX(102vw) translateY(-4px) rotate(1deg);
+    opacity: 0.95;
   }
   /* Exited right — fade out */
   33% {
