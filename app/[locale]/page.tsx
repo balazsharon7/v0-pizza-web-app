@@ -298,14 +298,15 @@ export default async function HomePage({
 
           <div className="mt-10 flex justify-end">
             <ScrollReveal>
-              <video
-                src="/videos/pizza-promo.mp4"
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-64 sm:w-72 md:w-80 rounded-2xl shadow-xl object-cover aspect-video"
-              />
+              <div className="relative w-48 sm:w-56 md:w-64 aspect-[2/3]">
+                <Image
+                  src="/hero/pizza-boat.png"
+                  alt={locale === 'hu' ? 'Pizza vitorláshajó illusztráció' : 'Pizza sailboat illustration'}
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  sizes="(max-width: 768px) 50vw, 256px"
+                />
+              </div>
             </ScrollReveal>
           </div>
 
