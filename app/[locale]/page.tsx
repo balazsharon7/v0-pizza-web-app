@@ -134,8 +134,8 @@ export default async function HomePage({
                   <span className="text-foreground">Terra Verde</span>
                   <span className="block text-primary mt-1">Pizzéria</span>
                 </h1>
-                <div className="animate-fade-in animation-delay-200 hidden md:block relative w-24 lg:w-32 xl:w-36 aspect-square shrink-0 rounded-full overflow-hidden ring-2 ring-primary/20 shadow-xl">
-                  <Image src="/images/logo.webp" alt="Terra Verde Pizzéria logó" fill className="object-cover" priority />
+                <div className="animate-fade-in animation-delay-200 hidden md:block relative w-40 lg:w-56 xl:w-64 aspect-square shrink-0 rounded-full overflow-hidden opacity-[0.12] pointer-events-none select-none" aria-hidden>
+                  <Image src="/images/logo.webp" alt="" fill className="object-cover" priority={false} />
                 </div>
               </div>
             </div>
