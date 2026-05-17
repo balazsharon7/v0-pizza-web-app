@@ -302,7 +302,20 @@ export default async function HomePage({
           
           <FeaturedPizzas pizzas={pizzas || []} locale={locale} dictionary={dictionary} />
           
-          <div className="mt-12 text-center">
+          <div className="mt-16 flex flex-col items-center gap-6">
+            {/* Boat decoration — centered above the menu button */}
+            <div
+              className="pointer-events-none select-none relative w-48 md:w-56 aspect-[3/4]"
+              aria-hidden
+            >
+              <Image
+                src="/hero/boat.png"
+                alt=""
+                fill
+                sizes="(max-width: 768px) 192px, 224px"
+                className="object-contain mix-blend-multiply dark:mix-blend-screen"
+              />
+            </div>
             <Button asChild size="lg" className="gap-2 text-base h-12 px-8">
               <Link href={`/${locale}/menu`}>
                 {t.nav.viewMenu}
@@ -316,6 +329,19 @@ export default async function HomePage({
       {/* Why Choose Us — refined */}
       <section className="relative bg-muted/30 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+        {/* Bike decoration — top-right corner, same mix-blend treatment as the hero oven */}
+        <div
+          className="pointer-events-none select-none absolute -top-8 right-0 w-48 md:w-64 lg:w-72 aspect-square"
+          aria-hidden
+        >
+          <Image
+            src="/hero/bike.png"
+            alt=""
+            fill
+            sizes="(max-width: 768px) 192px, (max-width: 1024px) 256px, 288px"
+            className="object-contain mix-blend-multiply dark:mix-blend-screen"
+          />
+        </div>
         <div className="container mx-auto px-4 relative">
           <ScrollReveal className="mb-16 text-center">
             <div className="inline-flex items-center gap-3 mb-5">
