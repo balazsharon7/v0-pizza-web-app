@@ -135,10 +135,10 @@ export default async function HomePage({
                   <span className="block text-primary mt-1">Pizzéria</span>
                 </h1>
                 <div
-                  className="hidden md:block absolute top-1/2 -translate-y-1/2 left-full ml-3 lg:ml-5 w-[clamp(110px,15vw,220px)] aspect-square rounded-full overflow-hidden opacity-40 pointer-events-none select-none z-0"
+                  className="hidden md:block absolute top-1/2 -translate-y-1/2 left-full ml-3 lg:ml-5 w-[clamp(140px,18vw,260px)] aspect-square pointer-events-none select-none z-0"
                   aria-hidden
                 >
-                  <Image src="/images/logo.webp" alt="" fill className="object-cover" priority={false} />
+                  <Image src="/images/logo-hero.png" alt="" fill className="object-contain" priority />
                 </div>
               </div>
             </div>
