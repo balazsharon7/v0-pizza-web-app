@@ -129,13 +129,13 @@ export default async function HomePage({
                 title height; on desktop it moves to the pizza column. */}
             <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <HeroSign className="lg:hidden absolute -top-2 right-0 w-24 sm:w-28 z-20 -rotate-3" />
-              <div className="relative">
+              <div className="relative w-fit">
                 <h1 className="animate-fade-in-up font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl relative z-10">
                   <span className="text-foreground">Terra Verde</span>
                   <span className="block text-primary mt-1">Pizzéria</span>
                 </h1>
                 <div
-                  className="hidden md:block absolute top-1/2 -translate-y-1/2 left-full ml-3 lg:ml-5 w-[clamp(110px,15vw,220px)] aspect-square rounded-full overflow-hidden opacity-[0.09] pointer-events-none select-none z-0"
+                  className="hidden md:block absolute top-1/2 -translate-y-1/2 left-full ml-3 lg:ml-5 w-[clamp(110px,15vw,220px)] aspect-square rounded-full overflow-hidden opacity-20 pointer-events-none select-none z-0"
                   aria-hidden
                 >
                   <Image src="/images/logo.webp" alt="" fill className="object-cover" priority={false} />
