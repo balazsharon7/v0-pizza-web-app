@@ -63,11 +63,11 @@ export function HeroSign({ className = '' }: HeroSignProps) {
   return (
     <div className={`hero-sign ${className}`} aria-label={isOpen ? 'Nyitva' : 'Zárva'}>
       <Image
-        src={isOpen ? '/hero/sign-open.svg' : '/hero/sign-closed.svg'}
+        src={isOpen ? '/hero/sign-open.png' : '/hero/sign-closed.png'}
         alt={isOpen ? 'Nyitva' : 'Zárva'}
-        width={500}
-        height={560}
-        className="w-full h-full object-contain drop-shadow-2xl"
+        width={1024}
+        height={1024}
+        className="w-full h-auto object-contain drop-shadow-2xl"
         priority={false}
       />
     </div>
