@@ -632,7 +632,9 @@
   }
 }
 @media (max-width: 639px) {
-  .balloon-cross { display: none; }
+  .balloon-cross {
+    width: clamp(50px, 14vw, 80px);
+  }
 }
 
 /* About-page oven — right-side background watercolor art on the Story section.

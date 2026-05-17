@@ -118,24 +118,24 @@ export default async function HomePage({
         <AuroraBg className="opacity-75" intensity={1.2} />
 
         {/* Content */}
-        <div className="container mx-auto px-4 py-10 md:py-14 lg:py-16 relative z-10">
+        <div className="container mx-auto px-4 py-4 md:py-8 lg:py-12 relative z-10">
           {/*
             Mobile flow (single column): title block → spinning pizzas → rest of copy.
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-8 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
+          <div className="grid gap-4 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
             {/* 1) Title block — on mobile the hanging sign sits up here at
                 title height; on desktop it moves to the pizza column. */}
             <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <HeroSign className="lg:hidden absolute -top-2 right-0 w-24 sm:w-28 z-20 -rotate-3" />
-              <div className="animate-fade-in-up relative w-[clamp(200px,28vw,380px)] aspect-square">
+              <div className="animate-fade-in-up relative w-[clamp(140px,18vw,260px)] aspect-square">
                 <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill className="object-contain" priority />
               </div>
             </div>
 
             {/* 2) Round pizza showcase + hanging open/closed sign (desktop) */}
-            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
+            <div className="animate-fade-in animation-delay-200 pb-2 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
               <HeroSign className="hidden lg:block absolute -top-6 -right-4 w-36 z-20 -rotate-3 hover:rotate-0 transition-transform duration-500" />
               <HeroCarousel
                 slides={heroSlides}
@@ -294,7 +294,7 @@ export default async function HomePage({
                   src="/hero/pizza-boat.png"
                   alt={locale === 'hu' ? 'Pizza vitorláshajó illusztráció' : 'Pizza sailboat illustration'}
                   fill
-                  className="object-contain drop-shadow-2xl"
+                  className="object-contain mix-blend-multiply dark:mix-blend-normal"
                   sizes="(max-width: 768px) 50vw, 256px"
                 />
               </div>
