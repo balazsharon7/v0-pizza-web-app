@@ -117,16 +117,6 @@ export default async function HomePage({
         {/* Interactive shader-style background — follows the pointer and ripples on click */}
         <AuroraBg className="opacity-75" intensity={1.2} />
 
-        {/* Logo emblem watermark — large semi-transparent brand mark behind the hero copy */}
-        <div
-          className="absolute top-[18%] left-[42%] -translate-x-1/2 pointer-events-none select-none z-[1]"
-          aria-hidden
-        >
-          <div className="relative w-[clamp(200px,30vw,440px)] aspect-square rounded-full overflow-hidden opacity-[0.09]">
-            <Image src="/images/logo.webp" alt="" fill className="object-cover" priority={false} />
-          </div>
-        </div>
-
         {/* Content */}
         <div className="container mx-auto px-4 py-10 md:py-14 lg:py-16 relative z-10">
           {/*
@@ -139,10 +129,15 @@ export default async function HomePage({
                 title height; on desktop it moves to the pizza column. */}
             <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <HeroSign className="lg:hidden absolute -top-2 right-0 w-24 sm:w-28 z-20 -rotate-3" />
-              <h1 className="animate-fade-in-up font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                <span className="text-foreground">Terra Verde</span>
-                <span className="block text-primary mt-1">Pizzeria</span>
-              </h1>
+              <div className="flex items-center gap-4 sm:gap-6">
+                <h1 className="animate-fade-in-up font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+                  <span className="text-foreground">Terra Verde</span>
+                  <span className="block text-primary mt-1">Pizzéria</span>
+                </h1>
+                <div className="animate-fade-in animation-delay-200 hidden md:block relative w-24 lg:w-32 xl:w-36 aspect-square shrink-0 rounded-full overflow-hidden ring-2 ring-primary/20 shadow-xl">
+                  <Image src="/images/logo.webp" alt="Terra Verde Pizzéria logó" fill className="object-cover" priority />
+                </div>
+              </div>
             </div>
 
             {/* 2) Round pizza showcase + hanging open/closed sign (desktop) */}
