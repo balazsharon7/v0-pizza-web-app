@@ -312,7 +312,7 @@ export default async function HomePage({
       </section>
 
       {/* Why Choose Us — refined */}
-      <section className="relative bg-muted/30 py-24 md:py-32 overflow-hidden">
+      <section className="relative bg-muted/30 pt-24 md:pt-32 pb-8 md:pb-10 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
         <div className="container mx-auto px-4 relative">
           <ScrollReveal className="mb-16 text-center">
@@ -380,7 +380,13 @@ export default async function HomePage({
             })}
           </div>
 
-          <div className="mt-10 flex justify-center">
+        </div>
+      </section>
+
+      {/* CTA Section — refined */}
+      <section className="relative pt-4 pb-20 md:pb-28 overflow-hidden">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex justify-center mb-0 relative z-10">
             <ScrollReveal>
               <div className="relative w-40 sm:w-48 md:w-56 aspect-[3/2]">
                 <Image
@@ -393,13 +399,6 @@ export default async function HomePage({
               </div>
             </ScrollReveal>
           </div>
-
-        </div>
-      </section>
-
-      {/* CTA Section — refined */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
-        <div className="container mx-auto px-4 max-w-6xl">
           <ScrollReveal>
             <div className="cta-card relative overflow-hidden rounded-[2rem] px-6 py-14 sm:px-12 sm:py-20 lg:py-24 text-center text-primary-foreground">
               <Image
