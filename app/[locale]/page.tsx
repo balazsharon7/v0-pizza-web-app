@@ -257,7 +257,14 @@ export default async function HomePage({
       </section>
 
       {/* Featured Pizzas */}
-      <section className="relative py-20 md:py-28">
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        {/* Floating pizza hot-air balloons — decorative background */}
+        <div className="balloon-float-left" aria-hidden>
+          <Image src="/hero/balloon-1.png" alt="" fill sizes="22vw" className="object-contain" priority={false} />
+        </div>
+        <div className="balloon-float-right" aria-hidden>
+          <Image src="/hero/balloon-2.png" alt="" fill sizes="18vw" className="object-contain" priority={false} />
+        </div>
         <div className="container mx-auto px-4 relative">
           <ScrollReveal className="mb-14 text-center pt-8">
             <div className="inline-flex items-center gap-3 mb-5">

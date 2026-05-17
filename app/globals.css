@@ -560,6 +560,46 @@
   animation-play-state: paused;
 }
 
+/* ── Pizza hot-air balloons ──────────────────────────────────────────────── */
+/* Floating background decorations for the Popular Pizzas section.
+   mix-blend-screen removes the black PNG background on dark-enough surfaces;
+   the radial mask fades hard edges so they dissolve into the section bg. */
+.balloon-float-left,
+.balloon-float-right {
+  position: absolute;
+  aspect-ratio: 3 / 4;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+.balloon-float-left {
+  top: -2%;
+  left: -5%;
+  width: clamp(160px, 22vw, 300px);
+  opacity: 0.55;
+  -webkit-mask-image: radial-gradient(ellipse 72% 78% at 36% 46%, black 40%, transparent 76%);
+          mask-image: radial-gradient(ellipse 72% 78% at 36% 46%, black 40%, transparent 76%);
+  animation: balloon-drift 8s ease-in-out infinite;
+}
+.balloon-float-right {
+  top: 4%;
+  right: -4%;
+  width: clamp(140px, 18vw, 260px);
+  opacity: 0.48;
+  -webkit-mask-image: radial-gradient(ellipse 72% 78% at 64% 46%, black 40%, transparent 76%);
+          mask-image: radial-gradient(ellipse 72% 78% at 64% 46%, black 40%, transparent 76%);
+  animation: balloon-drift 10s ease-in-out infinite 2.2s;
+}
+@keyframes balloon-drift {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  28%       { transform: translateY(-28px) rotate(2.5deg); }
+  72%       { transform: translateY(-14px) rotate(-2deg); }
+}
+@media (max-width: 639px) {
+  .balloon-float-left,
+  .balloon-float-right { display: none; }
+}
+
 /* About-page oven — right-side background watercolor art on the Story section.
    Fades out left so the centered text stays legible. */
 .about-oven-bg {
@@ -904,7 +944,9 @@
   .pizza-spin,
   .pizza-showcase-halo,
   .pizza-dot-fill,
-  .hero-oven { animation: none !important }
+  .hero-oven,
+  .balloon-float-left,
+  .balloon-float-right { animation: none !important }
 }
 
 /* Custom cursor — hide native cursor when active (desktop only) */
