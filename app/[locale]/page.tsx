@@ -6,11 +6,11 @@ import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { FeaturedPizzas } from '@/components/featured-pizzas'
-import { OpenStatus } from '@/components/open-status'
 import { AuroraBg } from '@/components/animations/aurora-bg'
 import { ScrollReveal } from '@/components/animations/scroll-reveal'
 import { Marquee } from '@/components/animations/marquee'
 import { HeroCarousel, type HeroSlide } from '@/components/hero-carousel'
+import { HeroSign } from '@/components/hero-sign'
 
 // Disable caching to always show fresh data
 export const dynamic = 'force-dynamic'
@@ -127,18 +127,16 @@ export default async function HomePage({
           <div className="grid gap-8 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
             {/* 1) Title block */}
             <div className="space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
-              <div className="animate-fade-in-up inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary border border-primary/20">
-                <OpenStatus locale={locale} compact />
-              </div>
-
-              <h1 className="animate-fade-in-up animation-delay-100 font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              <h1 className="animate-fade-in-up font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                 <span className="text-foreground">Terra Verde</span>
                 <span className="block text-primary mt-1">Pizzeria</span>
               </h1>
             </div>
 
-            {/* 2) Round pizza showcase */}
-            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
+            {/* 2) Round pizza showcase + hanging open/closed sign */}
+            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
+              {/* Hanging NYITVA / ZÁRVA sign — top-right corner of pizza column */}
+              <HeroSign className="absolute -top-4 right-0 lg:-top-6 lg:-right-4 w-28 sm:w-32 lg:w-36 z-20 -rotate-3 hover:rotate-0 transition-transform duration-500" />
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}

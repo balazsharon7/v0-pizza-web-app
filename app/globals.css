@@ -547,6 +547,19 @@
   }
 }
 
+/* Hero hanging sign — subtle pendulum sway animation */
+.hero-sign {
+  animation: sign-sway 6s ease-in-out infinite;
+  transform-origin: top center;
+}
+@keyframes sign-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(2deg);  }
+}
+.hero-sign:hover {
+  animation-play-state: paused;
+}
+
 /* About-page oven — right-side background watercolor art on the Story section.
    Fades out left so the centered text stays legible. */
 .about-oven-bg {
