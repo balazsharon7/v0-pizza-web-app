@@ -389,6 +389,20 @@ export default async function HomePage({
               )
             })}
           </div>
+
+          <div className="mt-12 flex justify-start">
+            <ScrollReveal>
+              <div className="relative w-56 sm:w-64 md:w-80 aspect-[3/2]">
+                <Image
+                  src="/hero/pizza-bike.png"
+                  alt={locale === 'hu' ? 'Pizza kerékpár illusztráció' : 'Pizza bicycle illustration'}
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  sizes="(max-width: 768px) 60vw, 320px"
+                />
+              </div>
+            </ScrollReveal>
+          </div>
         </div>
       </section>
 
