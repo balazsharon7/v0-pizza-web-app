@@ -67,7 +67,7 @@ export function HeroSign({ className = '' }: HeroSignProps) {
         alt={isOpen ? 'Nyitva' : 'Zárva'}
         width={1024}
         height={1024}
-        className="w-full h-auto object-contain drop-shadow-2xl"
+        className="w-full h-auto object-contain"
         priority={false}
       />
     </div>
