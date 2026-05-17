@@ -579,10 +579,10 @@
   z-index: 20;
   -webkit-mask-image: radial-gradient(ellipse 60% 90% at 50% 50%, black 55%, transparent 94%);
           mask-image: radial-gradient(ellipse 60% 90% at 50% 50%, black 55%, transparent 94%);
-  animation: balloon-cross 60s ease-in-out infinite;
+  animation: balloon-cross 80s ease-in-out infinite;
 }
 .balloon-cross-2 {
-  animation-delay: 30s;
+  animation-delay: 40s;
 }
 @keyframes balloon-cross {
   /* Off-screen left, invisible */
