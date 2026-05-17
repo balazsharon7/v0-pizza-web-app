@@ -547,6 +547,14 @@
   }
 }
 
+/* About-page oven — right-side background watercolor art on the Story section.
+   Fades out left so the centered text stays legible. */
+.about-oven-bg {
+  opacity: 0.13;
+  -webkit-mask-image: linear-gradient(to left, black 0%, black 30%, transparent 75%);
+          mask-image: linear-gradient(to left, black 0%, black 30%, transparent 75%);
+}
+
 /* Pizza-card stage — used in featured pizzas + pizza category cards on the
    menu so a transparent PNG floats inside the card with a soft warm halo
    behind it, same vibe as the spinning hero pizzas. */

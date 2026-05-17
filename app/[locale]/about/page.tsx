@@ -185,8 +185,24 @@ export default async function AboutPage({ params }: PageProps) {
       </section>
 
       {/* ── Story ── */}
-      <section className="py-16 lg:py-24 bg-card">
-        <div className="container mx-auto px-4">
+      <section className="relative py-16 lg:py-24 bg-card overflow-hidden">
+        {/* Wood-fired oven watercolor — ghosted right-side background art */}
+        <div
+          className="about-oven-bg absolute inset-0 flex items-center justify-end pointer-events-none select-none"
+          aria-hidden
+        >
+          <div className="relative h-full aspect-[2/3]">
+            <Image
+              src="/hero/oven.png"
+              alt=""
+              fill
+              sizes="50vw"
+              className="object-contain"
+              priority={false}
+            />
+          </div>
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center space-y-6 section-divider pt-8">
             <h2 className="font-serif text-3xl md:text-4xl font-bold">{t.about.storyTitle}</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">{t.about.storyText1}</p>

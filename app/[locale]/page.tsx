@@ -137,33 +137,14 @@ export default async function HomePage({
               </h1>
             </div>
 
-            {/* 2) Round pizza showcase with oven in the background */}
-            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
-              {/* Wood-fired oven — absolutely positioned behind the pizza.
-                  mix-blend-screen drops the PNG's black bg so only the
-                  watercolor brushwork is visible. */}
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
-                style={{ width: '80%', aspectRatio: '2/3', zIndex: 0 }}
-                aria-hidden
-              >
-                <div className="hero-oven relative w-full h-full">
-                  <Image
-                    src="/hero/oven.png"
-                    alt=""
-                    fill
-                    sizes="40vw"
-                    className="object-contain mix-blend-screen"
-                    priority={false}
-                  />
-                </div>
-              </div>
+            {/* 2) Round pizza showcase */}
+            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
                 spinSeconds={50}
                 href={`/${locale}/menu`}
-                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[600px] mx-auto relative"
+                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[600px] mx-auto"
               />
             </div>
 
