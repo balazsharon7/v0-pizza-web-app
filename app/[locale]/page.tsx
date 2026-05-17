@@ -125,18 +125,19 @@ export default async function HomePage({
             spinning pizzas occupy the right column spanning both rows.
           */}
           <div className="grid gap-8 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
-            {/* 1) Title block */}
-            <div className="space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
+            {/* 1) Title block — on mobile the hanging sign sits up here at
+                title height; on desktop it moves to the pizza column. */}
+            <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
+              <HeroSign className="lg:hidden absolute -top-2 right-0 w-24 sm:w-28 z-20 -rotate-3" />
               <h1 className="animate-fade-in-up font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                 <span className="text-foreground">Terra Verde</span>
                 <span className="block text-primary mt-1">Pizzeria</span>
               </h1>
             </div>
 
-            {/* 2) Round pizza showcase + hanging open/closed sign */}
+            {/* 2) Round pizza showcase + hanging open/closed sign (desktop) */}
             <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
-              {/* Hanging NYITVA / ZÁRVA sign — top-right corner of pizza column */}
-              <HeroSign className="absolute -top-4 right-0 lg:-top-6 lg:-right-4 w-28 sm:w-32 lg:w-36 z-20 -rotate-3 hover:rotate-0 transition-transform duration-500" />
+              <HeroSign className="hidden lg:block absolute -top-6 -right-4 w-36 z-20 -rotate-3 hover:rotate-0 transition-transform duration-500" />
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}

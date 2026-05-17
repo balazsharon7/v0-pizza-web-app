@@ -105,8 +105,8 @@
 }
 
 @theme inline {
-  --font-sans: 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif;
-  --font-serif: 'Fraunces', 'Georgia', serif;
+  --font-sans: 'Inter', 'Inter Fallback', system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond', 'Cormorant Garamond Fallback', 'Garamond', 'Georgia', serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
