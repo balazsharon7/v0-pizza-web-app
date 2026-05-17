@@ -124,7 +124,7 @@ export default async function HomePage({
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-2 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
+          <div className="grid gap-0 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
             {/* 1) Title block — on mobile the hanging sign sits up here at
                 title height; on desktop it moves to the pizza column. */}
             <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
@@ -135,7 +135,7 @@ export default async function HomePage({
             </div>
 
             {/* 2) Round pizza showcase + hanging open/closed sign (desktop) */}
-            <div className="animate-fade-in animation-delay-200 pb-2 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
+            <div className="animate-fade-in animation-delay-200 -mt-16 sm:-mt-10 lg:mt-0 pb-2 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
               <HeroSign className="hidden lg:block absolute -top-6 -right-4 w-36 z-20 -rotate-3 hover:rotate-0 transition-transform duration-500" />
               <HeroCarousel
                 slides={heroSlides}
