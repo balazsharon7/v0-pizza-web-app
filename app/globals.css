@@ -561,43 +561,63 @@
 }
 
 /* ── Pizza hot-air balloons ──────────────────────────────────────────────── */
-/* Floating background decorations for the Popular Pizzas section.
-   mix-blend-screen removes the black PNG background on dark-enough surfaces;
-   the radial mask fades hard edges so they dissolve into the section bg. */
-.balloon-float-left,
-.balloon-float-right {
+/* One balloon drifts left → right across the Popular Pizzas section in 20s,
+   exits offscreen, then 10s later the other balloon repeats the journey.
+   Total cycle = 60s shared by both, balloon-2 offset by 30s.
+   A radial mask softens the PNG's black rectangular background into an
+   elliptical vignette so the balloon reads as floating in a soft halo. */
+.balloon-cross {
   position: absolute;
+  top: 6%;
+  left: 0;
+  width: clamp(200px, 24vw, 340px);
   aspect-ratio: 3 / 4;
   pointer-events: none;
   user-select: none;
-  will-change: transform;
+  will-change: transform, opacity;
+  opacity: 0;
+  z-index: 0;
+  -webkit-mask-image: radial-gradient(ellipse 58% 88% at 50% 50%, black 46%, transparent 92%);
+          mask-image: radial-gradient(ellipse 58% 88% at 50% 50%, black 46%, transparent 92%);
+  animation: balloon-cross 60s ease-in-out infinite;
 }
-.balloon-float-left {
-  top: -2%;
-  left: -5%;
-  width: clamp(160px, 22vw, 300px);
-  opacity: 0.55;
-  -webkit-mask-image: radial-gradient(ellipse 72% 78% at 36% 46%, black 40%, transparent 76%);
-          mask-image: radial-gradient(ellipse 72% 78% at 36% 46%, black 40%, transparent 76%);
-  animation: balloon-drift 8s ease-in-out infinite;
+.balloon-cross-2 {
+  animation-delay: 30s;
 }
-.balloon-float-right {
-  top: 4%;
-  right: -4%;
-  width: clamp(140px, 18vw, 260px);
-  opacity: 0.48;
-  -webkit-mask-image: radial-gradient(ellipse 72% 78% at 64% 46%, black 40%, transparent 76%);
-          mask-image: radial-gradient(ellipse 72% 78% at 64% 46%, black 40%, transparent 76%);
-  animation: balloon-drift 10s ease-in-out infinite 2.2s;
-}
-@keyframes balloon-drift {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  28%       { transform: translateY(-28px) rotate(2.5deg); }
-  72%       { transform: translateY(-14px) rotate(-2deg); }
+@keyframes balloon-cross {
+  /* Off-screen left, invisible */
+  0% {
+    transform: translateX(-30vw) translateY(0) rotate(-3deg);
+    opacity: 0;
+  }
+  /* Just entering — fade in */
+  3% {
+    transform: translateX(-15vw) translateY(-6px) rotate(-2deg);
+    opacity: 0.85;
+  }
+  /* Middle of journey, peak bob */
+  17% {
+    transform: translateX(45vw) translateY(-30px) rotate(2.5deg);
+    opacity: 0.85;
+  }
+  /* Approaching right edge */
+  30% {
+    transform: translateX(105vw) translateY(-8px) rotate(-1.5deg);
+    opacity: 0.85;
+  }
+  /* Exited right — fade out */
+  33% {
+    transform: translateX(125vw) translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  /* Hold off-screen until the next iteration */
+  100% {
+    transform: translateX(125vw);
+    opacity: 0;
+  }
 }
 @media (max-width: 639px) {
-  .balloon-float-left,
-  .balloon-float-right { display: none; }
+  .balloon-cross { display: none; }
 }
 
 /* About-page oven — right-side background watercolor art on the Story section.
@@ -945,8 +965,7 @@
   .pizza-showcase-halo,
   .pizza-dot-fill,
   .hero-oven,
-  .balloon-float-left,
-  .balloon-float-right { animation: none !important }
+  .balloon-cross { animation: none !important }
 }
 
 /* Custom cursor — hide native cursor when active (desktop only) */

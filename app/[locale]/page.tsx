@@ -258,12 +258,13 @@ export default async function HomePage({
 
       {/* Featured Pizzas */}
       <section className="relative py-20 md:py-28 overflow-hidden">
-        {/* Floating pizza hot-air balloons — decorative background */}
-        <div className="balloon-float-left" aria-hidden>
-          <Image src="/hero/balloon-1.png" alt="" fill sizes="22vw" className="object-contain" priority={false} />
+        {/* Pizza hot-air balloons — one drifts left → right across the section,
+            then 10s later the other balloon does the same. 60s loop. */}
+        <div className="balloon-cross" aria-hidden>
+          <Image src="/hero/balloon-1.png" alt="" fill sizes="24vw" className="object-contain" priority={false} />
         </div>
-        <div className="balloon-float-right" aria-hidden>
-          <Image src="/hero/balloon-2.png" alt="" fill sizes="18vw" className="object-contain" priority={false} />
+        <div className="balloon-cross balloon-cross-2" aria-hidden>
+          <Image src="/hero/balloon-2.png" alt="" fill sizes="24vw" className="object-contain" priority={false} />
         </div>
         <div className="container mx-auto px-4 relative">
           <ScrollReveal className="mb-14 text-center pt-8">
