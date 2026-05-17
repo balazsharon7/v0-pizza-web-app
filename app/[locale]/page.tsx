@@ -119,7 +119,7 @@ export default async function HomePage({
 
         {/* Logo emblem watermark — large semi-transparent brand mark behind the hero copy */}
         <div
-          className="absolute top-1/2 left-[22%] -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-[1]"
+          className="absolute top-[18%] left-[42%] -translate-x-1/2 pointer-events-none select-none z-[1]"
           aria-hidden
         >
           <div className="relative w-[clamp(200px,30vw,440px)] aspect-square rounded-full overflow-hidden opacity-[0.09]">
