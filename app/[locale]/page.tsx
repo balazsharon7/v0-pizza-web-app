@@ -117,6 +117,16 @@ export default async function HomePage({
         {/* Interactive shader-style background — follows the pointer and ripples on click */}
         <AuroraBg className="opacity-75" intensity={1.2} />
 
+        {/* Logo emblem watermark — large semi-transparent brand mark behind the hero copy */}
+        <div
+          className="absolute top-1/2 left-[22%] -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-[1]"
+          aria-hidden
+        >
+          <div className="relative w-[clamp(200px,30vw,440px)] aspect-square rounded-full overflow-hidden opacity-[0.09]">
+            <Image src="/images/logo.webp" alt="" fill className="object-cover" priority={false} />
+          </div>
+        </div>
+
         {/* Content */}
         <div className="container mx-auto px-4 py-10 md:py-14 lg:py-16 relative z-10">
           {/*
