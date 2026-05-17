@@ -138,7 +138,7 @@ export default async function HomePage({
                   className="hidden md:block absolute top-1/2 -translate-y-1/2 left-full ml-3 lg:ml-5 w-[clamp(140px,18vw,260px)] aspect-square pointer-events-none select-none z-0"
                   aria-hidden
                 >
-                  <Image src="/images/logo-hero.png" alt="" fill className="object-contain" priority />
+                  <Image src="/hero/logo-hero.png" alt="" fill className="object-contain" priority />
                 </div>
               </div>
             </div>
@@ -296,7 +296,7 @@ export default async function HomePage({
           
           <FeaturedPizzas pizzas={pizzas || []} locale={locale} dictionary={dictionary} />
 
-          <div className="mt-10 flex justify-end">
+          <div className="mt-10 flex flex-col items-center gap-6">
             <ScrollReveal>
               <div className="relative w-48 sm:w-56 md:w-64 aspect-[2/3]">
                 <Image
@@ -308,15 +308,14 @@ export default async function HomePage({
                 />
               </div>
             </ScrollReveal>
-          </div>
-
-          <div className="mt-8 text-center">
-            <Button asChild size="lg" className="gap-2 text-base h-12 px-8">
-              <Link href={`/${locale}/menu`}>
-                {t.nav.viewMenu}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+            <ScrollReveal>
+              <Button asChild size="lg" className="gap-2 text-base h-12 px-8">
+                <Link href={`/${locale}/menu`}>
+                  {t.nav.viewMenu}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -324,6 +323,15 @@ export default async function HomePage({
       {/* Why Choose Us — refined */}
       <section className="relative bg-muted/30 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+        <div className="absolute top-8 right-0 w-48 md:w-64 lg:w-80 aspect-[3/2] hidden md:block pointer-events-none" aria-hidden>
+          <Image
+            src="/hero/pizza-bike.png"
+            alt=""
+            fill
+            className="object-contain drop-shadow-2xl"
+            sizes="(max-width: 1024px) 256px, 320px"
+          />
+        </div>
         <div className="container mx-auto px-4 relative">
           <ScrollReveal className="mb-16 text-center">
             <div className="inline-flex items-center gap-3 mb-5">
@@ -390,19 +398,6 @@ export default async function HomePage({
             })}
           </div>
 
-          <div className="mt-12 flex justify-start">
-            <ScrollReveal>
-              <div className="relative w-56 sm:w-64 md:w-80 aspect-[3/2]">
-                <Image
-                  src="/hero/pizza-bike.png"
-                  alt={locale === 'hu' ? 'Pizza kerékpár illusztráció' : 'Pizza bicycle illustration'}
-                  fill
-                  className="object-contain drop-shadow-2xl"
-                  sizes="(max-width: 768px) 60vw, 320px"
-                />
-              </div>
-            </ScrollReveal>
-          </div>
         </div>
       </section>
 
