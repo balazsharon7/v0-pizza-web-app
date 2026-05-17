@@ -129,7 +129,7 @@ export default async function HomePage({
                 title height; on desktop it moves to the pizza column. */}
             <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <HeroSign className="lg:hidden absolute -top-2 right-0 w-24 sm:w-28 z-20 -rotate-3" />
-              <div className="animate-fade-in-up relative w-[clamp(140px,18vw,260px)] aspect-square">
+              <div className="animate-fade-in-up relative w-[clamp(210px,27vw,390px)] aspect-square">
                 <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill className="object-contain" priority />
               </div>
             </div>
