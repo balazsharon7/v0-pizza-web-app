@@ -135,7 +135,7 @@ export default async function HomePage({
                   <span className="block text-primary mt-1">Pizzéria</span>
                 </h1>
                 <div
-                  className="hidden md:block absolute top-1/2 -translate-y-1/2 left-full ml-4 lg:ml-8 w-[clamp(200px,30vw,440px)] aspect-square rounded-full overflow-hidden opacity-[0.09] pointer-events-none select-none z-0"
+                  className="hidden md:block absolute top-1/2 -translate-y-1/2 left-full ml-3 lg:ml-5 w-[clamp(110px,15vw,220px)] aspect-square rounded-full overflow-hidden opacity-[0.09] pointer-events-none select-none z-0"
                   aria-hidden
                 >
                   <Image src="/images/logo.webp" alt="" fill className="object-cover" priority={false} />
