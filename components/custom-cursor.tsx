@@ -5,6 +5,13 @@ import { usePathname } from 'next/navigation'
 
 type CursorState = 'default' | 'hover' | 'active'
 
+// Filenames on disk use underscores; 'default' is misspelled as 'defult'.
+const CURSOR_SRC: Record<CursorState, string> = {
+  default: '/cursors/cursor_defult.png',
+  hover: '/cursors/cursor_hover.png',
+  active: '/cursors/cursor_active.png',
+}
+
 const INTERACTIVE_SELECTOR =
   'a, button, [role="button"], select, label[for], summary, input[type="checkbox"], input[type="radio"], input[type="submit"], [data-cursor="hover"]'
 
@@ -108,7 +115,7 @@ export function CustomCursor() {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`/cursors/cursor-${state}.png`}
+          src={CURSOR_SRC[state]}
           alt=""
           width={44}
           height={44}
@@ -122,11 +129,11 @@ export function CustomCursor() {
           Use visibility:hidden (not display:none) so browsers still fetch. */}
       <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', visibility: 'hidden' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/cursors/cursor-default.png" alt="" />
+        <img src={CURSOR_SRC.default} alt="" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/cursors/cursor-hover.png" alt="" />
+        <img src={CURSOR_SRC.hover} alt="" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/cursors/cursor-active.png" alt="" />
+        <img src={CURSOR_SRC.active} alt="" />
       </div>
     </div>
   )
