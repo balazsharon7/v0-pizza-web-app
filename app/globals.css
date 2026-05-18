@@ -818,21 +818,23 @@
   mix-blend-mode: overlay;
 }
 
-/* Pizza peel — full hero-section width, paddle on the right behind the pizza.
-   Positioned at section level so the handle spans from the left edge to the
-   right column where the pizza carousel lives.
-   mix-blend-mode: screen removes the black PNG background.
-   For best visual quality provide a transparent-background PNG. */
+/* Pizza peel — full hero-section width, paddle aligned behind the pizza.
+   Image is RGBA (transparent bg) so no blend-mode trick needed.
+   translateX(-14%) shifts the paddle center from ~86% to ~72% of width
+   to line up with the right-column pizza carousel. */
 .pizza-peel-bg {
   position: absolute;
   width: 100%;
-  top: 46%;
+  top: 50%;
   left: 0;
-  transform: translateY(-50%) rotate(-2deg);
-  mix-blend-mode: screen;
+  transform: translateX(-14%) translateY(-50%) rotate(-3deg);
   z-index: 5;
   pointer-events: none;
   user-select: none;
+}
+
+@media (max-width: 1023px) {
+  .pizza-peel-bg { display: none; }
 }
 
 /* Pizza showcase — bare transparent PNG, no circle/background/halo */
