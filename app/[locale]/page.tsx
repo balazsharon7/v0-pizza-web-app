@@ -6,7 +6,6 @@ import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { FeaturedPizzas } from '@/components/featured-pizzas'
-import { AuroraBg } from '@/components/animations/aurora-bg'
 import { ScrollReveal } from '@/components/animations/scroll-reveal'
 import { Marquee } from '@/components/animations/marquee'
 import { HeroCarousel, type HeroSlide } from '@/components/hero-carousel'
@@ -114,37 +113,26 @@ export default async function HomePage({
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/40">
-        {/* Interactive shader-style background — follows the pointer and ripples on click */}
-        <AuroraBg className="opacity-75" intensity={1.2} />
 
         {/* Content */}
-        <div className="container mx-auto px-4 py-10 md:py-14 lg:py-16 relative z-10">
+        <div className="container mx-auto px-4 py-4 md:py-8 lg:py-12 relative z-10">
           {/*
             Mobile flow (single column): title block → spinning pizzas → rest of copy.
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-8 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
+          <div className="grid gap-0 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
             {/* 1) Title block — on mobile the hanging sign sits up here at
                 title height; on desktop it moves to the pizza column. */}
             <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <HeroSign className="lg:hidden absolute -top-2 right-0 w-24 sm:w-28 z-20 -rotate-3" />
-              <div className="relative w-fit">
-                <h1 className="animate-fade-in-up font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl relative z-10">
-                  <span className="text-foreground">Terra Verde</span>
-                  <span className="block text-primary mt-1">Pizzéria</span>
-                </h1>
-                <div
-                  className="hidden md:block absolute top-1/2 -translate-y-1/2 left-full ml-3 lg:ml-5 w-[clamp(140px,18vw,260px)] aspect-square pointer-events-none select-none z-0"
-                  aria-hidden
-                >
-                  <Image src="/images/logo-hero.png" alt="" fill className="object-contain" priority />
-                </div>
+              <div className="animate-fade-in-up relative w-[clamp(210px,27vw,390px)] aspect-square">
+                <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill className="object-contain" priority />
               </div>
             </div>
 
             {/* 2) Round pizza showcase + hanging open/closed sign (desktop) */}
-            <div className="animate-fade-in animation-delay-200 pb-10 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
+            <div className="animate-fade-in animation-delay-200 -mt-16 sm:-mt-10 lg:mt-0 pb-2 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
               <HeroSign className="hidden lg:block absolute -top-6 -right-4 w-36 z-20 -rotate-3 hover:rotate-0 transition-transform duration-500" />
               <HeroCarousel
                 slides={heroSlides}
@@ -296,33 +284,32 @@ export default async function HomePage({
           
           <FeaturedPizzas pizzas={pizzas || []} locale={locale} dictionary={dictionary} />
 
-          <div className="mt-10 flex justify-end">
+          <div className="mt-10 flex flex-col items-center gap-6">
             <ScrollReveal>
-              <div className="relative w-48 sm:w-56 md:w-64 aspect-[2/3]">
+              <div className="relative w-24 sm:w-28 md:w-32 aspect-[2/3]">
                 <Image
                   src="/hero/pizza-boat.png"
                   alt={locale === 'hu' ? 'Pizza vitorláshajó illusztráció' : 'Pizza sailboat illustration'}
                   fill
-                  className="object-contain drop-shadow-2xl"
+                  className="object-contain mix-blend-multiply dark:mix-blend-normal"
                   sizes="(max-width: 768px) 50vw, 256px"
                 />
               </div>
             </ScrollReveal>
-          </div>
-
-          <div className="mt-8 text-center">
-            <Button asChild size="lg" className="gap-2 text-base h-12 px-8">
-              <Link href={`/${locale}/menu`}>
-                {t.nav.viewMenu}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+            <ScrollReveal>
+              <Button asChild size="lg" className="gap-2 text-base h-12 px-8">
+                <Link href={`/${locale}/menu`}>
+                  {t.nav.viewMenu}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* Why Choose Us — refined */}
-      <section className="relative bg-muted/30 py-24 md:py-32 overflow-hidden">
+      <section className="relative bg-muted/30 pt-24 md:pt-32 pb-8 md:pb-10 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
         <div className="container mx-auto px-4 relative">
           <ScrollReveal className="mb-16 text-center">
@@ -390,25 +377,25 @@ export default async function HomePage({
             })}
           </div>
 
-          <div className="mt-12 flex justify-start">
+        </div>
+      </section>
+
+      {/* CTA Section — refined */}
+      <section className="relative pt-4 pb-20 md:pb-28 overflow-hidden">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex justify-center mb-0 relative z-10">
             <ScrollReveal>
-              <div className="relative w-56 sm:w-64 md:w-80 aspect-[3/2]">
+              <div className="relative w-40 sm:w-48 md:w-56 aspect-[3/2]">
                 <Image
                   src="/hero/pizza-bike.png"
                   alt={locale === 'hu' ? 'Pizza kerékpár illusztráció' : 'Pizza bicycle illustration'}
                   fill
                   className="object-contain drop-shadow-2xl"
-                  sizes="(max-width: 768px) 60vw, 320px"
+                  sizes="(max-width: 768px) 50vw, 224px"
                 />
               </div>
             </ScrollReveal>
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section — refined */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
-        <div className="container mx-auto px-4 max-w-6xl">
           <ScrollReveal>
             <div className="cta-card relative overflow-hidden rounded-[2rem] px-6 py-14 sm:px-12 sm:py-20 lg:py-24 text-center text-primary-foreground">
               <Image

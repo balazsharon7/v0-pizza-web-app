@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
@@ -64,6 +65,12 @@ export default async function MenuPage({
   return (
     <div className="relative py-12 md:py-16 overflow-hidden">
       <AuroraBg className="opacity-55" intensity={1} />
+      <div className="balloon-cross" aria-hidden>
+        <Image src="/hero/balloon-1.png" alt="" fill sizes="14vw" className="object-contain" priority={false} />
+      </div>
+      <div className="balloon-cross balloon-cross-2" aria-hidden>
+        <Image src="/hero/balloon-2.png" alt="" fill sizes="14vw" className="object-contain" priority={false} />
+      </div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="mb-10 text-center pt-4 animate-fade-in-up">
           <div className="inline-flex items-center gap-3 mb-5">

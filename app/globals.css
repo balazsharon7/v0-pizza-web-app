@@ -632,7 +632,9 @@
   }
 }
 @media (max-width: 639px) {
-  .balloon-cross { display: none; }
+  .balloon-cross {
+    width: clamp(50px, 14vw, 80px);
+  }
 }
 
 /* About-page oven — right-side background watercolor art on the Story section.
@@ -814,6 +816,24 @@
   z-index: -1;
   pointer-events: none;
   mix-blend-mode: overlay;
+}
+
+/* Pizza peel — sits behind the spinning pizza, handle extends left.
+   mix-blend-mode: screen makes the black PNG background transparent.
+   Best results with a transparent-background PNG. */
+.pizza-peel-bg {
+  position: absolute;
+  /* wider than the showcase so the handle extends left */
+  width: 200%;
+  /* shift left so the paddle head sits behind the pizza center */
+  left: -85%;
+  top: 50%;
+  transform: translateY(-54%) rotate(-8deg);
+  mix-blend-mode: screen;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
 }
 
 /* Pizza showcase — bare transparent PNG, no circle/background/halo */
