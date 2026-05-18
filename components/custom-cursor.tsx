@@ -104,11 +104,12 @@ export function CustomCursor() {
       {/* Inner wrapper handles rotation + scale; outer div handles position */}
       <div
         style={{
-          width: '44px',
-          height: '44px',
-          // Rotate so the pizza tip points upper-left like a standard cursor arrow.
-          // translate() shifts the hotspot (tip) to align with the actual click point.
-          transform: `translate(-10px, -8px) rotate(-270deg) ${state === 'active' ? 'scale(0.82)' : 'scale(1)'}`,
+          width: '60px',
+          height: '60px',
+          // rotate(165deg) turns the tip (originally pointing down in the portrait image)
+          // to point upward-slightly-left, like a standard cursor arrow.
+          // translate(-22px,-1px) shifts the hotspot so the tip sits on the click point.
+          transform: `translate(-22px, -1px) rotate(165deg) ${state === 'active' ? 'scale(0.85)' : 'scale(1)'}`,
           transformOrigin: 'center',
           transition: 'transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
@@ -117,8 +118,8 @@ export function CustomCursor() {
         <img
           src={CURSOR_SRC[state]}
           alt=""
-          width={44}
-          height={44}
+          width={60}
+          height={60}
           draggable={false}
           className="select-none block"
           style={{ width: '100%', height: '100%', objectFit: 'contain' }}
