@@ -133,7 +133,7 @@ export default async function HomePage({
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-0 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
+          <div className="grid gap-0 lg:gap-8 xl:gap-12 lg:grid-cols-[2fr_3fr] lg:grid-rows-[auto_1fr]">
             {/* 1) Title block — on mobile the hanging sign sits up here at
                 title height; on desktop it moves to the pizza column. */}
             <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
@@ -151,7 +151,7 @@ export default async function HomePage({
                 intervalMs={5000}
                 spinSeconds={50}
                 href={`/${locale}/menu`}
-                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[600px] mx-auto"
+                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[700px] mx-auto"
               />
             </div>
 
