@@ -820,15 +820,15 @@
 
 /* Pizza peel — spans hero section, paddle precisely behind pizza.
    Image: 1536×1024, paddle at x=80-100% (center=90%), width=19.9%.
-   width:162% so paddle (19.9%) = pizza diameter (0.667×700px carousel).
-   translateX(-48%) moves paddle center to 68% of viewport = pizza center
-   with [2fr_3fr] grid. Calculations verified across 1024-1440px viewports. */
+   width:162% so paddle (19.9%) ≈ pizza diameter (0.667×700px carousel).
+   translateX(-46.5%) → paddle center at 43.5%×162% = 70.5% of viewport,
+   matching pizza center (≈70.3-70.6%) across 1024-1920px viewports (<2px). */
 .pizza-peel-bg {
   position: absolute;
   width: 162%;
   top: 50%;
   left: 0;
-  transform: translateX(-48%) translateY(-50%) rotate(-3deg);
+  transform: translateX(-46.5%) translateY(-50%) rotate(-3deg);
   z-index: 5;
   pointer-events: none;
   user-select: none;

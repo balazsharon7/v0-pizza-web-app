@@ -118,8 +118,9 @@ export function CustomCursor() {
         />
       </div>
 
-      {/* Preload other states so transitions are instant */}
-      <div className="hidden">
+      {/* Preload other states so transitions are instant.
+          Use visibility:hidden (not display:none) so browsers still fetch. */}
+      <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', visibility: 'hidden' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/cursors/cursor-default.png" alt="" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
