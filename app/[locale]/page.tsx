@@ -6,7 +6,6 @@ import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { FeaturedPizzas } from '@/components/featured-pizzas'
-import { AuroraBg } from '@/components/animations/aurora-bg'
 import { ScrollReveal } from '@/components/animations/scroll-reveal'
 import { Marquee } from '@/components/animations/marquee'
 import { HeroCarousel, type HeroSlide } from '@/components/hero-carousel'
@@ -114,8 +113,6 @@ export default async function HomePage({
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/40">
-        {/* Interactive shader-style background — follows the pointer and ripples on click */}
-        <AuroraBg className="opacity-75" intensity={1.2} />
 
         {/* Content */}
         <div className="container mx-auto px-4 py-4 md:py-8 lg:py-12 relative z-10">
