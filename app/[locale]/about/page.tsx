@@ -128,31 +128,6 @@ export default async function AboutPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ── Decorative pizza boxes ── */}
-      <section className="py-10 overflow-hidden bg-background">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center gap-6 md:gap-14">
-            <div className="relative w-52 md:w-72 lg:w-80 aspect-[4/3] -rotate-2 drop-shadow-2xl shrink-0">
-              <Image
-                src="/images/pizza-box-1.png"
-                alt=""
-                fill
-                className="object-contain"
-                aria-hidden
-              />
-            </div>
-            <div className="relative w-52 md:w-72 lg:w-80 aspect-[4/3] rotate-2 drop-shadow-2xl shrink-0">
-              <Image
-                src="/images/pizza-box-2.png"
-                alt=""
-                fill
-                className="object-contain"
-                aria-hidden
-              />
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── Photo Gallery ── */}
       <section className="py-16 lg:py-20 bg-muted/30">
@@ -245,8 +220,19 @@ export default async function AboutPage({ params }: PageProps) {
       {/* ── Quality ── */}
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-14 section-divider pt-8">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold">{t.about.qualityTitle}</h2>
+          <div className="section-divider pt-8 mb-14 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-center md:text-left flex-1">
+              {t.about.qualityTitle}
+            </h2>
+            <div className="relative w-48 md:w-56 lg:w-64 aspect-[4/3] -rotate-2 drop-shadow-2xl shrink-0">
+              <Image
+                src="/images/pizza-box-1.png"
+                alt=""
+                fill
+                className="object-contain"
+                aria-hidden
+              />
+            </div>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
