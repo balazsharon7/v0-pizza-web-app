@@ -160,7 +160,7 @@ export default async function HomePage({
             </div>
 
             {/* 3) Rest of the copy */}
-            <div className="relative z-[1] space-y-5 lg:col-start-1 lg:row-start-2 lg:self-start">
+            <div className="relative z-[1] space-y-5 pt-6 lg:pt-0 lg:col-start-1 lg:row-start-2 lg:self-start">
               <div className="animate-fade-in-up animation-delay-200 flex items-center gap-3">
                 <div className="h-[2px] w-12 bg-accent rounded-full" />
                 <span className="text-accent font-serif italic text-sm tracking-wide">
