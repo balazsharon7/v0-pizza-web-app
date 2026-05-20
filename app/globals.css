@@ -838,6 +838,27 @@
   .pizza-peel-bg { display: none; }
 }
 
+/* Mobile portrait peel (pizza-peel2.png, 1024×1536).
+   scaleY(-1) flips it so handle is at bottom, paddle at top.
+   Paddle center sits at ~30% of the flipped image height.
+   top:5% + 30%×height ≈ 50% of carousel → paddle center behind pizza. */
+.pizza-peel-bg-mobile {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .pizza-peel-bg-mobile {
+    display: block;
+    position: absolute;
+    width: 80%;
+    top: 3%;
+    left: 50%;
+    transform: translateX(-50%) scaleY(-1);
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
 /* Pizza showcase — bare transparent PNG, no circle/background/halo */
 .pizza-showcase {
   position: relative;

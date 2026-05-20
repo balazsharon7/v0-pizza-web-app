@@ -146,6 +146,10 @@ export default async function HomePage({
             {/* 2) Round pizza showcase + hanging open/closed sign (desktop) */}
             <div className="animate-fade-in animation-delay-200 -mt-16 sm:-mt-10 lg:mt-0 pb-2 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
               <HeroSign className="hidden lg:block absolute -top-6 -right-4 w-36 z-20 -rotate-3 hover:rotate-0 transition-transform duration-500" />
+              {/* Mobile portrait peel — flipped so handle is at bottom, paddle cradles the pizza */}
+              <div className="pizza-peel-bg-mobile" aria-hidden>
+                <Image src="/hero/pizza-peel2.png" alt="" width={1024} height={1536} className="w-full h-auto" priority={false} />
+              </div>
               <HeroCarousel
                 slides={heroSlides}
                 intervalMs={5000}
