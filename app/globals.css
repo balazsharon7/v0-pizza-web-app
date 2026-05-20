@@ -818,11 +818,12 @@
   mix-blend-mode: overlay;
 }
 
-/* Portrait pizza peel (pizza-peel2.png, 1024×1536), absolute inside the overflow-hidden
-   carousel wrapper — overflow clips the peel so it never bleeds into text.
-   scaleY(-1) flips so handle is at bottom, paddle at top (6-54% of flipped height, center 30%).
-   width: 95% → paddle rendered width = 78.6%×95% ≈ 74.7% of carousel > pizza circle (~67%) ✓
-   top:  7%  → paddle center = 7% + 30%×142.5% = 7% + 42.75% ≈ 50% of carousel ✓ */
+/* Portrait pizza peel (pizza-peel2.png, 1024×1536).
+   scaleY(-1): handle at bottom, paddle at top (6-54% of flipped height, center 30%).
+   width 95%: paddle = 78.6%×95% ≈ 74.7% of carousel > pizza circle (~67%) ✓
+   top 7%: paddle center = 7% + 30%×142.5% ≈ 50% of carousel ✓
+   z-index 0: peel is behind text (title + copy are at z-[1]).
+   mask: handle fades out gracefully rather than ending abruptly at hero edge. */
 .pizza-peel-bg-mobile {
   position: absolute;
   left: 50%;
@@ -832,6 +833,8 @@
   z-index: 0;
   pointer-events: none;
   user-select: none;
+  mask-image: linear-gradient(to bottom, black 75%, transparent 92%);
+  -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 92%);
 }
 
 /* Pizza showcase — bare transparent PNG, no circle/background/halo */
