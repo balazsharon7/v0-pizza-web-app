@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -101,8 +102,8 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
   return (
     <Card>
       <CardHeader className="text-center">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-          <span className="font-serif text-lg font-bold text-primary-foreground">TV</span>
+        <div className="mx-auto mb-4 relative w-20 h-20">
+          <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill className="object-contain" />
         </div>
         <CardTitle className="font-serif text-2xl">{t.auth.registerTitle}</CardTitle>
       </CardHeader>
