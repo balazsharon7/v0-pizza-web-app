@@ -818,33 +818,20 @@
   mix-blend-mode: overlay;
 }
 
-/* Portrait pizza peel (pizza-peel2.png, 1024×1536), absolute inside the carousel wrapper.
-   scaleY(-1) flips so handle is at bottom, paddle at top.
-   Paddle occupies 6-54% of flipped height → center at 30%.
-   Mobile  (<1024px): width 65% → height 97.5% of carousel, top 21% → paddle center 50% ✓
-   Desktop (≥1024px): width 55% → height 82.5% of carousel, top 26% → paddle center 51% ✓ */
+/* Portrait pizza peel (pizza-peel2.png, 1024×1536), absolute inside the overflow-hidden
+   carousel wrapper — overflow clips the peel so it never bleeds into text.
+   scaleY(-1) flips so handle is at bottom, paddle at top (6-54% of flipped height, center 30%).
+   width: 95% → paddle rendered width = 78.6%×95% ≈ 74.7% of carousel > pizza circle (~67%) ✓
+   top:  7%  → paddle center = 7% + 30%×142.5% = 7% + 42.75% ≈ 50% of carousel ✓ */
 .pizza-peel-bg-mobile {
   position: absolute;
   left: 50%;
+  width: 95%;
+  top: 7%;
   transform: translateX(-50%) scaleY(-1);
   z-index: 0;
   pointer-events: none;
   user-select: none;
-  display: none;
-}
-@media (max-width: 1023px) {
-  .pizza-peel-bg-mobile {
-    display: block;
-    width: 65%;
-    top: 21%;
-  }
-}
-@media (min-width: 1024px) {
-  .pizza-peel-bg-mobile {
-    display: block;
-    width: 55%;
-    top: 26%;
-  }
 }
 
 /* Pizza showcase — bare transparent PNG, no circle/background/halo */
