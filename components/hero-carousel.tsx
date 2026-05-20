@@ -118,18 +118,6 @@ export function HeroCarousel({
       aria-label="Pizza showcase"
       style={{ touchAction: 'pan-y' }}
     >
-      {/* Pizza peel background — image must be at /hero/pizza-peel.png.
-          Black bg is removed via mix-blend-mode: screen in CSS. */}
-      <div className="pizza-peel-bg" aria-hidden>
-        <Image
-          src="/hero/pizza-peel.png"
-          alt=""
-          fill
-          className="object-contain"
-          priority={false}
-        />
-      </div>
-
       {/* The round stage */}
       {(() => {
         const stage = (

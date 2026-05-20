@@ -5,6 +5,13 @@ import { usePathname } from 'next/navigation'
 
 type CursorState = 'default' | 'hover' | 'active'
 
+// Filenames on disk use underscores; 'default' is misspelled as 'defult'.
+const CURSOR_SRC: Record<CursorState, string> = {
+  default: '/cursors/cursor_defult.png',
+  hover: '/cursors/cursor_hover.png',
+  active: '/cursors/cursor_active.png',
+}
+
 const INTERACTIVE_SELECTOR =
   'a, button, [role="button"], select, label[for], summary, input[type="checkbox"], input[type="radio"], input[type="submit"], [data-cursor="hover"]'
 
@@ -97,35 +104,39 @@ export function CustomCursor() {
       {/* Inner wrapper handles rotation + scale; outer div handles position */}
       <div
         style={{
-          width: '44px',
-          height: '44px',
-          // Rotate so the pizza tip points upper-left like a standard cursor arrow.
-          // translate() shifts the hotspot (tip) to align with the actual click point.
-          transform: `translate(-10px, -8px) rotate(-270deg) ${state === 'active' ? 'scale(0.82)' : 'scale(1)'}`,
+          width: '80px',
+          height: '80px',
+          // cursor_defult.png is 512×1024; rendered at 80px via objectFit:contain the
+          // image is 40×80 centered in the 80×80 box. The tip of the handle starts at
+          // y=322 (31.4%) of the source, landing at element coords ≈ (35, 25).
+          // rotate(-10deg) tilts 10° CCW → tip upper-left like a standard arrow.
+          // translate(-32px,-26px) shifts the element so that tip lands at the mouse.
+          transform: `translate(-32px, -26px) rotate(-10deg) ${state === 'active' ? 'scale(0.85)' : 'scale(1)'}`,
           transformOrigin: 'center',
           transition: 'transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`/cursors/cursor-${state}.png`}
+          src={CURSOR_SRC[state]}
           alt=""
-          width={44}
-          height={44}
+          width={80}
+          height={80}
           draggable={false}
           className="select-none block"
           style={{ width: '100%', height: '100%', objectFit: 'contain' }}
         />
       </div>
 
-      {/* Preload other states so transitions are instant */}
-      <div className="hidden">
+      {/* Preload other states so transitions are instant.
+          Use visibility:hidden (not display:none) so browsers still fetch. */}
+      <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', visibility: 'hidden' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/cursors/cursor-default.png" alt="" />
+        <img src={CURSOR_SRC.default} alt="" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/cursors/cursor-hover.png" alt="" />
+        <img src={CURSOR_SRC.hover} alt="" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/cursors/cursor-active.png" alt="" />
+        <img src={CURSOR_SRC.active} alt="" />
       </div>
     </div>
   )

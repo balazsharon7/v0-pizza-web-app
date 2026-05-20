@@ -818,22 +818,28 @@
   mix-blend-mode: overlay;
 }
 
-/* Pizza peel — sits behind the spinning pizza, handle extends left.
-   mix-blend-mode: screen makes the black PNG background transparent.
-   Best results with a transparent-background PNG. */
-.pizza-peel-bg {
+/* Portrait pizza peel (pizza-peel2.png, 1024×1536).
+   scaleY(-1): handle at bottom, paddle at top (6-54% of flipped height, center 30%).
+   width 95%: paddle = 78.6%×95% ≈ 74.7% of carousel > pizza circle (~67%) ✓
+   top 7%: paddle center = 7% + 30%×142.5% ≈ 50% of carousel ✓
+   z-index 0: peel is behind text (title + copy are at z-[1]).
+   mask: handle fades out gracefully rather than ending abruptly at hero edge. */
+.pizza-peel-bg-mobile {
   position: absolute;
-  /* wider than the showcase so the handle extends left */
-  width: 200%;
-  /* shift left so the paddle head sits behind the pizza center */
-  left: -85%;
-  top: 50%;
-  transform: translateY(-54%) rotate(-8deg);
-  mix-blend-mode: screen;
+  left: 50%;
+  width: 95%;
+  top: 7%;
+  transform: translateX(-50%) scaleY(-1);
   z-index: 0;
   pointer-events: none;
   user-select: none;
-  will-change: transform;
+  /* scaleY(-1) flips local coordinates: local-top = visual-bottom (handle tip).
+     'to top' in local space = fading toward visual-bottom (handle tip area).
+     65% → fade starts at physical ~100% of carousel (just below the pizza circle).
+     87% → fade completes at physical ~130% of carousel (mid text-area).
+     Paddle and handle within the carousel remain fully opaque. */
+  mask-image: linear-gradient(to top, black 65%, transparent 87%);
+  -webkit-mask-image: linear-gradient(to top, black 65%, transparent 87%);
 }
 
 /* Pizza showcase — bare transparent PNG, no circle/background/halo */

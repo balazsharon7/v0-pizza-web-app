@@ -121,10 +121,10 @@ export default async function HomePage({
             Desktop (lg+): title and rest of copy stack in the left column while the
             spinning pizzas occupy the right column spanning both rows.
           */}
-          <div className="grid gap-0 lg:gap-8 xl:gap-12 lg:grid-cols-2 lg:grid-rows-[auto_1fr]">
+          <div className="grid gap-0 lg:gap-8 xl:gap-12 lg:grid-cols-[2fr_3fr] lg:grid-rows-[auto_1fr]">
             {/* 1) Title block — on mobile the hanging sign sits up here at
                 title height; on desktop it moves to the pizza column. */}
-            <div className="relative space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
+            <div className="relative z-[1] space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <HeroSign className="lg:hidden absolute -top-2 right-0 w-24 sm:w-28 z-20 -rotate-3" />
               <div className="animate-fade-in-up relative w-[clamp(210px,27vw,390px)] aspect-square">
                 <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill className="object-contain" priority />
@@ -134,17 +134,22 @@ export default async function HomePage({
             {/* 2) Round pizza showcase + hanging open/closed sign (desktop) */}
             <div className="animate-fade-in animation-delay-200 -mt-16 sm:-mt-10 lg:mt-0 pb-2 lg:pb-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center relative">
               <HeroSign className="hidden lg:block absolute -top-6 -right-4 w-36 z-20 -rotate-3 hover:rotate-0 transition-transform duration-500" />
-              <HeroCarousel
-                slides={heroSlides}
-                intervalMs={5000}
-                spinSeconds={50}
-                href={`/${locale}/menu`}
-                className="max-w-[520px] sm:max-w-[640px] lg:max-w-[600px] mx-auto"
-              />
+              <div className="relative max-w-[520px] sm:max-w-[640px] lg:max-w-[700px] mx-auto">
+                <div className="pizza-peel-bg-mobile" aria-hidden>
+                  <Image src="/hero/pizza-peel2.png" alt="" width={1024} height={1536} className="w-full h-auto" priority={false} />
+                </div>
+                <HeroCarousel
+                  slides={heroSlides}
+                  intervalMs={5000}
+                  spinSeconds={50}
+                  href={`/${locale}/menu`}
+                  className="max-w-[520px] sm:max-w-[640px] lg:max-w-[700px] mx-auto"
+                />
+              </div>
             </div>
 
             {/* 3) Rest of the copy */}
-            <div className="space-y-5 lg:col-start-1 lg:row-start-2 lg:self-start">
+            <div className="relative z-[1] space-y-5 lg:col-start-1 lg:row-start-2 lg:self-start">
               <div className="animate-fade-in-up animation-delay-200 flex items-center gap-3">
                 <div className="h-[2px] w-12 bg-accent rounded-full" />
                 <span className="text-accent font-serif italic text-sm tracking-wide">

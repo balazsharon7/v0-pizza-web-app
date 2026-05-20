@@ -67,6 +67,11 @@ export default async function AboutPage({ params }: PageProps) {
 
             {/* Text */}
             <div className="space-y-6">
+              {/* Pizzeria logo */}
+              <div className="animate-fade-in-up w-[clamp(100px,14vw,160px)] aspect-square relative">
+                <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill className="object-contain" priority />
+              </div>
+
               <div className="animate-fade-in-up flex items-center gap-3">
                 <div className="h-[2px] w-10 bg-accent rounded-full" />
                 <span className="text-accent font-serif italic text-sm tracking-wide">
@@ -91,8 +96,8 @@ export default async function AboutPage({ params }: PageProps) {
               {/* Main photo */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-4 ring-primary/10 aspect-[4/3]">
                 <Image
-                  src="/images/pizza-fold.jpg"
-                  alt="Terra Verde – Pizza al portafoglio"
+                  src="/images/pizza-box-1.jpg"
+                  alt="Terra Verde – Pizzáink dobozban"
                   fill
                   className="object-cover"
                   priority
@@ -101,12 +106,12 @@ export default async function AboutPage({ params }: PageProps) {
               </div>
 
               {/* Inset oven photo */}
-              <div className="absolute -bottom-5 -right-5 w-36 h-36 rounded-xl overflow-hidden shadow-xl ring-2 ring-background">
+              <div className="absolute -bottom-5 -right-5 w-36 h-36 rounded-xl overflow-hidden shadow-xl ring-2 ring-background bg-muted/40">
                 <Image
-                  src="/images/pizza-room.jpg"
+                  src="/hero/oven.png"
                   alt="Terra Verde – Kemencénk"
                   fill
-                  className="object-cover"
+                  className="object-contain p-2"
                 />
               </div>
 
@@ -130,14 +135,27 @@ export default async function AboutPage({ params }: PageProps) {
 
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
               <Image
-                src="/images/pizza-fold.jpg"
-                alt="Pizza al Portafoglio – Terra Verde"
+                src="/images/pizza-box-1.jpg"
+                alt={locale === 'hu' ? 'Pizzáink dobozban – Terra Verde' : 'Our pizzas in the box – Terra Verde'}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
-                Pizza al Portafoglio
+                {locale === 'hu' ? 'Pizzáink' : 'Our pizzas'}
+              </p>
+            </div>
+
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
+              <Image
+                src="/images/pizza-box-2.jpg"
+                alt={locale === 'hu' ? 'Frissen sütve – Terra Verde' : 'Fresh from the oven – Terra Verde'}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
+                {locale === 'hu' ? 'Frissen sütve' : 'Fresh from the oven'}
               </p>
             </div>
 
@@ -150,33 +168,20 @@ export default async function AboutPage({ params }: PageProps) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
-                {locale === 'hu' ? 'Pizzáink' : 'Our pizzas'}
+                {locale === 'hu' ? 'Válogatásunk' : 'Our selection'}
               </p>
             </div>
 
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group bg-stone-100 dark:bg-stone-900">
               <Image
-                src="/images/terasz.jpg"
-                alt={locale === 'hu' ? 'Teraszunk – Terra Verde' : 'Our terrace – Terra Verde'}
+                src="/hero/oven.png"
+                alt={locale === 'hu' ? 'Kemencénk – Terra Verde' : 'Our oven – Terra Verde'}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                className="object-contain group-hover:scale-105 transition-transform duration-700 p-6"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
-                {locale === 'hu' ? 'Teraszunk' : 'Our terrace'}
-              </p>
-            </div>
-
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
-              <Image
-                src="/images/pizza-room.jpg"
-                alt={locale === 'hu' ? 'Konyhánk – Terra Verde' : 'Our kitchen – Terra Verde'}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
-                {locale === 'hu' ? 'Konyhánk' : 'Our kitchen'}
+                {locale === 'hu' ? 'Kemencénk' : 'Our oven'}
               </p>
             </div>
 
