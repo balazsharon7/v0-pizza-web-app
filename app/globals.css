@@ -833,8 +833,13 @@
   z-index: 0;
   pointer-events: none;
   user-select: none;
-  mask-image: linear-gradient(to bottom, black 75%, transparent 92%);
-  -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 92%);
+  /* scaleY(-1) flips local coordinates: local-top = visual-bottom (handle tip).
+     'to top' in local space = fading toward visual-bottom (handle tip area).
+     65% → fade starts at physical ~100% of carousel (just below the pizza circle).
+     87% → fade completes at physical ~130% of carousel (mid text-area).
+     Paddle and handle within the carousel remain fully opaque. */
+  mask-image: linear-gradient(to top, black 65%, transparent 87%);
+  -webkit-mask-image: linear-gradient(to top, black 65%, transparent 87%);
 }
 
 /* Pizza showcase — bare transparent PNG, no circle/background/halo */
