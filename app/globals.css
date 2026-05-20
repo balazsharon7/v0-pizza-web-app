@@ -818,44 +818,32 @@
   mix-blend-mode: overlay;
 }
 
-/* Pizza peel — spans hero section, paddle precisely behind pizza.
-   Image: 1536×1024, paddle region x=68.8-95.1% (center=82%), width≈26.4%.
-   width:130% → paddle ≈ 34% of viewport (slightly wider than pizza circle).
-   translateX(-28%) → paddle center at (0.82-0.28)×1.30 = 0.702 = 70.2% of
-   viewport, matching pizza center (≈70.3-70.6%) within ~5px at any size. */
-.pizza-peel-bg {
+/* Portrait pizza peel (pizza-peel2.png, 1024×1536), absolute inside the carousel wrapper.
+   scaleY(-1) flips so handle is at bottom, paddle at top.
+   Paddle occupies 6-54% of flipped height → center at 30%.
+   Mobile  (<1024px): width 65% → height 97.5% of carousel, top 21% → paddle center 50% ✓
+   Desktop (≥1024px): width 55% → height 82.5% of carousel, top 26% → paddle center 51% ✓ */
+.pizza-peel-bg-mobile {
   position: absolute;
-  width: 130%;
-  top: 50%;
-  left: 0;
-  transform: translateX(-28%) translateY(-50%) rotate(-3deg);
-  z-index: 5;
+  left: 50%;
+  transform: translateX(-50%) scaleY(-1);
+  z-index: 0;
   pointer-events: none;
   user-select: none;
-}
-
-@media (max-width: 1023px) {
-  .pizza-peel-bg { display: none; }
-}
-
-/* Mobile portrait peel (pizza-peel2.png, 1024×1536).
-   scaleY(-1) flips it so handle is at bottom, paddle at top.
-   Paddle center sits at ~30% of the flipped image height.
-   top:5% + 30%×height ≈ 50% of carousel → paddle center behind pizza. */
-.pizza-peel-bg-mobile {
   display: none;
 }
 @media (max-width: 1023px) {
   .pizza-peel-bg-mobile {
     display: block;
-    position: absolute;
-    width: 80%;
-    top: 3%;
-    left: 50%;
-    transform: translateX(-50%) scaleY(-1);
-    z-index: 0;
-    pointer-events: none;
-    user-select: none;
+    width: 65%;
+    top: 21%;
+  }
+}
+@media (min-width: 1024px) {
+  .pizza-peel-bg-mobile {
+    display: block;
+    width: 55%;
+    top: 26%;
   }
 }
 

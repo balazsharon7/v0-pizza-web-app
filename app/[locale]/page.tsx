@@ -114,18 +114,6 @@ export default async function HomePage({
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/40">
 
-        {/* Pizza peel — spans full hero width, paddle behind right-column pizza */}
-        <div className="pizza-peel-bg" aria-hidden>
-          <Image
-            src="/hero/pizza-peel.png"
-            alt=""
-            width={1500}
-            height={1000}
-            className="w-full h-auto"
-            priority={false}
-          />
-        </div>
-
         {/* Content */}
         <div className="container mx-auto px-4 py-4 md:py-8 lg:py-12 relative z-10">
           {/*
