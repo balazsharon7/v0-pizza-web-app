@@ -112,7 +112,18 @@ export default async function HomePage({
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/40">
+      <section className="relative overflow-hidden">
+        {/* Background photo */}
+        <div className="absolute inset-0 z-0" aria-hidden>
+          <Image
+            src="/images/pizzak-bg.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-background/80" />
+        </div>
 
         {/* Content */}
         <div className="container mx-auto px-4 py-4 md:py-8 lg:py-12 relative z-10">
