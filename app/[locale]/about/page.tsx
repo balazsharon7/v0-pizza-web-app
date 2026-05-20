@@ -9,7 +9,6 @@ import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { DeliveryZonesStatic } from '@/components/delivery-zones-map'
 import type { DeliveryZone } from '@/lib/types'
-import { AuroraBg } from '@/components/animations/aurora-bg'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,11 +54,17 @@ export default async function AboutPage({ params }: PageProps) {
     <main className="min-h-screen">
 
       {/* ── Hero ── */}
-      <section className="relative bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20 lg:py-32 overflow-hidden">
-        <AuroraBg className="opacity-65" intensity={1.1} />
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-20 right-20 w-40 h-40 rounded-full border-2 border-primary" />
-          <div className="absolute bottom-20 left-20 w-60 h-60 rounded-full border-2 border-accent" />
+      <section className="relative py-20 lg:py-32 overflow-hidden">
+        {/* Background photo */}
+        <div className="absolute inset-0 z-0" aria-hidden>
+          <Image
+            src="/images/pizzak-bg.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-background/80" />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
