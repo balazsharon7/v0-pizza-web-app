@@ -112,7 +112,18 @@ export default async function HomePage({
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/40">
+      <section className="relative overflow-hidden">
+        {/* Background photo */}
+        <div className="absolute inset-0 z-0" aria-hidden>
+          <Image
+            src="/images/pizzak-bg.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-background/80" />
+        </div>
 
         {/* Content */}
         <div className="container mx-auto px-4 py-4 md:py-8 lg:py-12 relative z-10">
@@ -149,7 +160,7 @@ export default async function HomePage({
             </div>
 
             {/* 3) Rest of the copy */}
-            <div className="relative z-[1] space-y-5 lg:col-start-1 lg:row-start-2 lg:self-start">
+            <div className="relative z-[1] space-y-5 pt-6 lg:pt-0 lg:col-start-1 lg:row-start-2 lg:self-start">
               <div className="animate-fade-in-up animation-delay-200 flex items-center gap-3">
                 <div className="h-[2px] w-12 bg-accent rounded-full" />
                 <span className="text-accent font-serif italic text-sm tracking-wide">

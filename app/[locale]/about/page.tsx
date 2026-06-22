@@ -9,7 +9,6 @@ import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { DeliveryZonesStatic } from '@/components/delivery-zones-map'
 import type { DeliveryZone } from '@/lib/types'
-import { AuroraBg } from '@/components/animations/aurora-bg'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,11 +54,17 @@ export default async function AboutPage({ params }: PageProps) {
     <main className="min-h-screen">
 
       {/* ── Hero ── */}
-      <section className="relative bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20 lg:py-32 overflow-hidden">
-        <AuroraBg className="opacity-65" intensity={1.1} />
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-20 right-20 w-40 h-40 rounded-full border-2 border-primary" />
-          <div className="absolute bottom-20 left-20 w-60 h-60 rounded-full border-2 border-accent" />
+      <section className="relative py-20 lg:py-32 overflow-hidden">
+        {/* Background photo */}
+        <div className="absolute inset-0 z-0" aria-hidden>
+          <Image
+            src="/images/pizzak-bg.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-background/80" />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
@@ -96,8 +101,8 @@ export default async function AboutPage({ params }: PageProps) {
               {/* Main photo */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-4 ring-primary/10 aspect-[4/3]">
                 <Image
-                  src="/images/pizza-box-1.jpg"
-                  alt="Terra Verde – Pizzáink dobozban"
+                  src="/images/pizzak.jpg"
+                  alt="Terra Verde – Pizzáink"
                   fill
                   className="object-cover"
                   priority
@@ -106,12 +111,12 @@ export default async function AboutPage({ params }: PageProps) {
               </div>
 
               {/* Inset oven photo */}
-              <div className="absolute -bottom-5 -right-5 w-36 h-36 rounded-xl overflow-hidden shadow-xl ring-2 ring-background bg-muted/40">
+              <div className="absolute -bottom-5 -right-5 w-36 h-36 rounded-xl overflow-hidden shadow-xl ring-2 ring-background">
                 <Image
-                  src="/hero/oven.png"
+                  src="/images/pizza-room.jpg"
                   alt="Terra Verde – Kemencénk"
                   fill
-                  className="object-contain p-2"
+                  className="object-cover"
                 />
               </div>
 
@@ -128,6 +133,7 @@ export default async function AboutPage({ params }: PageProps) {
         </div>
       </section>
 
+
       {/* ── Photo Gallery ── */}
       <section className="py-16 lg:py-20 bg-muted/30">
         <div className="container mx-auto px-4">
@@ -135,27 +141,14 @@ export default async function AboutPage({ params }: PageProps) {
 
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
               <Image
-                src="/images/pizza-box-1.jpg"
-                alt={locale === 'hu' ? 'Pizzáink dobozban – Terra Verde' : 'Our pizzas in the box – Terra Verde'}
+                src="/images/pizza-fold.jpg"
+                alt="Pizza al Portafoglio – Terra Verde"
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
-                {locale === 'hu' ? 'Pizzáink' : 'Our pizzas'}
-              </p>
-            </div>
-
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
-              <Image
-                src="/images/pizza-box-2.jpg"
-                alt={locale === 'hu' ? 'Frissen sütve – Terra Verde' : 'Fresh from the oven – Terra Verde'}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
-                {locale === 'hu' ? 'Frissen sütve' : 'Fresh from the oven'}
+                Pizza al Portafoglio
               </p>
             </div>
 
@@ -168,20 +161,33 @@ export default async function AboutPage({ params }: PageProps) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
-                {locale === 'hu' ? 'Válogatásunk' : 'Our selection'}
+                {locale === 'hu' ? 'Pizzáink' : 'Our pizzas'}
               </p>
             </div>
 
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group bg-stone-100 dark:bg-stone-900">
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
               <Image
-                src="/hero/oven.png"
-                alt={locale === 'hu' ? 'Kemencénk – Terra Verde' : 'Our oven – Terra Verde'}
+                src="/images/terasz.jpg"
+                alt={locale === 'hu' ? 'Teraszunk – Terra Verde' : 'Our terrace – Terra Verde'}
                 fill
-                className="object-contain group-hover:scale-105 transition-transform duration-700 p-6"
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
-                {locale === 'hu' ? 'Kemencénk' : 'Our oven'}
+                {locale === 'hu' ? 'Teraszunk' : 'Our terrace'}
+              </p>
+            </div>
+
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
+              <Image
+                src="/images/pizza-room.jpg"
+                alt={locale === 'hu' ? 'Konyhánk – Terra Verde' : 'Our kitchen – Terra Verde'}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <p className="absolute bottom-4 left-5 text-white font-serif text-lg font-semibold drop-shadow">
+                {locale === 'hu' ? 'Konyhánk' : 'Our kitchen'}
               </p>
             </div>
 
@@ -219,8 +225,19 @@ export default async function AboutPage({ params }: PageProps) {
       {/* ── Quality ── */}
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-14 section-divider pt-8">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold">{t.about.qualityTitle}</h2>
+          <div className="section-divider pt-8 mb-14 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-center md:text-left flex-1">
+              {t.about.qualityTitle}
+            </h2>
+            <div className="relative w-48 md:w-56 lg:w-64 aspect-[4/3] -rotate-2 drop-shadow-2xl shrink-0">
+              <Image
+                src="/images/pizza-box-1.png"
+                alt=""
+                fill
+                className="object-contain"
+                aria-hidden
+              />
+            </div>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[

@@ -72,22 +72,35 @@ export default async function MenuPage({
         <Image src="/hero/balloon-2.png" alt="" fill sizes="14vw" className="object-contain" priority={false} />
       </div>
       <div className="container mx-auto px-4 relative z-10">
-        <div className="mb-10 text-center pt-4 animate-fade-in-up">
-          <div className="inline-flex items-center gap-3 mb-5">
-            <span className="h-px w-10 bg-accent/50" />
-            <span className="text-accent font-serif italic text-xs tracking-[0.25em] uppercase">
-              {locale === 'hu' ? 'Fedezd fel kínálatunkat' : 'Explore our selection'}
-            </span>
-            <span className="h-px w-10 bg-accent/50" />
+        <div className="mb-10 pt-4 animate-fade-in-up">
+          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 justify-center">
+            <div className="text-center md:text-left">
+              <div className="inline-flex items-center gap-3 mb-5">
+                <span className="h-px w-10 bg-accent/50" />
+                <span className="text-accent font-serif italic text-xs tracking-[0.25em] uppercase">
+                  {locale === 'hu' ? 'Fedezd fel kínálatunkat' : 'Explore our selection'}
+                </span>
+                <span className="h-px w-10 bg-accent/50" />
+              </div>
+              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+                {dictionary.menu.title}
+              </h1>
+              <p className="mt-4 text-muted-foreground max-w-xl leading-relaxed">
+                {locale === 'hu'
+                  ? 'Válassz kategóriát, és rendeld meg a kedvenced — minden pizza kézzel készül, fa-tüzelésű kemencében.'
+                  : 'Pick a category and order your favorite — every pizza is hand-made in a wood-fired oven.'}
+              </p>
+            </div>
+            <div className="relative w-44 md:w-56 lg:w-64 aspect-[4/3] rotate-2 drop-shadow-2xl shrink-0">
+              <Image
+                src="/images/pizza-box-2.png"
+                alt=""
+                fill
+                className="object-contain"
+                aria-hidden
+              />
+            </div>
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-            {dictionary.menu.title}
-          </h1>
-          <p className="mt-4 text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            {locale === 'hu'
-              ? 'Válassz kategóriát, és rendeld meg a kedvenced — minden pizza kézzel készül, fa-tüzelésű kemencében.'
-              : 'Pick a category and order your favorite — every pizza is hand-made in a wood-fired oven.'}
-          </p>
         </div>
         
         <MenuContent
