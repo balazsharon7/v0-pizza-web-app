@@ -22,6 +22,7 @@ export interface Product {
   is_available: boolean
   is_customizable: boolean
   is_featured: boolean
+  allergens: string[]
   sort_order: number
   created_at: string
   updated_at: string

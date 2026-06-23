@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { ShoppingCart, Minus, Plus, Pizza } from 'lucide-react'
+import Link from 'next/link'
+import { ShoppingCart, Minus, Plus, Pizza, Info } from 'lucide-react'
 import { toast } from 'sonner'
+import { ALLERGENS_BY_CODE } from '@/lib/allergens'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -113,6 +115,35 @@ export function ProductModal({
               <Pizza className="h-24 w-24 text-primary/30" />
             )}
           </div>
+
+          {/* Allergens */}
+          {product.allergens && product.allergens.length > 0 && (
+            <div className="space-y-2">
+              <Link
+                href={`/${locale}/allergenek`}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline underline-offset-2"
+              >
+                <Info className="h-4 w-4" />
+                {locale === 'hu' ? 'Allergének, további információ' : 'Allergens, additional information'}
+              </Link>
+              <div className="flex flex-wrap gap-2">
+                {product.allergens.map((code) => {
+                  const allergen = ALLERGENS_BY_CODE[code]
+                  if (!allergen) return null
+                  const Icon = allergen.icon
+                  return (
+                    <span
+                      key={code}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground"
+                    >
+                      <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {locale === 'hu' ? allergen.hu : allergen.en}
+                    </span>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Toppings Selection */}
           {product.is_customizable && toppings.length > 0 && (

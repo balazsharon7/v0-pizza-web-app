@@ -30,6 +30,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
   SelectContent,
@@ -38,6 +39,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { formatPrice, getLocalizedName, type Product, type Category } from '@/lib/types'
+import { ALLERGENS } from '@/lib/allergens'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { createClient } from '@/lib/supabase/client'
@@ -69,7 +71,16 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
     is_available: true,
     is_customizable: true,
     is_featured: false,
+    allergens: [] as string[],
   })
+
+  const toggleAllergen = (code: string) =>
+    setFormData((f) => ({
+      ...f,
+      allergens: f.allergens.includes(code)
+        ? f.allergens.filter((c) => c !== code)
+        : [...f.allergens, code],
+    }))
 
   const handleEdit = (product: Product) => {
     setFormData({
@@ -83,6 +94,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
       is_available: product.is_available,
       is_customizable: product.is_customizable,
       is_featured: product.is_featured ?? false,
+      allergens: product.allergens ?? [],
     })
     setEditingProduct(product)
   }
@@ -99,6 +111,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
       is_available: true,
       is_customizable: true,
       is_featured: false,
+      allergens: [],
     })
     setIsCreating(true)
   }
@@ -165,6 +178,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
         is_available: formData.is_available,
         is_customizable: formData.is_customizable,
         is_featured: formData.is_featured,
+        allergens: formData.allergens,
       }
 
       if (editingProduct) {
@@ -483,6 +497,31 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
                   })
                 }}
               />
+            </div>
+
+            {/* Allergens */}
+            <div className="space-y-2">
+              <Label>{locale === 'hu' ? 'Allergének' : 'Allergens'}</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {ALLERGENS.map((a) => {
+                  const checked = formData.allergens.includes(a.code)
+                  const Icon = a.icon
+                  return (
+                    <button
+                      type="button"
+                      key={a.code}
+                      onClick={() => toggleAllergen(a.code)}
+                      className={`flex items-center gap-2 rounded-lg border p-2.5 text-sm text-left transition-colors ${
+                        checked ? 'border-primary bg-primary/5' : 'border-muted hover:bg-muted/50'
+                      }`}
+                    >
+                      <Checkbox checked={checked} className="pointer-events-none" />
+                      <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      <span className="truncate">{locale === 'hu' ? a.hu : a.en}</span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
 
             {/* Switches */}
