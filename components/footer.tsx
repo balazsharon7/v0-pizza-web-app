@@ -234,6 +234,14 @@ export function Footer({ locale, dictionary }: FooterProps) {
               </li>
               <li>
                 <Link
+                  href={`/${locale}/cookie`}
+                  className="text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                >
+                  {locale === 'hu' ? 'Süti tájékoztató' : 'Cookie policy'}
+                </Link>
+              </li>
+              <li>
+                <Link
                   href={`/${locale}/allergenek`}
                   className="text-sidebar-foreground/80 hover:text-sidebar-foreground"
                 >

@@ -36,13 +36,13 @@ export default async function ImpresszumPage({ params }: PageProps) {
 
       <h2>A szolgáltató adatai</h2>
       <ul>
-        <li><strong>Cégnév:</strong> [Cégnév Kft.]</li>
-        <li><strong>Székhely:</strong> [Irányítószám, város, utca, házszám]</li>
+        <li><strong>Cégnév:</strong> BetLux Food Bt.</li>
         <li><strong>Üzlet / telephely:</strong> {store.address}</li>
-        <li><strong>Cégjegyzékszám:</strong> [00-00-000000]</li>
-        <li><strong>Adószám:</strong> [00000000-0-00]</li>
-        <li><strong>Nyilvántartó hatóság:</strong> [pl. Fővárosi Törvényszék Cégbírósága]</li>
-        <li><strong>Képviselő:</strong> [Név]</li>
+        <li><strong>Cégjegyzékszám:</strong> 13-06-071353</li>
+        <li><strong>Adószám:</strong> 26342463-2-13</li>
+        <li><strong>Nyilvántartó hatóság:</strong> Budapest Környéki Törvényszék Cégbírósága</li>
+        <li><strong>Székhely:</strong> [Székhely – kérjük pótold a cégadatból]</li>
+        <li><strong>Képviselő:</strong> [Képviselő neve – kérjük pótold]</li>
       </ul>
 
       <h2>Elérhetőség</h2>
@@ -66,8 +66,8 @@ export default async function ImpresszumPage({ params }: PageProps) {
 
       <p>
         {isHu
-          ? 'A szögletes zárójelben szereplő adatokat az üzemeltető hivatalos cégadataival kell kitölteni a publikálás előtt.'
-          : 'The bracketed fields must be completed with the operator’s official company data before publishing.'}
+          ? 'A szögletes zárójelben maradt két mező (székhely, képviselő neve) a hivatalos cégadatokból pótolható.'
+          : 'The two remaining bracketed fields (registered seat, representative) can be completed from the official company records.'}
       </p>
     </LegalShell>
   )

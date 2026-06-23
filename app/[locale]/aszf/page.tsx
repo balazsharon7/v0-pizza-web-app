@@ -29,7 +29,7 @@ export default async function AszfPage({ params }: PageProps) {
     <LegalShell
       locale={locale}
       title={isHu ? 'Általános Szerződési Feltételek' : 'Terms & Conditions'}
-      subtitle={isHu ? 'Hatályos: [dátum]' : 'Effective: [date]'}
+      subtitle={isHu ? 'Hatályos: 2026. június 23.' : 'Effective: 23 June 2026'}
     >
       {!isHu && (
         <p>
@@ -41,9 +41,9 @@ export default async function AszfPage({ params }: PageProps) {
       <h2>1. A szolgáltató</h2>
       <p>
         A jelen Általános Szerződési Feltételek (a továbbiakban: <strong>ÁSZF</strong>) a{' '}
-        <strong>[Cégnév Kft.]</strong> (székhely: [cím]; adószám: [00000000-0-00];
-        a továbbiakban: <strong>Szolgáltató</strong>) által üzemeltetett Terra Verde
-        Pizzéria weboldalon keresztül leadott rendelésekre vonatkoznak.
+        <strong>BetLux Food Bt.</strong> (adószám: 26342463-2-13; cégjegyzékszám:
+        13-06-071353; a továbbiakban: <strong>Szolgáltató</strong>) által üzemeltetett
+        Terra Verde Pizzéria weboldalon keresztül leadott rendelésekre vonatkoznak.
       </p>
       <ul>
         <li>Telephely: {store.address}</li>
@@ -125,8 +125,9 @@ export default async function AszfPage({ params }: PageProps) {
       </p>
       <p>
         Békéltető testület: a fogyasztó lakóhelye szerint illetékes békéltető testülethez
-        fordulhat. A Szolgáltató székhelye szerinti testület: [Békéltető Testület megnevezése,
-        címe]. Online vitarendezési platform:{' '}
+        fordulhat. A Szolgáltató telephelye (Budaörs, Pest vármegye) szerint illetékes a{' '}
+        <strong>Pest Vármegyei Békéltető Testület</strong> (1055 Budapest, Balassi Bálint
+        utca 25. IV/2.). Online vitarendezési platform:{' '}
         <a href="https://ec.europa.eu/odr" target="_blank" rel="noopener noreferrer">
           ec.europa.eu/odr
         </a>.
@@ -148,8 +149,8 @@ export default async function AszfPage({ params }: PageProps) {
 
       <p>
         {isHu
-          ? 'A szögletes zárójelben szereplő adatokat publikálás előtt ki kell tölteni, és javasolt jogi szakértővel véglegesíteni.'
-          : 'The bracketed fields must be completed before publishing; legal review is recommended.'}
+          ? 'A dokumentum jogi szakértővel való véglegesítése javasolt.'
+          : 'Final legal review is recommended.'}
       </p>
     </LegalShell>
   )

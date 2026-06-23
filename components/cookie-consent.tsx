@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { Cookie, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Locale } from '@/lib/i18n/config'
-
-const COOKIE_KEY = 'terra-verde-cookie-consent'
+import { getConsent, setConsent } from '@/lib/consent'
 
 interface CookieConsentProps {
   locale: Locale
@@ -15,21 +15,20 @@ export function CookieConsent({ locale: locale }: CookieConsentProps) {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem(COOKIE_KEY)
-    if (!stored) {
+    if (getConsent() === null) {
       // Small delay so it doesn't flash immediately on page load
       const t = setTimeout(() => setVisible(true), 1200)
       return () => clearTimeout(t)
     }
   }, [])
 
-  const accept = () => {
-    localStorage.setItem(COOKIE_KEY, 'accepted')
+  const acceptAll = () => {
+    setConsent({ analytics: true })
     setVisible(false)
   }
 
-  const decline = () => {
-    localStorage.setItem(COOKIE_KEY, 'declined')
+  const onlyNecessary = () => {
+    setConsent({ analytics: false })
     setVisible(false)
   }
 
@@ -39,11 +38,11 @@ export function CookieConsent({ locale: locale }: CookieConsentProps) {
     title: locale === 'hu' ? 'Sütiket használunk' : 'We use cookies',
     description:
       locale === 'hu'
-        ? 'Weboldalunk sütiket (cookie-kat) használ a jobb felhasználói élmény érdekében, a munkamenet kezeléséhez és az alapvető funkciók biztosításához.'
-        : 'Our website uses cookies to improve your experience, manage your session, and provide essential functionality.',
-    accept: locale === 'hu' ? 'Elfogadom' : 'Accept all',
-    decline: locale === 'hu' ? 'Elutasítom' : 'Decline',
-    privacy: locale === 'hu' ? 'Adatvédelmi tájékoztató' : 'Privacy Policy',
+        ? 'A működéshez szükséges sütiket mindig használjuk (munkamenet, bejelentkezés). Statisztikai (látogatottság-mérő) sütiket csak az engedélyeddel.'
+        : 'We always use cookies required for the site to work (session, login). Statistics (analytics) run only with your consent.',
+    accept: locale === 'hu' ? 'Mindet elfogadom' : 'Accept all',
+    decline: locale === 'hu' ? 'Csak a szükségeseket' : 'Necessary only',
+    more: locale === 'hu' ? 'Süti tájékoztató' : 'Cookie policy',
   }
 
   return (
@@ -64,7 +63,7 @@ export function CookieConsent({ locale: locale }: CookieConsentProps) {
             </p>
           </div>
           <button
-            onClick={decline}
+            onClick={onlyNecessary}
             className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 mt-0.5"
             aria-label="Close"
           >
@@ -73,13 +72,20 @@ export function CookieConsent({ locale: locale }: CookieConsentProps) {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
-          <Button onClick={accept} className="flex-1 rounded-full">
+          <Button onClick={acceptAll} className="flex-1 rounded-full">
             {t.accept}
           </Button>
-          <Button onClick={decline} variant="outline" className="flex-1 rounded-full">
+          <Button onClick={onlyNecessary} variant="outline" className="flex-1 rounded-full">
             {t.decline}
           </Button>
         </div>
+
+        <Link
+          href={`/${locale}/cookie`}
+          className="block text-center text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+        >
+          {t.more}
+        </Link>
       </div>
     </div>
   )

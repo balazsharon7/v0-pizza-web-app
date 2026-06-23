@@ -29,7 +29,7 @@ export default async function AdatkezelesPage({ params }: PageProps) {
     <LegalShell
       locale={locale}
       title={isHu ? 'Adatkezelési tájékoztató' : 'Privacy Policy'}
-      subtitle={isHu ? 'Hatályos: [dátum]' : 'Effective: [date]'}
+      subtitle={isHu ? 'Hatályos: 2026. június 23.' : 'Effective: 23 June 2026'}
     >
       {!isHu && (
         <p>
@@ -40,8 +40,9 @@ export default async function AdatkezelesPage({ params }: PageProps) {
 
       <h2>1. Az adatkezelő</h2>
       <ul>
-        <li><strong>Név:</strong> [Cégnév Kft.]</li>
-        <li><strong>Székhely:</strong> [cím]</li>
+        <li><strong>Név:</strong> BetLux Food Bt.</li>
+        <li><strong>Adószám:</strong> 26342463-2-13</li>
+        <li><strong>Cégjegyzékszám:</strong> 13-06-071353</li>
         <li><strong>Telephely:</strong> {store.address}</li>
         <li><strong>E-mail:</strong> <a href={`mailto:${store.email}`}>{store.email}</a></li>
         <li><strong>Telefon:</strong> {store.phone}</li>
@@ -56,7 +57,7 @@ export default async function AdatkezelesPage({ params }: PageProps) {
       <ul>
         <li><strong>Cél:</strong> a megrendelés feldolgozása, teljesítése, kapcsolattartás.</li>
         <li><strong>Jogalap:</strong> a szerződés teljesítése (GDPR 6. cikk (1) b)).</li>
-        <li><strong>Megőrzési idő:</strong> a számviteli bizonylatok tekintetében a számvitelről szóló 2000. évi C. törvény szerint 8 év; egyébként a rendelés teljesítését követő [pl. 1 év].</li>
+        <li><strong>Megőrzési idő:</strong> a számviteli bizonylatok tekintetében a számvitelről szóló 2000. évi C. törvény szerint 8 év; egyéb rendelési adatok esetében a rendelés teljesítését követő 1 év.</li>
       </ul>
 
       <h3>Regisztráció / felhasználói fiók</h3>
@@ -69,16 +70,18 @@ export default async function AdatkezelesPage({ params }: PageProps) {
 
       <h3>Sütik (cookie-k)</h3>
       <p>
-        A weboldal a működéshez szükséges sütiket, valamint — hozzájárulás esetén —
-        statisztikai célú sütiket használ. A sütikről a weboldal alján megjelenő
-        süti-tájékoztatóban rendelkezhet. A működéshez feltétlenül szükséges sütik
-        jogalapja a Szolgáltató jogos érdeke (GDPR 6. cikk (1) f)).
+        A weboldal a működéshez feltétlenül szükséges sütiket (munkamenet, bejelentkezés,
+        süti-beállítás tárolása), valamint — kizárólag az Ön hozzájárulása esetén —
+        anonim, statisztikai célú látogatottság-mérést használ. A részletekért lásd a{' '}
+        <a href={`/${locale}/cookie`}>Süti tájékoztatót</a>. A működéshez feltétlenül
+        szükséges sütik jogalapja a Szolgáltató jogos érdeke (GDPR 6. cikk (1) f)); a
+        statisztikai mérés jogalapja az Ön hozzájárulása (GDPR 6. cikk (1) a)).
       </p>
 
       <h2>3. Adatfeldolgozók</h2>
       <p>A Szolgáltató az alábbi adatfeldolgozókat veszi igénybe:</p>
       <ul>
-        <li><strong>Vercel Inc.</strong> (USA) – tárhely- és üzemeltetési szolgáltatás.</li>
+        <li><strong>Vercel Inc.</strong> (USA) – tárhely- és üzemeltetési szolgáltatás, valamint anonim látogatottság-mérés (Vercel Web Analytics, hozzájárulás esetén).</li>
         <li><strong>Supabase Inc.</strong> – adatbázis, hitelesítés és tárolás.</li>
         <li><strong>Resend</strong> – tranzakciós e-mailek (pl. rendelés-visszaigazolás) kézbesítése.</li>
       </ul>
@@ -118,8 +121,8 @@ export default async function AdatkezelesPage({ params }: PageProps) {
 
       <p>
         {isHu
-          ? 'A szögletes zárójelben szereplő adatokat és megőrzési időket az üzemeltetőnek a tényleges gyakorlatának megfelelően kell kitöltenie; jogi felülvizsgálat javasolt.'
-          : 'The bracketed fields and retention periods must be completed to reflect the operator’s actual practice; legal review is recommended.'}
+          ? 'A megőrzési idők a Szolgáltató jelenlegi gyakorlatát tükrözik; jogi felülvizsgálat javasolt.'
+          : 'Retention periods reflect the operator’s current practice; legal review is recommended.'}
       </p>
     </LegalShell>
   )

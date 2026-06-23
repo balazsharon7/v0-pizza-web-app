@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Analytics } from '@vercel/analytics/next'
+import { AnalyticsGate } from '@/components/analytics-gate'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -47,7 +47,7 @@ export default function RootLayout({
     <html lang="hu" suppressHydrationWarning>
       <body className="font-sans antialiased">
         {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <AnalyticsGate />
       </body>
     </html>
   )
