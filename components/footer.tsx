@@ -76,7 +76,7 @@ export function Footer({ locale, dictionary }: FooterProps) {
   return (
     <footer className="border-t bg-sidebar text-sidebar-foreground">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="space-y-4">
             <Link href={`/${locale}`} className="flex items-center gap-3">
@@ -197,6 +197,47 @@ export function Footer({ locale, dictionary }: FooterProps) {
                   className="text-sidebar-foreground/80 hover:text-sidebar-foreground"
                 >
                   {t.common.login}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div className="space-y-4">
+            <h3 className="font-serif text-lg font-semibold">
+              {locale === 'hu' ? 'Jogi információ' : 'Legal'}
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  href={`/${locale}/impresszum`}
+                  className="text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                >
+                  {locale === 'hu' ? 'Impresszum' : 'Imprint'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`/${locale}/aszf`}
+                  className="text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                >
+                  {locale === 'hu' ? 'ÁSZF' : 'Terms'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`/${locale}/adatkezeles`}
+                  className="text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                >
+                  {locale === 'hu' ? 'Adatkezelési tájékoztató' : 'Privacy'}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`/${locale}/allergenek`}
+                  className="text-sidebar-foreground/80 hover:text-sidebar-foreground"
+                >
+                  {locale === 'hu' ? 'Allergén információ' : 'Allergens'}
                 </Link>
               </li>
             </ul>
