@@ -133,6 +133,16 @@ export function DeliveryZonesMap({ zones, locale }: DeliveryZonesMapProps) {
 // Pizzeria coordinates (Budaörs).
 const PIZZERIA = { lat: 47.4621, lng: 18.955 }
 
+/** Pick black or white text for a hex fill based on perceived luminance. */
+function readableTextColor(hex: string): string {
+  const m = hex.replace('#', '')
+  const r = parseInt(m.slice(0, 2), 16)
+  const g = parseInt(m.slice(2, 4), 16)
+  const b = parseInt(m.slice(4, 6), 16)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance > 0.6 ? '#1f1f1f' : '#ffffff'
+}
+
 /**
  * Self-contained SVG map of the delivery zones, projected directly from the
  * zone polygon coordinates. Needs no external map provider or API key, so it
@@ -225,7 +235,7 @@ function ZoneSvgMap({ zones, locale }: DeliveryZonesMapProps) {
                 dominantBaseline="middle"
                 fontSize={12}
                 fontWeight={600}
-                fill="#ffffff"
+                fill={readableTextColor(zone.color)}
                 style={{ fontFamily: 'system-ui, sans-serif' }}
               >
                 {name}
