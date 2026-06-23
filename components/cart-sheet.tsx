@@ -31,7 +31,7 @@ export function CartSheet({ locale, dictionary }: CartSheetProps) {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => toggleCart(open)}>
-      <SheetContent className="flex w-full flex-col sm:max-w-md">
+      <SheetContent className="flex h-dvh max-h-dvh w-full flex-col overflow-hidden sm:max-w-md">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5" />
@@ -127,7 +127,7 @@ export function CartSheet({ locale, dictionary }: CartSheetProps) {
               </div>
             </ScrollArea>
 
-            <div className="space-y-4 border-t pt-4">
+            <div className="shrink-0 space-y-4 border-t pt-4 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>{t.cart.subtotal}</span>

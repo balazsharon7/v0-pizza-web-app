@@ -63,6 +63,7 @@ const translations = {
     delivery: 'Házhozszállítás',
     pickup: 'Személyes átvétel',
     estimatedTime: 'Becsült idő',
+    scheduledFor: 'Időzítve',
     minutes: 'perc',
     orderDetails: 'Rendelés részletei',
     deliveryAddress: 'Szállítási cím',
@@ -73,7 +74,7 @@ const translations = {
     total: 'Összesen',
     free: 'Ingyenes',
     pickupAddress: 'Átvételi cím',
-    restaurantAddress: 'Budaörs, Fő utca 1.',
+    restaurantAddress: '2040 Budaörs, Szabadság út 23-25.',
   },
   en: {
     tracking: 'Order Tracking',
@@ -99,6 +100,7 @@ const translations = {
     delivery: 'Delivery',
     pickup: 'Pickup',
     estimatedTime: 'Estimated time',
+    scheduledFor: 'Scheduled for',
     minutes: 'minutes',
     orderDetails: 'Order Details',
     deliveryAddress: 'Delivery Address',
@@ -109,7 +111,7 @@ const translations = {
     total: 'Total',
     free: 'Free',
     pickupAddress: 'Pickup Address',
-    restaurantAddress: 'Budaörs, Fő utca 1.',
+    restaurantAddress: '2040 Budaörs, Szabadság út 23-25.',
   },
 }
 
@@ -230,14 +232,33 @@ export function OrderTracker({ initialOrder, locale }: OrderTrackerProps) {
             </div>
           )}
 
-          {/* Estimated Time */}
+          {/* Estimated time / scheduled */}
           {!isCancelled && order.status !== 'completed' && (
-            <div className="flex items-center justify-center gap-2 rounded-lg bg-muted p-4 mb-6">
+            <div className="flex flex-wrap items-center justify-center gap-2 rounded-lg bg-muted p-4 mb-6">
               <Clock className="h-5 w-5 text-muted-foreground" />
-              <span className="text-muted-foreground">{t.estimatedTime}:</span>
-              <span className="font-bold">
-                {order.delivery_type === 'pickup' ? '30' : '60'} {t.minutes}
-              </span>
+              {order.scheduled_for ? (
+                <>
+                  <span className="text-muted-foreground">{t.scheduledFor}:</span>
+                  <span className="font-bold">
+                    {new Date(order.scheduled_for).toLocaleString(locale === 'hu' ? 'hu-HU' : 'en-GB', {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    })}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="text-muted-foreground">{t.estimatedTime}:</span>
+                  <span className="font-bold">
+                    {order.delivery_time_min != null && order.delivery_time_max != null
+                      ? `${order.delivery_time_min}–${order.delivery_time_max}`
+                      : order.delivery_type === 'pickup'
+                        ? '20–30'
+                        : '45–60'}{' '}
+                    {t.minutes}
+                  </span>
+                </>
+              )}
             </div>
           )}
 

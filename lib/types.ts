@@ -85,6 +85,9 @@ export interface Order {
   confirmed_at: string | null
   completed_at: string | null
   estimated_delivery: string | null
+  delivery_time_min: number | null
+  delivery_time_max: number | null
+  scheduled_for: string | null
   items?: OrderItem[]
 }
 

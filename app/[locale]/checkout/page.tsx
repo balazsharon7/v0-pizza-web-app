@@ -33,6 +33,14 @@ export default async function CheckoutPage({
 
   const deliveryZones = (deliveryZonesData || []) as DeliveryZone[]
 
+  // Opening hours for scheduled-order validation
+  const { data: ohRow } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'opening_hours')
+    .maybeSingle()
+  const openingHours = (ohRow?.value ?? {}) as Record<string, { open?: string; close?: string; closed?: boolean }>
+
   return (
     <div className="py-8 md:py-12">
       <div className="container mx-auto px-4 max-w-4xl">
@@ -40,10 +48,11 @@ export default async function CheckoutPage({
           {dictionary.checkout.title}
         </h1>
         
-        <CheckoutForm 
-          locale={locale} 
-          dictionary={dictionary} 
+        <CheckoutForm
+          locale={locale}
+          dictionary={dictionary}
           deliveryZones={deliveryZones}
+          openingHours={openingHours}
         />
       </div>
     </div>

@@ -30,6 +30,9 @@ interface OrderData {
   subtotal: number
   deliveryFee: number
   total: number
+  deliveryTimeMin: number | null
+  deliveryTimeMax: number | null
+  scheduledFor: string | null
   items: OrderItemData[]
 }
 
@@ -71,6 +74,9 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
         total: data.total,
         payment_method: data.paymentMethod,
         notes: data.notes,
+        delivery_time_min: data.deliveryTimeMin,
+        delivery_time_max: data.deliveryTimeMax,
+        scheduled_for: data.scheduledFor,
       })
 
     if (orderError) {
@@ -154,6 +160,9 @@ export async function placeOrder(data: OrderData): Promise<{ success: boolean; o
       confirmed_at: null,
       completed_at: null,
       estimated_delivery: null,
+      delivery_time_min: data.deliveryTimeMin,
+      delivery_time_max: data.deliveryTimeMax,
+      scheduled_for: data.scheduledFor,
     }
     
     const emailSent = await sendOrderConfirmationEmail({

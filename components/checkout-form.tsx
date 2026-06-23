@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Truck, Store, CreditCard, Banknote } from 'lucide-react'
+import { Truck, Store, CreditCard, Banknote, Zap, CalendarClock } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -20,13 +20,38 @@ import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { placeOrder } from '@/app/[locale]/checkout/actions'
 import { createClient } from '@/lib/supabase/client'
 
+interface OpeningHours {
+  [day: string]: { open?: string; close?: string; closed?: boolean }
+}
+
 interface CheckoutFormProps {
   locale: Locale
   dictionary: Dictionary
   deliveryZones: DeliveryZone[]
+  openingHours?: OpeningHours
 }
 
-export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutFormProps) {
+// Uniform sizing for all the radio "option" rectangles (delivery type,
+// timing, payment method) so they line up consistently in the design.
+const optionBox =
+  'flex h-full min-h-[88px] flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 text-center text-sm hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary cursor-pointer'
+
+// Pickup preparation time (minutes) shown when there's no delivery zone.
+const PICKUP_MIN = 20
+const PICKUP_MAX = 30
+// Minimum lead time for a scheduled order (minutes).
+const SCHEDULE_LEAD_MIN = 45
+
+const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const
+
+function pad(n: number) {
+  return String(n).padStart(2, '0')
+}
+function toLocalInput(d: Date) {
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours = {} }: CheckoutFormProps) {
   const router = useRouter()
   const { items, subtotal, clearCart } = useCart()
   const t = dictionary
@@ -34,6 +59,8 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('delivery')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash')
+  const [scheduleMode, setScheduleMode] = useState<'asap' | 'scheduled'>('asap')
+  const [scheduledFor, setScheduledFor] = useState<string>('')
   
   // Address selector state - now directly using zones
   const [selectedZoneId, setSelectedZoneId] = useState<string>('')
@@ -55,6 +82,40 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
   const actualDeliveryFee = deliveryType === 'pickup' ? 0 : deliveryFee
   const total = subtotal + actualDeliveryFee
   const isAddressValid = deliveryType === 'pickup' || (selectedZoneId && selectedZip && streetAddress && selectedZone)
+
+  // Estimated time range stored on the order: the delivery zone's time for
+  // delivery, a fixed prep window for pickup.
+  const estMin = deliveryType === 'pickup' ? PICKUP_MIN : selectedZone?.delivery_time_min ?? null
+  const estMax = deliveryType === 'pickup' ? PICKUP_MAX : selectedZone?.delivery_time_max ?? null
+
+  // Scheduled-order bounds (datetime-local, local time)
+  const minScheduled = toLocalInput(new Date(Date.now() + SCHEDULE_LEAD_MIN * 60000))
+  const maxScheduled = toLocalInput(new Date(Date.now() + 7 * 24 * 60 * 60000))
+
+  function validateScheduled(): string | null {
+    if (scheduleMode !== 'scheduled') return null
+    if (!scheduledFor)
+      return locale === 'hu' ? 'Válassz időpontot az időzített rendeléshez.' : 'Pick a time for the scheduled order.'
+    const when = new Date(scheduledFor)
+    if (isNaN(when.getTime())) return locale === 'hu' ? 'Érvénytelen időpont.' : 'Invalid time.'
+    if (when.getTime() < Date.now() + SCHEDULE_LEAD_MIN * 60000 - 60000)
+      return locale === 'hu'
+        ? `Legalább ${SCHEDULE_LEAD_MIN} perccel későbbi időpontot válassz.`
+        : `Pick a time at least ${SCHEDULE_LEAD_MIN} minutes from now.`
+    const hours = openingHours[dayKeys[when.getDay()]]
+    if (!hours || hours.closed || !hours.open || !hours.close)
+      return locale === 'hu'
+        ? 'Ezen a napon zárva tartunk, válassz másik időpontot.'
+        : 'We are closed that day, pick another time.'
+    const minutes = when.getHours() * 60 + when.getMinutes()
+    const [oh, om] = hours.open.split(':').map(Number)
+    const [ch, cm] = hours.close.split(':').map(Number)
+    if (minutes < oh * 60 + om || minutes > ch * 60 + cm)
+      return locale === 'hu'
+        ? `Csak nyitvatartási időben (${hours.open}–${hours.close}) választható időpont.`
+        : `Choose a time within opening hours (${hours.open}–${hours.close}).`
+    return null
+  }
 
   // Load profile data if user is logged in
   useEffect(() => {
@@ -128,12 +189,18 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
       
       if (!isMinOrderMet) {
         toast.error(
-          locale === 'hu' 
-            ? `A minimum rendelési összeg ${formatPrice(minOrder)} Ft erre a területre` 
+          locale === 'hu'
+            ? `A minimum rendelési összeg ${formatPrice(minOrder)} Ft erre a területre`
             : `Minimum order is ${formatPrice(minOrder)} Ft for this area`
         )
         return
       }
+    }
+
+    const scheduleError = validateScheduled()
+    if (scheduleError) {
+      toast.error(scheduleError)
+      return
     }
 
     setIsSubmitting(true)
@@ -152,6 +219,9 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
         subtotal,
         deliveryFee: actualDeliveryFee,
         total,
+        deliveryTimeMin: estMin,
+        deliveryTimeMax: estMax,
+        scheduledFor: scheduleMode === 'scheduled' && scheduledFor ? new Date(scheduledFor).toISOString() : null,
         items: items.map((item) => ({
           productId: item.product.id,
           productName: getLocalizedName(item.product, locale),
@@ -218,7 +288,7 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
                   <RadioGroupItem value="delivery" id="delivery" className="peer sr-only" />
                   <Label
                     htmlFor="delivery"
-                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary cursor-pointer"
+                    className={optionBox}
                   >
                     <Truck className="mb-2 h-6 w-6" />
                     {t.checkout.delivery}
@@ -228,13 +298,61 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
                   <RadioGroupItem value="pickup" id="pickup" className="peer sr-only" />
                   <Label
                     htmlFor="pickup"
-                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary cursor-pointer"
+                    className={optionBox}
                   >
                     <Store className="mb-2 h-6 w-6" />
                     {t.checkout.pickup}
                   </Label>
                 </div>
               </RadioGroup>
+            </CardContent>
+          </Card>
+
+          {/* When — ASAP or scheduled */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{locale === 'hu' ? 'Mikorra kéred?' : 'When?'}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <RadioGroup
+                value={scheduleMode}
+                onValueChange={(v) => setScheduleMode(v as 'asap' | 'scheduled')}
+                className="grid grid-cols-2 gap-4"
+              >
+                <div>
+                  <RadioGroupItem value="asap" id="asap" className="peer sr-only" />
+                  <Label htmlFor="asap" className={optionBox}>
+                    <Zap className="mb-2 h-6 w-6" />
+                    {locale === 'hu' ? 'Leghamarabb' : 'As soon as possible'}
+                  </Label>
+                </div>
+                <div>
+                  <RadioGroupItem value="scheduled" id="scheduled" className="peer sr-only" />
+                  <Label htmlFor="scheduled" className={optionBox}>
+                    <CalendarClock className="mb-2 h-6 w-6" />
+                    {locale === 'hu' ? 'Időzített' : 'Scheduled'}
+                  </Label>
+                </div>
+              </RadioGroup>
+
+              {scheduleMode === 'scheduled' && (
+                <div className="space-y-2">
+                  <Label htmlFor="scheduledFor">{locale === 'hu' ? 'Időpont' : 'Time'}</Label>
+                  <Input
+                    id="scheduledFor"
+                    type="datetime-local"
+                    value={scheduledFor}
+                    min={minScheduled}
+                    max={maxScheduled}
+                    onChange={(e) => setScheduledFor(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {locale === 'hu'
+                      ? `Legalább ${SCHEDULE_LEAD_MIN} perccel későbbi, nyitvatartási időn belüli időpont.`
+                      : `At least ${SCHEDULE_LEAD_MIN} minutes from now, within opening hours.`}
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -316,7 +434,7 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
                   <RadioGroupItem value="cash" id="cash" className="peer sr-only" />
                   <Label
                     htmlFor="cash"
-                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary cursor-pointer"
+                    className={optionBox}
                   >
                     <Banknote className="mb-2 h-6 w-6" />
                     {t.checkout.cash}
@@ -326,7 +444,7 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
                   <RadioGroupItem value="card" id="card" className="peer sr-only" />
                   <Label
                     htmlFor="card"
-                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary cursor-pointer"
+                    className={optionBox}
                   >
                     <CreditCard className="mb-2 h-6 w-6" />
                     {t.checkout.card}
@@ -422,13 +540,29 @@ export function CheckoutForm({ locale, dictionary, deliveryZones }: CheckoutForm
                 <span className="text-primary">{formatPrice(total)} {t.common.currency}</span>
               </div>
 
-              {deliveryType === 'delivery' && (
+              {scheduleMode === 'scheduled' && scheduledFor ? (
                 <p className="text-sm text-muted-foreground text-center">
-                  {locale === 'hu' 
-                    ? 'Várható kiszállítás: 1 órán belül'
-                    : 'Estimated delivery: within 1 hour'}
+                  {locale === 'hu' ? 'Időzítve: ' : 'Scheduled for: '}
+                  {new Date(scheduledFor).toLocaleString(locale === 'hu' ? 'hu-HU' : 'en-GB', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  })}
                 </p>
-              )}
+              ) : estMin && estMax ? (
+                <p className="text-sm text-muted-foreground text-center">
+                  {deliveryType === 'pickup'
+                    ? locale === 'hu'
+                      ? `Átvételre kész kb. ${estMin}–${estMax} perc múlva`
+                      : `Ready for pickup in ~${estMin}–${estMax} min`
+                    : locale === 'hu'
+                      ? `Várható kiszállítás: ${estMin}–${estMax} perc`
+                      : `Estimated delivery: ${estMin}–${estMax} min`}
+                </p>
+              ) : deliveryType === 'delivery' ? (
+                <p className="text-sm text-muted-foreground text-center">
+                  {locale === 'hu' ? 'Várható kiszállítás: 1 órán belül' : 'Estimated delivery: within 1 hour'}
+                </p>
+              ) : null}
 
               <Button 
                 type="submit" 
