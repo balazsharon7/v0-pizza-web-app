@@ -133,6 +133,130 @@ export function DeliveryZonesMap({ zones, locale }: DeliveryZonesMapProps) {
 // Pizzeria coordinates (Budaörs).
 const PIZZERIA = { lat: 47.4621, lng: 18.955 }
 
+const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+
+/**
+ * Loads the Google Maps JS API once, using the recommended async pattern
+ * (loading=async + callback). Resolves when google.maps is ready.
+ */
+function loadGoogleMaps(key: string): Promise<void> {
+  const w = window as unknown as { google?: { maps?: unknown }; __tvInitGmaps?: () => void }
+  if (w.google?.maps) return Promise.resolve()
+  return new Promise<void>((resolve, reject) => {
+    const existing = document.getElementById('tv-gmaps-loader') as HTMLScriptElement | null
+    if (existing) {
+      existing.addEventListener('load', () => resolve())
+      existing.addEventListener('error', () => reject(new Error('Google Maps failed to load')))
+      return
+    }
+    w.__tvInitGmaps = () => resolve()
+    const s = document.createElement('script')
+    s.id = 'tv-gmaps-loader'
+    s.src =
+      `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}` +
+      `&v=weekly&libraries=maps,marker&loading=async&callback=__tvInitGmaps`
+    s.async = true
+    s.onerror = () => reject(new Error('Google Maps failed to load'))
+    document.head.appendChild(s)
+  })
+}
+
+/**
+ * Renders the delivery zones as filled polygons on a real Google map, with a
+ * pizzeria marker and a click info window per zone. Only used when a Google
+ * Maps API key is configured; otherwise the SVG fallback is shown.
+ */
+function ZoneGoogleMap({ zones, locale }: DeliveryZonesMapProps) {
+  const mapRef = useRef<HTMLDivElement>(null)
+  const [error, setError] = useState(false)
+
+  const drawable = zones.filter((z) => Array.isArray(z.polygon) && z.polygon.length >= 3)
+
+  useEffect(() => {
+    if (!GOOGLE_MAPS_KEY || !mapRef.current) return
+    let cancelled = false
+
+    loadGoogleMaps(GOOGLE_MAPS_KEY)
+      .then(() => {
+        if (cancelled || !mapRef.current) return
+        const g = (window as unknown as { google: any }).google
+
+        const map = new g.maps.Map(mapRef.current, {
+          center: PIZZERIA,
+          zoom: 12,
+          mapTypeControl: true,
+          streetViewControl: false,
+          fullscreenControl: true,
+        })
+
+        const bounds = new g.maps.LatLngBounds()
+
+        new g.maps.Marker({
+          position: PIZZERIA,
+          map,
+          title: 'Terra Verde Pizzéria',
+        })
+        bounds.extend(PIZZERIA)
+
+        const cur = 'HUF'
+        const lbl = {
+          min: locale === 'hu' ? 'Min.' : 'Min.',
+          time: locale === 'hu' ? 'Idő' : 'Time',
+          fee: locale === 'hu' ? 'Díj' : 'Fee',
+          free: locale === 'hu' ? 'Ingyenes' : 'Free',
+          mins: locale === 'hu' ? 'perc' : 'min',
+        }
+
+        drawable.forEach((zone) => {
+          const paths = zone.polygon.map(([lat, lng]) => ({ lat, lng }))
+          paths.forEach((p) => bounds.extend(p))
+
+          const poly = new g.maps.Polygon({
+            paths,
+            strokeColor: zone.color,
+            strokeOpacity: 0.85,
+            strokeWeight: 2,
+            fillColor: zone.color,
+            fillOpacity: 0.35,
+            map,
+          })
+
+          const name = locale === 'hu' ? zone.name_hu : zone.name_en
+          const feeText =
+            zone.delivery_fee === 0 ? lbl.free : `${cur} ${formatPrice(zone.delivery_fee)}`
+          const info = new g.maps.InfoWindow({
+            content:
+              `<div style="font-family:system-ui,sans-serif;padding:2px 4px;">` +
+              `<strong style="font-size:14px;">${name}</strong>` +
+              `<div style="margin-top:6px;font-size:12px;color:#555;line-height:1.5;">` +
+              `${lbl.min}: ${cur} ${formatPrice(zone.min_order)}<br/>` +
+              `${lbl.time}: ${zone.delivery_time_min}–${zone.delivery_time_max} ${lbl.mins}<br/>` +
+              `${lbl.fee}: ${feeText}</div></div>`,
+          })
+          poly.addListener('click', (e: any) => {
+            info.setPosition(e.latLng)
+            info.open(map)
+          })
+        })
+
+        if (!bounds.isEmpty()) map.fitBounds(bounds, 48)
+      })
+      .catch(() => {
+        if (!cancelled) setError(true)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [drawable, locale])
+
+  if (error) {
+    return <ZoneSvgMap zones={zones} locale={locale} />
+  }
+
+  return <div ref={mapRef} className="h-[460px] w-full" />
+}
+
 /** Pick black or white text for a hex fill based on perceived luminance. */
 function readableTextColor(hex: string): string {
   const m = hex.replace('#', '')
@@ -360,7 +484,11 @@ export function DeliveryZonesStatic({ zones, locale }: DeliveryZonesMapProps) {
 
         {/* Map */}
         <div className="rounded-2xl overflow-hidden border bg-card shadow-sm sticky top-24">
-          <ZoneSvgMap zones={zones} locale={locale} />
+          {GOOGLE_MAPS_KEY ? (
+            <ZoneGoogleMap zones={zones} locale={locale} />
+          ) : (
+            <ZoneSvgMap zones={zones} locale={locale} />
+          )}
           <p className="px-4 py-3 text-xs text-muted-foreground border-t text-center">
             {t.mapTitle}
           </p>
