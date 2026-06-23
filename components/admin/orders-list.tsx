@@ -28,7 +28,7 @@ import { formatPrice, getLocalizedName, type Order, type OrderStatus } from '@/l
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
 import { updateOrderStatus } from './actions'
-import { Truck, Store, Phone, MapPin, Clock, Check, X, ChefHat, Package, ArrowRight, Calendar, Search } from 'lucide-react'
+import { Truck, Store, Phone, MapPin, Clock, Check, X, ChefHat, Package, ArrowRight, Calendar, Search, CalendarClock, Banknote, CreditCard } from 'lucide-react'
 
 interface OrdersListProps {
   orders: Order[]
@@ -56,6 +56,17 @@ const statusIcons: Record<OrderStatus, typeof Clock> = {
   delivering: Truck,
   completed: Check,
   cancelled: X,
+}
+
+// Left accent stripe colour per status, so an order's state is readable at a glance.
+const statusAccent: Record<OrderStatus, string> = {
+  pending: 'bg-yellow-400',
+  confirmed: 'bg-blue-400',
+  preparing: 'bg-orange-400',
+  ready: 'bg-green-500',
+  delivering: 'bg-purple-400',
+  completed: 'bg-gray-300',
+  cancelled: 'bg-red-400',
 }
 
 const statuses: OrderStatus[] = [
@@ -253,82 +264,131 @@ export function OrdersList({ orders, locale, dictionary, initialFromDate, initia
           const StatusIcon = statusIcons[order.status]
           const nextStatus = getNextStatus(order.status)
           
+          const itemSummary = (order.items ?? [])
+            .map((i) => `${i.quantity}× ${i.product ? getLocalizedName(i.product, locale) : '—'}`)
+            .join('  ·  ')
+          const addressLine = [order.delivery_address, order.delivery_zip, order.delivery_city]
+            .filter(Boolean)
+            .join(', ')
+          const PayIcon = order.payment_method === 'card' ? CreditCard : Banknote
+
           return (
             <Card
               key={order.id}
-              className="overflow-hidden hover:shadow-md transition-shadow active:scale-[0.99]"
+              className={`overflow-hidden hover:shadow-md transition-shadow ${
+                order.scheduled_for ? 'ring-2 ring-amber-300' : ''
+              }`}
             >
               <CardContent className="p-0">
-                {/* Order Header - Clickable */}
-                <div 
-                  className="p-4 cursor-pointer"
-                  onClick={() => setSelectedOrder(order)}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono font-bold text-lg">{order.order_number}</span>
-                        <Badge className={`${statusColors[order.status]} flex items-center gap-1`}>
-                          <StatusIcon className="h-3 w-3" />
-                          {t.orders.status[order.status]}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-                        <span>{order.customer_name}</span>
-                        <span>•</span>
-                        <span>{formatDate(order.created_at)}</span>
-                      </div>
-                      <div className="flex items-center gap-1 mt-1 text-sm text-muted-foreground">
-                        {order.delivery_type === 'delivery' ? (
-                          <>
-                            <Truck className="h-4 w-4" />
-                            <span>{locale === 'hu' ? 'Kiszállítás' : 'Delivery'}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Store className="h-4 w-4" />
-                            <span>{locale === 'hu' ? 'Elvitel' : 'Pickup'}</span>
-                          </>
-                        )}
+                <div className="flex">
+                  {/* Status accent stripe */}
+                  <div className={`w-1.5 shrink-0 ${statusAccent[order.status]}`} aria-hidden />
+
+                  <div className="flex-1 min-w-0">
+                    {/* Clickable header */}
+                    <div className="p-4 cursor-pointer" onClick={() => setSelectedOrder(order)}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-mono font-bold text-lg">{order.order_number}</span>
+                            <Badge className={`${statusColors[order.status]} flex items-center gap-1`}>
+                              <StatusIcon className="h-3 w-3" />
+                              {t.orders.status[order.status]}
+                            </Badge>
+                            {order.scheduled_for && (
+                              <Badge className="bg-amber-100 text-amber-900 border-amber-300 flex items-center gap-1">
+                                <CalendarClock className="h-3 w-3" />
+                                {locale === 'hu' ? 'Időzítve' : 'Scheduled'}: {formatDate(order.scheduled_for)}
+                              </Badge>
+                            )}
+                          </div>
+
+                          {/* Customer · phone · time */}
+                          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                            <span className="font-medium">{order.customer_name}</span>
+                            <a
+                              href={`tel:${order.customer_phone}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 text-primary hover:underline"
+                            >
+                              <Phone className="h-3.5 w-3.5" />
+                              {order.customer_phone}
+                            </a>
+                            <span className="inline-flex items-center gap-1 text-muted-foreground">
+                              <Clock className="h-3.5 w-3.5" />
+                              {formatDate(order.created_at)}
+                            </span>
+                          </div>
+
+                          {/* Delivery type + address */}
+                          <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+                            {order.delivery_type === 'delivery' ? (
+                              <>
+                                <Truck className="h-4 w-4 shrink-0" />
+                                <span className="truncate">
+                                  {addressLine || (locale === 'hu' ? 'Kiszállítás' : 'Delivery')}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <Store className="h-4 w-4 shrink-0" />
+                                <span>{locale === 'hu' ? 'Személyes átvétel' : 'Pickup'}</span>
+                              </>
+                            )}
+                          </div>
+
+                          {/* What they ordered — at a glance */}
+                          {itemSummary && (
+                            <p className="mt-2 text-sm leading-relaxed line-clamp-2">{itemSummary}</p>
+                          )}
+                        </div>
+
+                        {/* Total + meta */}
+                        <div className="text-right flex-shrink-0">
+                          <p className="font-bold text-xl text-primary">{formatPrice(order.total)} Ft</p>
+                          <p className="text-xs text-muted-foreground">
+                            {order.items?.length || 0} {locale === 'hu' ? 'tétel' : 'items'}
+                          </p>
+                          <p className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground">
+                            <PayIcon className="h-3.5 w-3.5" />
+                            {order.payment_method === 'card'
+                              ? locale === 'hu' ? 'Kártya' : 'Card'
+                              : locale === 'hu' ? 'Készpénz' : 'Cash'}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="font-bold text-xl text-primary">{formatPrice(order.total)} Ft</p>
-                      <p className="text-xs text-muted-foreground">
-                        {order.items?.length || 0} {locale === 'hu' ? 'tétel' : 'items'}
-                      </p>
-                    </div>
+
+                    {/* Quick action buttons */}
+                    {nextStatus && (
+                      <div className="border-t px-4 py-3 bg-muted/30 flex gap-2">
+                        <Button
+                          size="lg"
+                          className="flex-1 h-12 text-base"
+                          disabled={isUpdating}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleStatusChange(order.id, nextStatus)
+                          }}
+                        >
+                          <ArrowRight className="h-4 w-4 mr-2" />
+                          {t.orders.status[nextStatus]}
+                        </Button>
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="h-12"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedOrder(order)
+                          }}
+                        >
+                          {locale === 'hu' ? 'Részletek' : 'Details'}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
-
-                {/* Quick Action Buttons */}
-                {nextStatus && (
-                  <div className="border-t px-4 py-3 bg-muted/30 flex gap-2">
-                    <Button
-                      size="lg"
-                      className="flex-1 h-12 text-base"
-                      disabled={isUpdating}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleStatusChange(order.id, nextStatus)
-                      }}
-                    >
-                      <ArrowRight className="h-4 w-4 mr-2" />
-                      {t.orders.status[nextStatus]}
-                    </Button>
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="h-12"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedOrder(order)
-                      }}
-                    >
-                      {locale === 'hu' ? 'Részletek' : 'Details'}
-                    </Button>
-                  </div>
-                )}
               </CardContent>
             </Card>
           )
@@ -360,6 +420,31 @@ export function OrdersList({ orders, locale, dictionary, initialFromDate, initia
               </DialogHeader>
 
               <div className="p-4 sm:p-0 space-y-6">
+                {/* Scheduled / estimated time */}
+                {selectedOrder.scheduled_for ? (
+                  <div className="flex items-center gap-3 rounded-lg border-2 border-amber-300 bg-amber-50 p-4">
+                    <CalendarClock className="h-7 w-7 text-amber-600 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-900">
+                        {selectedOrder.delivery_type === 'delivery'
+                          ? locale === 'hu' ? 'Időzített kiszállítás' : 'Scheduled delivery'
+                          : locale === 'hu' ? 'Időzített átvétel' : 'Scheduled pickup'}
+                      </p>
+                      <p className="text-lg font-bold text-amber-900">
+                        {formatDateLong(selectedOrder.scheduled_for)}
+                      </p>
+                    </div>
+                  </div>
+                ) : selectedOrder.delivery_time_min != null && selectedOrder.delivery_time_max != null ? (
+                  <div className="flex items-center gap-2 rounded-lg bg-muted p-3 text-sm">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{locale === 'hu' ? 'Becsült idő:' : 'Estimated time:'}</span>
+                    <span className="font-semibold">
+                      {selectedOrder.delivery_time_min}–{selectedOrder.delivery_time_max} {locale === 'hu' ? 'perc' : 'min'}
+                    </span>
+                  </div>
+                ) : null}
+
                 {/* Quick Status Buttons - Mobile Friendly */}
                 <div className="space-y-3">
                   <p className="text-sm font-medium">{locale === 'hu' ? 'Státusz módosítása' : 'Change status'}</p>
