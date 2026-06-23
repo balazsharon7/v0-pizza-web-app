@@ -130,6 +130,133 @@ export function DeliveryZonesMap({ zones, locale }: DeliveryZonesMapProps) {
   )
 }
 
+// Pizzeria coordinates (Budaörs).
+const PIZZERIA = { lat: 47.4621, lng: 18.955 }
+
+/**
+ * Self-contained SVG map of the delivery zones, projected directly from the
+ * zone polygon coordinates. Needs no external map provider or API key, so it
+ * always renders. Zones with an empty polygon are skipped on the map (they
+ * still appear in the cards/legend).
+ */
+function ZoneSvgMap({ zones, locale }: DeliveryZonesMapProps) {
+  const drawable = zones.filter((z) => Array.isArray(z.polygon) && z.polygon.length >= 3)
+  if (drawable.length === 0) return null
+
+  // Collect all points (+ pizzeria) to compute geographic bounds.
+  const pts: [number, number][] = []
+  drawable.forEach((z) => z.polygon.forEach((p) => pts.push(p)))
+  pts.push([PIZZERIA.lat, PIZZERIA.lng])
+
+  const lats = pts.map((p) => p[0])
+  const lngs = pts.map((p) => p[1])
+  let minLat = Math.min(...lats)
+  let maxLat = Math.max(...lats)
+  let minLng = Math.min(...lngs)
+  let maxLng = Math.max(...lngs)
+
+  const padLat = (maxLat - minLat) * 0.12 || 0.01
+  const padLng = (maxLng - minLng) * 0.12 || 0.01
+  minLat -= padLat
+  maxLat += padLat
+  minLng -= padLng
+  maxLng += padLng
+
+  // Correct for longitude compression at this latitude so shapes aren't stretched.
+  const lngK = Math.cos(((minLat + maxLat) / 2) * (Math.PI / 180))
+  const geoW = (maxLng - minLng) * lngK
+  const geoH = maxLat - minLat
+  const W = 600
+  const H = Math.max(360, Math.round((W * geoH) / geoW))
+
+  const project = (lat: number, lng: number): [number, number] => [
+    (((lng - minLng) * lngK) / geoW) * W,
+    ((maxLat - lat) / geoH) * H,
+  ]
+
+  const [px, py] = project(PIZZERIA.lat, PIZZERIA.lng)
+
+  const title = locale === 'hu' ? 'Kiszállítási területek térképe' : 'Delivery zones map'
+
+  return (
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      width="100%"
+      className="block h-auto w-full"
+      role="img"
+      aria-label={title}
+      style={{ background: 'var(--muted, #f3f3f1)' }}
+    >
+      <title>{title}</title>
+
+      {/* Zone polygons */}
+      {drawable.map((zone) => {
+        const points = zone.polygon.map(([lat, lng]) => project(lat, lng).join(',')).join(' ')
+        // Centroid for the label.
+        const cx =
+          zone.polygon.reduce((s, [, lng]) => s + project(0, lng)[0], 0) / zone.polygon.length
+        const cy =
+          zone.polygon.reduce((s, [lat]) => s + project(lat, 0)[1], 0) / zone.polygon.length
+        const name = locale === 'hu' ? zone.name_hu : zone.name_en
+        const pillW = Math.max(54, name.length * 7.2 + 18)
+        return (
+          <g key={zone.id}>
+            <polygon
+              points={points}
+              fill={zone.color}
+              fillOpacity={0.32}
+              stroke={zone.color}
+              strokeWidth={2}
+              strokeLinejoin="round"
+            />
+            <g transform={`translate(${cx}, ${cy})`}>
+              <rect
+                x={-pillW / 2}
+                y={-11}
+                width={pillW}
+                height={22}
+                rx={11}
+                fill={zone.color}
+              />
+              <text
+                x={0}
+                y={1}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize={12}
+                fontWeight={600}
+                fill="#ffffff"
+                style={{ fontFamily: 'system-ui, sans-serif' }}
+              >
+                {name}
+              </text>
+            </g>
+          </g>
+        )
+      })}
+
+      {/* Pizzeria marker */}
+      <g transform={`translate(${px}, ${py})`}>
+        <circle r={9} fill="#ffffff" stroke="#1f1f1f" strokeWidth={2} />
+        <circle r={3.5} fill="#1f1f1f" />
+        <text
+          x={0}
+          y={-15}
+          textAnchor="middle"
+          fontSize={12}
+          fontWeight={700}
+          fill="#1f1f1f"
+          style={{ fontFamily: 'system-ui, sans-serif', paintOrder: 'stroke' }}
+          stroke="#ffffff"
+          strokeWidth={3}
+        >
+          Terra Verde
+        </text>
+      </g>
+    </svg>
+  )
+}
+
 // Static fallback component
 export function DeliveryZonesStatic({ zones, locale }: DeliveryZonesMapProps) {
   const t = {
@@ -222,17 +349,11 @@ export function DeliveryZonesStatic({ zones, locale }: DeliveryZonesMapProps) {
         </div>
 
         {/* Map */}
-        <div className="rounded-2xl overflow-hidden border shadow-sm sticky top-24">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10784.5!2d18.9510!3d47.4611!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4741ddc1e5afe6db%3A0x397c23ec48fec7a0!2sTerra%20Verde%20Pizz%C3%A9ria!5e0!3m2!1shu!2shu!4v1699900000000"
-            width="100%"
-            height="480"
-            style={{ border: 0, display: 'block' }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title={t.mapTitle}
-          />
+        <div className="rounded-2xl overflow-hidden border bg-card shadow-sm sticky top-24">
+          <ZoneSvgMap zones={zones} locale={locale} />
+          <p className="px-4 py-3 text-xs text-muted-foreground border-t text-center">
+            {t.mapTitle}
+          </p>
         </div>
       </div>
     </div>
