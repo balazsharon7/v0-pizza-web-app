@@ -7,8 +7,6 @@ import { Separator } from '@/components/ui/separator'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
-import { DeliveryZonesStatic } from '@/components/delivery-zones-map'
-import type { DeliveryZone } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,13 +30,6 @@ export default async function AboutPage({ params }: PageProps) {
   const supabase = await createClient()
 
   const { data: settingsData } = await supabase.from('settings').select('key, value')
-  const { data: deliveryZonesData } = await supabase
-    .from('delivery_zones')
-    .select('*')
-    .eq('is_active', true)
-    .order('sort_order', { ascending: true })
-
-  const deliveryZones = (deliveryZonesData || []) as DeliveryZone[]
 
   const settings: Record<string, any> = {}
   settingsData?.forEach((s) => { settings[s.key] = s.value })
@@ -222,43 +213,6 @@ export default async function AboutPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ── Quality ── */}
-      <section className="py-16 lg:py-24">
-        <div className="container mx-auto px-4">
-          <div className="section-divider pt-8 mb-14 flex flex-col md:flex-row items-center gap-8 md:gap-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-center md:text-left flex-1">
-              {t.about.qualityTitle}
-            </h2>
-            <div className="relative w-48 md:w-56 lg:w-64 aspect-[4/3] -rotate-2 drop-shadow-2xl shrink-0">
-              <Image
-                src="/images/pizza-box-1.png"
-                alt=""
-                fill
-                className="object-contain"
-                aria-hidden
-              />
-            </div>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { icon: Timer, title: t.about.quality1Title, text: t.about.quality1Text },
-              { icon: Wheat, title: t.about.quality2Title, text: t.about.quality2Text },
-              { icon: ChefHat, title: t.about.quality3Title, text: t.about.quality3Text },
-            ].map(({ icon: Icon, title, text }) => (
-              <Card key={title} className="group text-center border-0 shadow-md hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 bg-card rounded-2xl">
-                <CardContent className="pt-10 pb-8 px-6 space-y-4">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300 flex items-center justify-center">
-                    <Icon className="w-10 h-10 text-primary" />
-                  </div>
-                  <h3 className="font-serif text-xl font-semibold tracking-tight">{title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{text}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Contact & Hours ── */}
       <section className="py-16 lg:py-24 bg-card">
         <div className="container mx-auto px-4">
@@ -347,14 +301,42 @@ export default async function AboutPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ── Delivery Zones ── */}
-      {deliveryZones.length > 0 && (
-        <section className="py-16 lg:py-24 bg-muted/20">
-          <div className="container mx-auto px-4">
-            <DeliveryZonesStatic zones={deliveryZones} locale={locale} />
+      {/* ── Quality ── */}
+      <section className="py-16 lg:py-24 bg-muted/20">
+        <div className="container mx-auto px-4">
+          <div className="section-divider pt-8 mb-14 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-center md:text-left flex-1">
+              {t.about.qualityTitle}
+            </h2>
+            <div className="relative w-48 md:w-56 lg:w-64 aspect-[4/3] -rotate-2 drop-shadow-2xl shrink-0">
+              <Image
+                src="/images/pizza-box-1.png"
+                alt=""
+                fill
+                className="object-contain"
+                aria-hidden
+              />
+            </div>
           </div>
-        </section>
-      )}
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { icon: Timer, title: t.about.quality1Title, text: t.about.quality1Text },
+              { icon: Wheat, title: t.about.quality2Title, text: t.about.quality2Text },
+              { icon: ChefHat, title: t.about.quality3Title, text: t.about.quality3Text },
+            ].map(({ icon: Icon, title, text }) => (
+              <Card key={title} className="group text-center border-0 shadow-md hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 bg-card rounded-2xl">
+                <CardContent className="pt-10 pb-8 px-6 space-y-4">
+                  <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/15 to-primary/5 group-hover:from-primary/25 group-hover:to-primary/10 transition-colors duration-300 flex items-center justify-center">
+                    <Icon className="w-10 h-10 text-primary" />
+                  </div>
+                  <h3 className="font-serif text-xl font-semibold tracking-tight">{title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{text}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ── CTA ── */}
       <section className="relative py-16 lg:py-24 bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground overflow-hidden">

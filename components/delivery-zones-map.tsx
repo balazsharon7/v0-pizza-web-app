@@ -391,6 +391,26 @@ function ZoneSvgMap({ zones, locale }: DeliveryZonesMapProps) {
   )
 }
 
+/**
+ * Just the delivery-zone map (no detail cards), in a self-contained card.
+ * Uses the real Google map when an API key is set, otherwise the SVG fallback.
+ */
+export function DeliveryZonesMapOnly({ zones, locale }: DeliveryZonesMapProps) {
+  const mapTitle = locale === 'hu' ? 'Kiszállítási területek térképe' : 'Delivery zones map'
+  return (
+    <div className="rounded-2xl overflow-hidden border bg-card shadow-sm">
+      {GOOGLE_MAPS_KEY ? (
+        <ZoneGoogleMap zones={zones} locale={locale} />
+      ) : (
+        <ZoneSvgMap zones={zones} locale={locale} />
+      )}
+      <p className="px-4 py-3 text-xs text-muted-foreground border-t text-center">
+        {mapTitle}
+      </p>
+    </div>
+  )
+}
+
 // Static fallback component
 export function DeliveryZonesStatic({ zones, locale }: DeliveryZonesMapProps) {
   const t = {

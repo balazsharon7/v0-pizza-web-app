@@ -6,6 +6,8 @@ import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { FeaturedPizzas } from '@/components/featured-pizzas'
+import { DeliveryZonesMapOnly } from '@/components/delivery-zones-map'
+import type { DeliveryZone } from '@/lib/types'
 import { ScrollReveal } from '@/components/animations/scroll-reveal'
 import { Marquee } from '@/components/animations/marquee'
 import { HeroCarousel, type HeroSlide } from '@/components/hero-carousel'
@@ -79,6 +81,14 @@ export default async function HomePage({
   const pizzaNames = (allPizzas ?? [])
     .map((p) => (locale === 'hu' ? p.name_hu : p.name_en))
     .filter((n): n is string => !!n && n.trim().length > 0)
+
+  // Delivery zones for the homepage coverage map
+  const { data: deliveryZonesData } = await supabase
+    .from('delivery_zones')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+  const deliveryZones = (deliveryZonesData || []) as DeliveryZone[]
 
   // Fetch settings
   const { data: settingsData } = await supabase
@@ -323,6 +333,34 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+
+      {/* Delivery coverage map */}
+      {deliveryZones.length > 0 && (
+        <section className="relative py-16 md:py-20 overflow-hidden">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <ScrollReveal className="mb-10 text-center">
+              <div className="inline-flex items-center gap-3 mb-5">
+                <span className="h-px w-10 bg-accent/50" />
+                <span className="text-accent font-serif italic text-xs tracking-[0.25em] uppercase">
+                  {locale === 'hu' ? 'Házhozszállítás' : 'Home delivery'}
+                </span>
+                <span className="h-px w-10 bg-accent/50" />
+              </div>
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+                {locale === 'hu' ? 'Hova szállítunk?' : 'Where We Deliver'}
+              </h2>
+              <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                {locale === 'hu'
+                  ? 'Nézd meg a térképen, hogy a címedre várható-e kiszállítás. A részletekért kattints egy területre.'
+                  : 'Check the map to see if we deliver to your address. Click a zone for details.'}
+              </p>
+            </ScrollReveal>
+            <ScrollReveal>
+              <DeliveryZonesMapOnly zones={deliveryZones} locale={locale} />
+            </ScrollReveal>
+          </div>
+        </section>
+      )}
 
       {/* Why Choose Us — refined */}
       <section className="relative bg-muted/30 pt-24 md:pt-32 pb-8 md:pb-10 overflow-hidden">
