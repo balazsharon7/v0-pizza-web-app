@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { sendOrderConfirmationEmail } from '@/lib/email'
+import { isStoreOpenNow } from '@/lib/store-open'
 import type { DeliveryType, PaymentMethod } from '@/lib/types'
 
 interface OrderItemData {
@@ -44,11 +45,21 @@ function generateOrderNumber(): string {
 
 export async function placeOrder(data: OrderData): Promise<{ success: boolean; orderNumber?: string; error?: string }> {
   try {
+    // Reject ASAP orders while the restaurant is closed. Scheduled orders are
+    // allowed (their time is validated against opening hours at checkout).
+    if (!data.scheduledFor && !(await isStoreOpenNow())) {
+      return {
+        success: false,
+        error:
+          'Az étterem jelenleg zárva van, ezért azonnali rendelést nem tudunk fogadni. Adj le időzített rendelést, vagy próbáld újra nyitvatartási időben.',
+      }
+    }
+
     const supabase = await createClient()
-    
+
     // Get current user if logged in
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     const orderNumber = generateOrderNumber()
     
     // Generate a UUID for the order

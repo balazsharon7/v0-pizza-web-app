@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, ShoppingBag, Package, Settings, FolderOpen, Users, Menu, X, ArrowLeft } from 'lucide-react'
+import { LayoutDashboard, ShoppingBag, Package, Settings, FolderOpen, Users, Menu, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { useState } from 'react'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
@@ -112,13 +112,8 @@ export function AdminSidebar({ locale, dictionary }: AdminSidebarProps) {
               </SheetTrigger>
               <SheetContent side="left" className="w-[280px] p-0">
                 <div className="flex flex-col h-full">
-                  <div className="flex items-center justify-between p-4 border-b">
+                  <div className="p-4 border-b">
                     <h2 className="font-serif text-lg font-bold">{t.common.admin}</h2>
-                    <SheetClose asChild>
-                      <Button variant="ghost" size="icon">
-                        <X className="h-5 w-5" />
-                      </Button>
-                    </SheetClose>
                   </div>
                   <NavContent onNavigate={() => setMobileOpen(false)} />
                   <div className="border-t p-4">

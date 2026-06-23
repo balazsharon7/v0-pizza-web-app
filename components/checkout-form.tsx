@@ -29,6 +29,7 @@ interface CheckoutFormProps {
   dictionary: Dictionary
   deliveryZones: DeliveryZone[]
   openingHours?: OpeningHours
+  storeOpen?: boolean
 }
 
 // Uniform sizing for all the radio "option" rectangles (delivery type,
@@ -51,7 +52,7 @@ function toLocalInput(d: Date) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours = {} }: CheckoutFormProps) {
+export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours = {}, storeOpen = true }: CheckoutFormProps) {
   const router = useRouter()
   const { items, subtotal, clearCart } = useCart()
   const t = dictionary
@@ -197,6 +198,15 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours =
       }
     }
 
+    if (!storeOpen && scheduleMode === 'asap') {
+      toast.error(
+        locale === 'hu'
+          ? 'Az étterem jelenleg zárva. Válaszd az „Időzített" opciót egy későbbi időpontra.'
+          : 'The restaurant is closed. Choose the “Scheduled” option for a later time.'
+      )
+      return
+    }
+
     const scheduleError = validateScheduled()
     if (scheduleError) {
       toast.error(scheduleError)
@@ -270,6 +280,21 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours =
 
   return (
     <form onSubmit={handleSubmit}>
+      {!storeOpen && (
+        <div className="mb-6 flex items-start gap-3 rounded-lg border-2 border-destructive/30 bg-destructive/5 p-4">
+          <Store className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+          <div className="text-sm">
+            <p className="font-medium text-destructive">
+              {locale === 'hu' ? 'Az étterem jelenleg zárva' : 'The restaurant is currently closed'}
+            </p>
+            <p className="text-muted-foreground">
+              {locale === 'hu'
+                ? 'Azonnali rendelést most nem tudunk fogadni. A „Mikorra kéred?" résznél válaszd az „Időzített" opciót egy nyitvatartási időpontra.'
+                : 'We can’t take ASAP orders right now. Under “When?”, choose “Scheduled” for a time within opening hours.'}
+            </p>
+          </div>
+        </div>
+      )}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Left Column - Form */}
         <div className="space-y-6">
@@ -568,7 +593,11 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours =
                 type="submit" 
                 className="w-full" 
                 size="lg" 
-                disabled={isSubmitting || (deliveryType === 'delivery' && (!isAddressValid || !isMinOrderMet))}
+                disabled={
+                  isSubmitting ||
+                  (deliveryType === 'delivery' && (!isAddressValid || !isMinOrderMet)) ||
+                  (!storeOpen && scheduleMode === 'asap')
+                }
               >
                 {isSubmitting ? (
                   <>

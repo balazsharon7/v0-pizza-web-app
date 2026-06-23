@@ -2,6 +2,7 @@ import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { CheckoutForm } from '@/components/checkout-form'
 import { createClient } from '@/lib/supabase/server'
+import { isStoreOpenNow } from '@/lib/store-open'
 import type { DeliveryZone } from '@/lib/types'
 
 export async function generateMetadata({
@@ -41,6 +42,8 @@ export default async function CheckoutPage({
     .maybeSingle()
   const openingHours = (ohRow?.value ?? {}) as Record<string, { open?: string; close?: string; closed?: boolean }>
 
+  const storeOpen = await isStoreOpenNow()
+
   return (
     <div className="py-8 md:py-12">
       <div className="container mx-auto px-4 max-w-4xl">
@@ -53,6 +56,7 @@ export default async function CheckoutPage({
           dictionary={dictionary}
           deliveryZones={deliveryZones}
           openingHours={openingHours}
+          storeOpen={storeOpen}
         />
       </div>
     </div>

@@ -246,23 +246,23 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
                         </div>
                       </div>
                       {!hours.closed && (
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="space-y-1">
+                        <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3">
+                          <div className="space-y-1 min-w-0">
                             <Label className="text-xs text-muted-foreground">{t.open}</Label>
                             <Input
                               type="time"
                               value={hours.open}
                               onChange={(e) => updateOpeningHours(day, 'open', e.target.value)}
-                              className="h-11 w-full"
+                              className="h-11 w-full min-w-0"
                             />
                           </div>
-                          <div className="space-y-1">
+                          <div className="space-y-1 min-w-0">
                             <Label className="text-xs text-muted-foreground">{t.close}</Label>
                             <Input
                               type="time"
                               value={hours.close}
                               onChange={(e) => updateOpeningHours(day, 'close', e.target.value)}
-                              className="h-11 w-full"
+                              className="h-11 w-full min-w-0"
                             />
                           </div>
                         </div>

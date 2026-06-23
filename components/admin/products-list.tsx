@@ -236,8 +236,7 @@ export function ProductsList({ products, categories, locale, dictionary }: Produ
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">{locale === 'hu' ? 'Termékek' : 'Products'}</h2>
+      <div className="flex justify-end items-center mb-6">
         <Button onClick={handleCreate} className="gap-2">
           <Plus className="h-4 w-4" />
           {locale === 'hu' ? 'Új termék' : 'New Product'}
