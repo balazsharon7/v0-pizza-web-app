@@ -276,15 +276,21 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData): Promise<
 </html>
     `
 
+    // Sender address. Defaults to Resend's shared test sender, which ONLY
+    // delivers to your own Resend account email. Set RESEND_FROM to a verified
+    // domain address (e.g. "Terra Verde <rendeles@terraverdepizza.hu>") to send
+    // confirmation emails to real customers.
+    const from = process.env.RESEND_FROM || 'Terra Verde <onboarding@resend.dev>'
+
     const response = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from,
       to: order.customer_email,
       subject: t.subject,
       html,
     })
 
     if (response.error) {
-      console.error('Email sending error:', response.error)
+      console.error('Email sending error:', JSON.stringify(response.error))
       return false
     }
 
