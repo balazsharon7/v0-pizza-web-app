@@ -188,13 +188,13 @@ export default async function HomePage({
               </p>
 
               <div className="animate-fade-in-up animation-delay-500 flex flex-col gap-4 sm:flex-row pt-2">
-                <Button asChild size="lg" className="gap-2 text-base h-12 px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
+                <Button asChild size="lg" className="cta-glow gap-2 text-base h-12 px-8 rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
                   <Link href={`/${locale}/menu`}>
                     {t.hero.cta}
                     <ArrowRight className="h-5 w-5" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="text-base h-12 px-8 hover:bg-muted/70 transition-all">
+                <Button asChild variant="outline" size="lg" className="text-base h-12 px-8 rounded-full hover:bg-muted/70 transition-all">
                   <Link href={`/${locale}/about`}>
                     {locale === 'hu' ? 'Rólunk' : 'About Us'}
                   </Link>
@@ -227,54 +227,58 @@ export default async function HomePage({
       {/* Quick Info Bar */}
       <section className="border-y bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4">
-          <div className="grid gap-6 py-8 sm:grid-cols-2 lg:grid-cols-4">
-            <ScrollReveal delay={0} className="flex items-center gap-4 group">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
-                <Clock className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">{locale === 'hu' ? 'Ma nyitva' : 'Open today'}</p>
-                <p className="font-semibold">
-                  {todayHours?.closed 
-                    ? (locale === 'hu' ? 'Zárva' : 'Closed')
-                    : `${todayHours?.open || '11:00'} - ${todayHours?.close || '22:00'}`}
-                </p>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={80} className="flex items-center gap-4 group">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
-                <Phone className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">{locale === 'hu' ? 'Rendelés' : 'Order'}</p>
-                <a href={`tel:${storeInfo.phone || '+36 1 234 5678'}`} className="font-semibold hover:text-primary transition-colors">
-                  {storeInfo.phone || '+36 1 234 5678'}
-                </a>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={160} className="flex items-center gap-4 group">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
-                <MapPin className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">{locale === 'hu' ? 'Címünk' : 'Address'}</p>
-                <p className="font-semibold">{storeInfo.address || 'Budaörs'}</p>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={240} className="flex items-center gap-4 group">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
-                <Mail className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Email</p>
-                <a href={`mailto:${storeInfo.email || 'info@terraverde.hu'}`} className="font-semibold hover:text-primary transition-colors">
-                  {storeInfo.email || 'info@terraverde.hu'}
-                </a>
-              </div>
-            </ScrollReveal>
+          <div className="grid gap-x-8 gap-y-6 py-7 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                icon: Clock,
+                label: locale === 'hu' ? 'Ma nyitva' : 'Open today',
+                value: todayHours?.closed
+                  ? (locale === 'hu' ? 'Zárva' : 'Closed')
+                  : `${todayHours?.open || '11:00'} – ${todayHours?.close || '22:00'}`,
+              },
+              {
+                icon: Phone,
+                label: locale === 'hu' ? 'Rendelés' : 'Order',
+                value: storeInfo.phone || '+36 30 173 5918',
+                href: `tel:${storeInfo.phone || '+36 30 173 5918'}`,
+              },
+              {
+                icon: MapPin,
+                label: locale === 'hu' ? 'Címünk' : 'Address',
+                value: storeInfo.address || '2040 Budaörs, Szabadság út 23-25.',
+              },
+              {
+                icon: Mail,
+                label: 'Email',
+                value: storeInfo.email || 'terraverdepizzeria@gmail.com',
+                href: `mailto:${storeInfo.email || 'terraverdepizzeria@gmail.com'}`,
+              },
+            ].map((info, i) => {
+              const Icon = info.icon
+              return (
+                <ScrollReveal
+                  key={info.label}
+                  delay={i * 80}
+                  className="group flex items-center gap-4 lg:[&:not(:first-child)]:border-l lg:[&:not(:first-child)]:border-border/60 lg:[&:not(:first-child)]:pl-8"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15 transition-all duration-500 group-hover:rotate-6 group-hover:scale-105 group-hover:bg-primary/15">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                      {info.label}
+                    </p>
+                    {info.href ? (
+                      <a href={info.href} className="font-semibold hover:text-primary transition-colors break-words">
+                        {info.value}
+                      </a>
+                    ) : (
+                      <p className="font-semibold">{info.value}</p>
+                    )}
+                  </div>
+                </ScrollReveal>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -336,7 +340,7 @@ export default async function HomePage({
 
       {/* Delivery coverage map */}
       {deliveryZones.length > 0 && (
-        <section className="relative py-16 md:py-20 overflow-hidden">
+        <section className="relative py-20 md:py-28 overflow-hidden">
           <div className="container mx-auto px-4 max-w-5xl">
             <ScrollReveal className="mb-10 text-center">
               <div className="inline-flex items-center gap-3 mb-5">
@@ -490,10 +494,10 @@ export default async function HomePage({
                     size="lg"
                     className="text-primary-foreground hover:bg-white/10 hover:text-white h-12 px-6 border border-white/20"
                   >
-                    <a href={`tel:${storeInfo.phone || '+36 1 234 5678'}`}>
+                    <a href={`tel:${storeInfo.phone || '+36 30 173 5918'}`}>
                       <Phone className="mr-2 h-5 w-5" />
                       <span className="font-medium">
-                        {storeInfo.phone || '+36 1 234 5678'}
+                        {storeInfo.phone || '+36 30 173 5918'}
                       </span>
                     </a>
                   </Button>
