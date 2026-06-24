@@ -44,6 +44,17 @@ export default async function CheckoutPage({
 
   const storeOpen = await isStoreOpenNow()
 
+  // Saved addresses for a logged-in user (offered as quick-pick at checkout)
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: savedAddresses } = user
+    ? await supabase
+        .from('saved_addresses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('is_default', { ascending: false })
+        .order('created_at', { ascending: true })
+    : { data: [] }
+
   return (
     <div className="py-8 md:py-12">
       <div className="container mx-auto px-4 max-w-4xl">
@@ -57,6 +68,7 @@ export default async function CheckoutPage({
           deliveryZones={deliveryZones}
           openingHours={openingHours}
           storeOpen={storeOpen}
+          savedAddresses={savedAddresses || []}
         />
       </div>
     </div>

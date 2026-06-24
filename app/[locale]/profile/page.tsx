@@ -40,14 +40,22 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     `)
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
-  
+
+  // Delivery zones (for the zone-restricted address picker) and saved addresses
+  const [{ data: deliveryZones }, { data: savedAddresses }] = await Promise.all([
+    supabase.from('delivery_zones').select('*').eq('is_active', true).order('sort_order', { ascending: true }),
+    supabase.from('saved_addresses').select('*').eq('user_id', user.id).order('created_at', { ascending: true }),
+  ])
+
   return (
     <main className="min-h-screen bg-background py-8">
       <div className="container mx-auto px-4">
-        <ProfileContent 
+        <ProfileContent
           user={user}
           profile={profile}
           orders={orders || []}
+          zones={deliveryZones || []}
+          savedAddresses={savedAddresses || []}
           locale={locale}
           t={t}
         />

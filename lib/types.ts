@@ -114,6 +114,17 @@ export interface OrderItemTopping {
   topping?: Topping
 }
 
+export interface SavedAddress {
+  id: string
+  user_id: string
+  label: string
+  zone_id: string | null
+  zip: string
+  street_address: string
+  is_default: boolean
+  created_at: string
+}
+
 export interface StoreInfo {
   name_hu: string
   name_en: string

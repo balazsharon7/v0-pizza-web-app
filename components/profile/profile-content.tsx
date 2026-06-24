@@ -12,9 +12,11 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
-import { User as UserIcon, Package, Settings, LogOut, MapPin, Phone, Mail, Clock, ExternalLink } from 'lucide-react'
+import { User as UserIcon, Package, Settings, LogOut, Phone, Mail, Clock, ExternalLink, MapPin } from 'lucide-react'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
+import { SavedAddresses } from '@/components/profile/saved-addresses'
+import type { DeliveryZone, SavedAddress } from '@/lib/types'
 
 interface Profile {
   id: string
@@ -49,6 +51,8 @@ interface ProfileContentProps {
   user: User
   profile: Profile | null
   orders: Order[]
+  zones: DeliveryZone[]
+  savedAddresses: SavedAddress[]
   locale: Locale
   t: Dictionary
 }
@@ -73,15 +77,12 @@ const statusLabels: Record<string, Record<Locale, string>> = {
   cancelled: { hu: 'Törölve', en: 'Cancelled' },
 }
 
-export function ProfileContent({ user, profile, orders, locale, t }: ProfileContentProps) {
+export function ProfileContent({ user, profile, orders, zones, savedAddresses, locale, t }: ProfileContentProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     fullName: profile?.full_name || '',
     phone: profile?.phone || '',
-    defaultAddress: profile?.default_address || '',
-    defaultCity: profile?.default_city || '',
-    defaultZip: profile?.default_zip || '',
   })
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -95,9 +96,6 @@ export function ProfileContent({ user, profile, orders, locale, t }: ProfileCont
         .update({
           full_name: formData.fullName,
           phone: formData.phone,
-          default_address: formData.defaultAddress,
-          default_city: formData.defaultCity,
-          default_zip: formData.defaultZip,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id)
@@ -156,14 +154,18 @@ export function ProfileContent({ user, profile, orders, locale, t }: ProfileCont
       </div>
 
       <Tabs defaultValue="orders" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="orders" className="flex items-center gap-2">
             <Package className="h-4 w-4" />
-            {locale === 'hu' ? 'Rendeléseim' : 'My Orders'}
+            <span className="hidden sm:inline">{locale === 'hu' ? 'Rendeléseim' : 'My Orders'}</span>
+          </TabsTrigger>
+          <TabsTrigger value="addresses" className="flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
+            <span className="hidden sm:inline">{locale === 'hu' ? 'Címeim' : 'Addresses'}</span>
           </TabsTrigger>
           <TabsTrigger value="settings" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
-            {locale === 'hu' ? 'Beállítások' : 'Settings'}
+            <span className="hidden sm:inline">{locale === 'hu' ? 'Beállítások' : 'Settings'}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -250,6 +252,19 @@ export function ProfileContent({ user, profile, orders, locale, t }: ProfileCont
           )}
         </TabsContent>
 
+        <TabsContent value="addresses">
+          <Card>
+            <CardContent className="pt-6">
+              <SavedAddresses
+                userId={user.id}
+                zones={zones}
+                initialAddresses={savedAddresses}
+                locale={locale}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="settings">
           <Card>
             <CardHeader>
@@ -294,49 +309,6 @@ export function ProfileContent({ user, profile, orders, locale, t }: ProfileCont
                         className="pl-10"
                       />
                     </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    {locale === 'hu' ? 'Alapértelmezett szállítási cím' : 'Default Delivery Address'}
-                  </Label>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="defaultAddress">
-                    {locale === 'hu' ? 'Utca, házszám' : 'Street Address'}
-                  </Label>
-                  <Input
-                    id="defaultAddress"
-                    value={formData.defaultAddress}
-                    onChange={(e) => setFormData({ ...formData, defaultAddress: e.target.value })}
-                  />
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="defaultCity">
-                      {locale === 'hu' ? 'Város' : 'City'}
-                    </Label>
-                    <Input
-                      id="defaultCity"
-                      value={formData.defaultCity}
-                      onChange={(e) => setFormData({ ...formData, defaultCity: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="defaultZip">
-                      {locale === 'hu' ? 'Irányítószám' : 'ZIP Code'}
-                    </Label>
-                    <Input
-                      id="defaultZip"
-                      value={formData.defaultZip}
-                      onChange={(e) => setFormData({ ...formData, defaultZip: e.target.value })}
-                    />
                   </div>
                 </div>
 

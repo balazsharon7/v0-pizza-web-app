@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
 import { useCart } from '@/lib/cart-context'
-import { formatPrice, getLocalizedName, type DeliveryType, type PaymentMethod, type DeliveryZone } from '@/lib/types'
+import { formatPrice, getLocalizedName, type DeliveryType, type PaymentMethod, type DeliveryZone, type SavedAddress } from '@/lib/types'
 import { DeliveryAddressSelector } from '@/components/delivery-address-selector'
 import type { Locale } from '@/lib/i18n/config'
 import type { Dictionary } from '@/lib/i18n/get-dictionary'
@@ -30,6 +30,7 @@ interface CheckoutFormProps {
   deliveryZones: DeliveryZone[]
   openingHours?: OpeningHours
   storeOpen?: boolean
+  savedAddresses?: SavedAddress[]
 }
 
 // Uniform sizing for all the radio "option" rectangles (delivery type,
@@ -52,7 +53,7 @@ function toLocalInput(d: Date) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours = {}, storeOpen = true }: CheckoutFormProps) {
+export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours = {}, storeOpen = true, savedAddresses = [] }: CheckoutFormProps) {
   const router = useRouter()
   const { items, subtotal, clearCart } = useCart()
   const t = dictionary
@@ -139,20 +140,6 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours =
             email: user.email || prev.email,
           }))
           
-          // Try to match profile ZIP with a zone
-          if (profile.default_zip) {
-            const matchingZone = deliveryZones.find(z => 
-              z.zip_codes && z.zip_codes.includes(profile.default_zip)
-            )
-            if (matchingZone) {
-              setSelectedZoneId(matchingZone.id)
-              setSelectedZip(profile.default_zip)
-              setSelectedZone(matchingZone)
-              if (profile.default_address) {
-                setStreetAddress(profile.default_address)
-              }
-            }
-          }
         } else {
           setFormData(prev => ({
             ...prev,
@@ -172,6 +159,23 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours =
 
   const handleSelectedZoneUpdate = useCallback((zone: DeliveryZone | null) => {
     setSelectedZone(zone)
+  }, [])
+
+  const applySavedAddress = useCallback(
+    (a: SavedAddress) => {
+      if (a.zone_id) setSelectedZoneId(a.zone_id)
+      setSelectedZip(a.zip)
+      setStreetAddress(a.street_address)
+      setSelectedZone(deliveryZones.find((z) => z.id === a.zone_id) ?? null)
+    },
+    [deliveryZones],
+  )
+
+  // Pre-fill the default saved address for logged-in users
+  useEffect(() => {
+    const def = savedAddresses.find((a) => a.is_default) ?? savedAddresses[0]
+    if (def && !selectedZoneId) applySavedAddress(def)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -428,7 +432,37 @@ export function CheckoutForm({ locale, dictionary, deliveryZones, openingHours =
               <CardHeader>
                 <CardTitle>{t.checkout.deliveryAddress}</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
+                {savedAddresses.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">
+                      {locale === 'hu' ? 'Mentett címeim' : 'Saved addresses'}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {savedAddresses.map((a) => {
+                        const active =
+                          selectedZoneId === a.zone_id &&
+                          selectedZip === a.zip &&
+                          streetAddress === a.street_address
+                        return (
+                          <button
+                            type="button"
+                            key={a.id}
+                            onClick={() => applySavedAddress(a)}
+                            className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
+                              active ? 'border-primary bg-primary/5' : 'border-muted hover:bg-muted/50'
+                            }`}
+                          >
+                            <span className="font-medium">{a.label}</span>
+                            <span className="block text-xs text-muted-foreground">
+                              {a.street_address}, {a.zip}
+                            </span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
                 <DeliveryAddressSelector
                   locale={locale}
                   zones={deliveryZones}
