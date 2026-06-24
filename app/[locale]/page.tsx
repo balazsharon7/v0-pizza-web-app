@@ -284,7 +284,7 @@ export default async function HomePage({
       </section>
 
       {/* Featured Pizzas */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <section className="relative pt-20 md:pt-28 pb-12 md:pb-16 overflow-hidden">
         {/* Pizza hot-air balloons — one drifts left → right across the section,
             then 10s later the other balloon does the same. 60s loop. */}
         <div className="balloon-cross" aria-hidden>
@@ -340,7 +340,7 @@ export default async function HomePage({
 
       {/* Delivery coverage map */}
       {deliveryZones.length > 0 && (
-        <section className="relative py-20 md:py-28 overflow-hidden">
+        <section className="relative pt-4 md:pt-6 pb-20 md:pb-28 overflow-hidden">
           <div className="container mx-auto px-4 max-w-5xl">
             <ScrollReveal className="mb-10 text-center">
               <div className="inline-flex items-center gap-3 mb-5">

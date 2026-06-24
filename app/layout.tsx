@@ -1,6 +1,18 @@
 import type { Metadata, Viewport } from 'next'
+import { Inter, Fraunces } from 'next/font/google'
 import { AnalyticsGate } from '@/components/analytics-gate'
 import './globals.css'
+
+// Body: Inter (clean, highly legible). Headings: Fraunces (warm artisan serif
+// that suits a Mediterranean pizzeria). Defined on <body> so portaled UI
+// (dropdowns, cart sheet, toasts) inherits the fonts too.
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  variable: '--font-fraunces',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -44,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="hu" suppressHydrationWarning>
+    <html lang="hu" suppressHydrationWarning className={`${inter.variable} ${fraunces.variable}`}>
       <body className="font-sans antialiased">
         {children}
         <AnalyticsGate />

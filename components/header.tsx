@@ -223,17 +223,26 @@ export function Header({ locale, dictionary }: HeaderProps) {
         </nav>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              {link.label}
-            </Link>
-          ))}
-          
+        <nav className="hidden items-center gap-7 md:flex">
+          {navLinks.map((link) => {
+            const isActive =
+              link.href === `/${locale}` ? pathname === link.href : pathname.startsWith(link.href)
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive ? 'page' : undefined}
+                className={`relative text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:rounded-full after:bg-primary after:transition-all after:duration-300 ${
+                  isActive
+                    ? 'text-primary after:w-full'
+                    : 'text-foreground/70 hover:text-foreground after:w-0 hover:after:w-full'
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
+
           {/* Open Status */}
           <OpenStatus locale={locale} />
         </nav>

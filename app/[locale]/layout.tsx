@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Inter, Cormorant_Garamond } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { locales, type Locale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
@@ -10,19 +9,6 @@ import { CartSheet } from '@/components/cart-sheet'
 import { Toaster } from '@/components/ui/sonner'
 import { CookieConsent } from '@/components/cookie-consent'
 import { CustomCursor } from '@/components/custom-cursor'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-cormorant',
-  display: 'swap',
-})
 
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -70,7 +56,7 @@ export default async function LocaleLayout({
   const dictionary = await getDictionary(locale)
 
   return (
-    <div className={`${inter.variable} ${cormorant.variable} min-h-screen flex flex-col font-sans`}>
+    <div className="min-h-screen flex flex-col font-sans">
       <CartProvider>
         <Header locale={locale} dictionary={dictionary} />
         <main className="flex-1">
