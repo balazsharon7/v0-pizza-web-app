@@ -4,7 +4,6 @@ import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
 import { MenuContent } from '@/components/menu-content'
 import type { Category, Product, Size, Topping } from '@/lib/types'
-import { AuroraBg } from '@/components/animations/aurora-bg'
 
 // Disable caching to always show fresh data
 export const dynamic = 'force-dynamic'
@@ -64,7 +63,6 @@ export default async function MenuPage({
 
   return (
     <div className="relative py-12 md:py-16 overflow-hidden">
-      <AuroraBg className="opacity-55" intensity={1} />
       <div className="balloon-cross" aria-hidden>
         <Image src="/hero/balloon-1.png" alt="" fill sizes="14vw" className="object-contain" priority={false} />
       </div>
