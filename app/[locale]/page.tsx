@@ -179,11 +179,11 @@ export default async function HomePage({
                 <div className="h-[2px] w-12 bg-accent rounded-full" />
               </div>
 
-              <p className="animate-fade-in-up animation-delay-300 text-xl text-muted-foreground md:text-2xl leading-relaxed">
+              <p className="animate-fade-in-up animation-delay-300 font-serif text-2xl md:text-3xl font-medium text-foreground leading-snug">
                 {t.hero.subtitle}
               </p>
 
-              <p className="animate-fade-in-up animation-delay-400 text-muted-foreground leading-relaxed max-w-lg">
+              <p className="animate-fade-in-up animation-delay-400 text-foreground/70 leading-relaxed max-w-lg">
                 {t.hero.description}
               </p>
 
@@ -194,7 +194,7 @@ export default async function HomePage({
                     <ArrowRight className="h-5 w-5" />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="text-base h-12 px-8 rounded-full hover:bg-muted/70 transition-all">
+                <Button asChild variant="outline" size="lg" className="text-base h-12 px-8 rounded-full transition-all">
                   <Link href={`/${locale}/about`}>
                     {locale === 'hu' ? 'Rólunk' : 'About Us'}
                   </Link>
