@@ -52,12 +52,11 @@ export function DeliveryAddressSelector({
     return [...selectedZone.zip_codes].sort()
   }, [selectedZone])
 
-  // When zone changes, auto-select first ZIP if only one
+  // When zone changes, auto-select the only ZIP. Guard against re-setting the
+  // same value so an unstable onZipChange callback can't cause an update loop.
   useEffect(() => {
-    if (selectedZone && availableZipCodes.length === 1) {
+    if (selectedZone && availableZipCodes.length === 1 && selectedZip !== availableZipCodes[0]) {
       onZipChange(availableZipCodes[0])
-    } else if (selectedZone && availableZipCodes.length > 0 && !selectedZip) {
-      // Don't auto-select, user needs to choose
     }
   }, [selectedZone, availableZipCodes, onZipChange, selectedZip])
 

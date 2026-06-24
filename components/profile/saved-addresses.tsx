@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { MapPin, Plus, Pencil, Trash2, Star, Home } from 'lucide-react'
@@ -42,6 +42,12 @@ export function SavedAddresses({ userId, zones, initialAddresses, locale }: Save
   const [form, setForm] = useState(emptyForm)
   const [selectedZone, setSelectedZone] = useState<DeliveryZone | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+
+  // Stable callbacks — passing fresh arrow functions to DeliveryAddressSelector
+  // makes its auto-select-ZIP effect loop forever on single-ZIP zones.
+  const handleZoneChange = useCallback((zoneId: string) => setForm((f) => ({ ...f, zoneId })), [])
+  const handleZipChange = useCallback((zip: string) => setForm((f) => ({ ...f, zip })), [])
+  const handleStreetChange = useCallback((street: string) => setForm((f) => ({ ...f, street })), [])
 
   const zoneName = (zoneId: string | null) => {
     const z = zones.find((zz) => zz.id === zoneId)
@@ -243,9 +249,9 @@ export function SavedAddresses({ userId, zones, initialAddresses, locale }: Save
               selectedZoneId={form.zoneId}
               selectedZip={form.zip}
               address={form.street}
-              onZoneChange={(zoneId) => setForm((f) => ({ ...f, zoneId }))}
-              onZipChange={(zip) => setForm((f) => ({ ...f, zip }))}
-              onAddressChange={(street) => setForm((f) => ({ ...f, street }))}
+              onZoneChange={handleZoneChange}
+              onZipChange={handleZipChange}
+              onAddressChange={handleStreetChange}
               onSelectedZoneUpdate={setSelectedZone}
             />
           </div>
