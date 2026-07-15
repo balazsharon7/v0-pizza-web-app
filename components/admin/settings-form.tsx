@@ -10,9 +10,11 @@ import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
-import { Clock, Store, Save, Power, MapPin } from 'lucide-react'
+import { Clock, Store, Save, Power, MapPin, ImageIcon } from 'lucide-react'
 import { updateSettings } from '@/app/actions/admin'
 import { DeliveryZonesForm } from './delivery-zones-form'
+import { ImageUploadField } from './image-upload-field'
+import { ABOUT_IMAGE_SLOTS, type AboutImages } from '@/lib/about-images'
 import type { DeliveryZone } from '@/lib/types'
 
 type OpeningHours = {
@@ -62,6 +64,7 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
     phone: '',
     email: '',
   })
+  const [aboutImages, setAboutImages] = useState<AboutImages>({})
 
   
   const t = {
@@ -106,6 +109,9 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
               case 'store_info':
                 setStoreInfo(setting.value as StoreInfo)
                 break
+              case 'about_images':
+                setAboutImages((setting.value as AboutImages) || {})
+                break
             }
           })
         }
@@ -132,7 +138,10 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
       
       const result3 = await updateSettings('store_info', storeInfo)
       if (!result3.success) throw new Error(result3.error)
-      
+
+      const result4 = await updateSettings('about_images', aboutImages)
+      if (!result4.success) throw new Error(result4.error)
+
       toast.success(t.saved)
       router.refresh()
     } catch (error) {
@@ -164,7 +173,7 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
   return (
     <div className="space-y-6">
       <Tabs defaultValue="status" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="status" className="flex items-center gap-2">
             <Power className="h-4 w-4" />
             <span className="hidden sm:inline">{t.storeStatus}</span>
@@ -180,6 +189,10 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
           <TabsTrigger value="zones" className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
             <span className="hidden sm:inline">{locale === 'hu' ? 'Zónák' : 'Zones'}</span>
+          </TabsTrigger>
+          <TabsTrigger value="about" className="flex items-center gap-2">
+            <ImageIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">{locale === 'hu' ? 'Rólunk képek' : 'About images'}</span>
           </TabsTrigger>
         </TabsList>
         
@@ -334,6 +347,44 @@ export function SettingsForm({ locale, deliveryZones = [] }: SettingsFormProps) 
         
         <TabsContent value="zones" className="mt-6">
           <DeliveryZonesForm locale={locale} initialZones={deliveryZones} />
+        </TabsContent>
+
+        <TabsContent value="about" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ImageIcon className="h-5 w-5" />
+                {locale === 'hu' ? 'Rólunk oldal képei' : 'About page images'}
+              </CardTitle>
+              <CardDescription>
+                {locale === 'hu'
+                  ? 'A „Rólunk” oldal hero és galéria képeinek cseréje. A mentés a lap alján lévő gombbal történik.'
+                  : 'Replace the hero and gallery images on the About page. Use the Save button at the bottom to apply.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {ABOUT_IMAGE_SLOTS.map((meta) => (
+                  <ImageUploadField
+                    key={meta.slot}
+                    label={locale === 'hu' ? meta.label_hu : meta.label_en}
+                    value={aboutImages[meta.slot] || ''}
+                    defaultSrc={meta.default}
+                    onChange={(url) =>
+                      setAboutImages((prev) => {
+                        const next = { ...prev }
+                        if (url) next[meta.slot] = url
+                        else delete next[meta.slot]
+                        return next
+                      })
+                    }
+                    locale={locale}
+                    folder="about"
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
       

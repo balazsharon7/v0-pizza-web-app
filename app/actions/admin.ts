@@ -102,18 +102,24 @@ export async function deleteProduct(productId: string) {
 
 export async function updateSettings(key: string, value: Record<string, unknown>) {
   const supabase = await createClient()
-  
+
+  // Upsert (not plain update) so a settings key that doesn't exist yet — e.g.
+  // `about_images` on first save — gets created instead of silently matching
+  // zero rows. `key` is UNIQUE, so onConflict resolves to an update.
   const { error } = await supabase
     .from('settings')
-    .update({ value, updated_at: new Date().toISOString() })
-    .eq('key', key)
-  
+    .upsert(
+      { key, value, updated_at: new Date().toISOString() },
+      { onConflict: 'key' },
+    )
+
   if (error) {
     return { success: false, error: error.message }
   }
-  
+
   revalidatePath('/[locale]', 'layout')
-  
+  revalidatePath('/[locale]/about', 'page')
+
   return { success: true }
 }
 

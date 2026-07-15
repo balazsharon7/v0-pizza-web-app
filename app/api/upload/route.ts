@@ -25,6 +25,12 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const file = formData.get('file') as File
 
+    // Optional destination folder (e.g. "about"). Sanitised to a safe slug so
+    // callers can't traverse or inject anything into the blob path. Defaults to
+    // "products" to preserve existing behaviour.
+    const rawFolder = (formData.get('folder') as string | null) ?? 'products'
+    const folder = rawFolder.replace(/[^a-z0-9-]/gi, '').toLowerCase() || 'products'
+
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
@@ -43,7 +49,7 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now()
     const ext = file.name.split('.').pop()
-    const filename = `products/${timestamp}.${ext}`
+    const filename = `${folder}/${timestamp}.${ext}`
 
     const blob = await put(filename, file, {
       access: 'public',

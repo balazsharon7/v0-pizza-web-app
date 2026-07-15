@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator'
 import { getDictionary } from '@/lib/i18n/get-dictionary'
 import type { Locale } from '@/lib/i18n/config'
 import { createClient } from '@/lib/supabase/server'
+import { aboutImageSrc, type AboutImages } from '@/lib/about-images'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,6 +36,7 @@ export default async function AboutPage({ params }: PageProps) {
   settingsData?.forEach((s) => { settings[s.key] = s.value })
 
   const storeInfo = settings.store_info || {}
+  const aboutImages = (settings.about_images || {}) as AboutImages
   const openingHours = Object.keys(settings.opening_hours || {}).length
     ? settings.opening_hours
     : fallbackOpeningHours
@@ -92,7 +94,7 @@ export default async function AboutPage({ params }: PageProps) {
               {/* Main photo */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-4 ring-primary/10 aspect-[4/3]">
                 <Image
-                  src="/images/pizzak.jpg"
+                  src={aboutImageSrc(aboutImages, 'hero_main')}
                   alt="Terra Verde – Pizzáink"
                   fill
                   className="object-cover"
@@ -104,7 +106,7 @@ export default async function AboutPage({ params }: PageProps) {
               {/* Inset oven photo */}
               <div className="absolute -bottom-5 -right-5 w-36 h-36 rounded-xl overflow-hidden shadow-xl ring-2 ring-background">
                 <Image
-                  src="/images/pizza-room.jpg"
+                  src={aboutImageSrc(aboutImages, 'hero_inset')}
                   alt="Terra Verde – Kemencénk"
                   fill
                   className="object-cover"
@@ -132,7 +134,7 @@ export default async function AboutPage({ params }: PageProps) {
 
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
               <Image
-                src="/images/pizza-fold.jpg"
+                src={aboutImageSrc(aboutImages, 'gallery_fold')}
                 alt="Pizza al Portafoglio – Terra Verde"
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -145,7 +147,7 @@ export default async function AboutPage({ params }: PageProps) {
 
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
               <Image
-                src="/images/pizzak.jpg"
+                src={aboutImageSrc(aboutImages, 'gallery_pizzas')}
                 alt={locale === 'hu' ? 'Pizzáink – Terra Verde' : 'Our pizzas – Terra Verde'}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -158,7 +160,7 @@ export default async function AboutPage({ params }: PageProps) {
 
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
               <Image
-                src="/images/terasz.jpg"
+                src={aboutImageSrc(aboutImages, 'gallery_terrace')}
                 alt={locale === 'hu' ? 'Teraszunk – Terra Verde' : 'Our terrace – Terra Verde'}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -171,7 +173,7 @@ export default async function AboutPage({ params }: PageProps) {
 
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg group">
               <Image
-                src="/images/pizza-room.jpg"
+                src={aboutImageSrc(aboutImages, 'gallery_kitchen')}
                 alt={locale === 'hu' ? 'Konyhánk – Terra Verde' : 'Our kitchen – Terra Verde'}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"

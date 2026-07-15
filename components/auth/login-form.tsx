@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { toast } from 'sonner'
@@ -22,10 +22,22 @@ interface LoginFormProps {
 
 export function LoginForm({ locale, dictionary }: LoginFormProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const t = dictionary
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  // Surface auth/OAuth errors that /auth/callback redirects back with.
+  useEffect(() => {
+    if (searchParams.get('error')) {
+      toast.error(
+        locale === 'hu'
+          ? 'A bejelentkezés nem sikerült. Próbáld újra.'
+          : 'Sign-in failed. Please try again.',
+      )
+    }
+  }, [searchParams, locale])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -77,7 +89,15 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">{t.auth.password}</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">{t.auth.password}</Label>
+              <Link
+                href={`/${locale}/auth/forgot-password`}
+                className="text-sm text-primary hover:underline"
+              >
+                {t.auth.forgotPassword}
+              </Link>
+            </div>
             <Input
               id="password"
               type="password"
