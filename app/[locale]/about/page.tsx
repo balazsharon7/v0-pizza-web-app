@@ -67,7 +67,7 @@ export default async function AboutPage({ params }: PageProps) {
             <div className="space-y-6">
               {/* Pizzeria logo */}
               <div className="animate-fade-in-up w-[clamp(100px,14vw,160px)] aspect-square relative">
-                <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill className="object-contain" priority />
+                <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill sizes="160px" className="object-contain" priority />
               </div>
 
               <div className="animate-fade-in-up flex items-center gap-3">
@@ -97,6 +97,7 @@ export default async function AboutPage({ params }: PageProps) {
                   src={aboutImageSrc(aboutImages, 'hero_main')}
                   alt="Terra Verde – Pizzáink"
                   fill
+                  sizes="(max-width: 1024px) 90vw, 448px"
                   className="object-cover"
                   priority
                 />
@@ -109,6 +110,7 @@ export default async function AboutPage({ params }: PageProps) {
                   src={aboutImageSrc(aboutImages, 'hero_inset')}
                   alt="Terra Verde – Kemencénk"
                   fill
+                  sizes="144px"
                   className="object-cover"
                 />
               </div>
@@ -137,6 +139,7 @@ export default async function AboutPage({ params }: PageProps) {
                 src={aboutImageSrc(aboutImages, 'gallery_fold')}
                 alt="Pizza al Portafoglio – Terra Verde"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -150,6 +153,7 @@ export default async function AboutPage({ params }: PageProps) {
                 src={aboutImageSrc(aboutImages, 'gallery_pizzas')}
                 alt={locale === 'hu' ? 'Pizzáink – Terra Verde' : 'Our pizzas – Terra Verde'}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -163,6 +167,7 @@ export default async function AboutPage({ params }: PageProps) {
                 src={aboutImageSrc(aboutImages, 'gallery_terrace')}
                 alt={locale === 'hu' ? 'Teraszunk – Terra Verde' : 'Our terrace – Terra Verde'}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -176,6 +181,7 @@ export default async function AboutPage({ params }: PageProps) {
                 src={aboutImageSrc(aboutImages, 'gallery_kitchen')}
                 alt={locale === 'hu' ? 'Konyhánk – Terra Verde' : 'Our kitchen – Terra Verde'}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -315,6 +321,7 @@ export default async function AboutPage({ params }: PageProps) {
                 src="/images/pizza-box-1.png"
                 alt=""
                 fill
+                sizes="256px"
                 className="object-contain"
                 aria-hidden
               />

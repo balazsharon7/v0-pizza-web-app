@@ -129,6 +129,7 @@ export default async function HomePage({
             src="/images/pizzak-bg.png"
             alt=""
             fill
+            sizes="100vw"
             className="object-cover object-center"
             priority
           />
@@ -148,7 +149,7 @@ export default async function HomePage({
             <div className="relative z-[1] space-y-5 lg:col-start-1 lg:row-start-1 lg:self-end">
               <HeroSign className="lg:hidden absolute -top-2 right-0 w-24 sm:w-28 z-20 -rotate-3" />
               <div className="animate-fade-in-up relative w-[clamp(210px,27vw,390px)] aspect-square">
-                <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill className="object-contain" priority />
+                <Image src="/hero/logo-hero.png" alt="Terra Verde Pizzéria" fill sizes="(max-width: 640px) 210px, 390px" className="object-contain" priority />
               </div>
             </div>
 
